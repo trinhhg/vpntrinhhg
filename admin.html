@@ -28,7 +28,10 @@
     <div id="adminPanel" class="hidden max-w-7xl mx-auto p-4 md:p-8 pb-20">
         <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 gap-4">
             <h1 class="text-2xl font-extrabold"><span class="gradient-text">Trinh Hg VPN</span> Dashboard</h1>
-            <button onclick="location.reload()" class="bg-red-50 text-red-600 hover:bg-red-100 px-5 py-2.5 rounded-xl font-bold transition">Đăng xuất</button>
+            <div class="flex gap-3">
+                <button onclick="fetchOrders()" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-5 py-2.5 rounded-xl font-bold transition"><i class="fas fa-sync-alt mr-2"></i>Làm mới</button>
+                <button onclick="location.reload()" class="bg-red-50 text-red-600 hover:bg-red-100 px-5 py-2.5 rounded-xl font-bold transition">Đăng xuất</button>
+            </div>
         </div>
 
         <div class="flex flex-wrap gap-3 mb-8">
@@ -66,7 +69,7 @@
             </div>
             <textarea id="cmsGuide" rows="14" class="w-full p-5 border border-slate-200 rounded-b-xl focus:outline-none text-slate-800 bg-white shadow-inner font-mono text-sm leading-relaxed" placeholder="Soạn nội dung ở đây..."></textarea>
             
-            <button onclick="saveCms()" class="mt-4 bg-indigo-600 text-white font-bold px-8 py-4 rounded-xl shadow-md w-full md:w-auto">💾 LƯU LÊN WEB</button>
+            <button onclick="saveCmsToCloud()" class="mt-4 bg-indigo-600 text-white font-bold px-8 py-4 rounded-xl shadow-md w-full md:w-auto hover:bg-indigo-700 transition">💾 LƯU LÊN MÁY CHỦ</button>
         </div>
     </div>
 
@@ -75,13 +78,13 @@
             <h3 class="text-2xl font-bold mb-6" id="modalTitle">Chỉnh sửa Đơn Hàng</h3>
             
             <div class="grid md:grid-cols-2 gap-4 mb-4">
-                <div><label class="block font-bold text-sm mb-1 text-slate-600">Mã Đơn Hàng</label><input type="text" id="editId" class="w-full p-3 border rounded-lg bg-slate-100 font-mono font-bold" readonly></div>
+                <div><label class="block font-bold text-sm mb-1 text-slate-600">Mã Đơn</label><input type="text" id="editId" class="w-full p-3 border rounded-lg bg-slate-100 font-mono font-bold" readonly></div>
                 <div><label class="block font-bold text-sm mb-1 text-slate-600">Email Khách</label><input type="text" id="editEmail" class="w-full p-3 border rounded-lg outline-none focus:border-indigo-500"></div>
             </div>
 
             <div class="mb-4">
-                <label class="block font-bold text-sm mb-1 text-slate-600">Gói VPN (Giá + Dung lượng)</label>
-                <select id="editPkg" class="w-full p-3 border rounded-lg font-bold text-indigo-700 bg-indigo-50 outline-none"></select>
+                <label class="block font-bold text-sm mb-1 text-slate-600">Gói VPN</label>
+                <input type="text" id="editPkg" class="w-full p-3 border rounded-lg font-bold text-indigo-700 bg-indigo-50 outline-none">
             </div>
 
             <div class="mb-6">
@@ -108,42 +111,38 @@
                 <label for="sendMailCheck" class="font-bold text-sm text-slate-700">Gửi Email thông báo trạng thái cho khách sau khi Lưu</label>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-3">
-                <button onclick="saveOrder()" class="flex-1 bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700">💾 LƯU ĐƠN HÀNG</button>
-                <button onclick="document.getElementById('modalEdit').classList.add('hidden')" class="bg-slate-200 text-slate-700 font-bold py-3 px-6 rounded-lg">Hủy</button>
+            <div class="flex flex-col md:flex-row gap-3 mt-6">
+                <button onclick="saveOrderToCloud()" class="flex-1 bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition">💾 LƯU LÊN MÁY CHỦ</button>
+                <button onclick="document.getElementById('modalEdit').classList.add('hidden')" class="bg-slate-200 text-slate-700 font-bold py-3 px-6 rounded-lg hover:bg-slate-300">Hủy</button>
             </div>
         </div>
     </div>
 
     <script>
+        // --- CẤU HÌNH API Ở ĐÂY ---
+        const API_URL = "https://vpn-api.doicucden.workers.dev"; 
+        const GOOGLE_MAIL_API = "https://script.google.com/macros/s/AKfycbyQjEln9By0HuUPtboqJpb1INI6rRp52BxvHR8HaE5fs8qojfgau1R_27P4RyLLxXIp/exec";
+        
+        let ordersDb = []; let cmsDb = {}; let currentCmsDevice = 'android';
+
         function showToast(msg, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             const bg = type === 'error' ? 'bg-red-500' : (type === 'info' ? 'bg-blue-500' : 'bg-green-500');
             const icon = type === 'error' ? 'fa-times-circle' : (type === 'info' ? 'fa-info-circle' : 'fa-check-circle');
-            toast.className = `${bg} text-white px-6 py-4 rounded-xl shadow-2xl flex items-center transform transition-all duration-300 translate-x-full opacity-0`;
-            toast.innerHTML = `<i class="fas ${icon} text-xl mr-3"></i><span class="font-bold text-sm">${msg}</span>`;
+            toast.className = `${bg} text-white px-5 md:px-6 py-3 md:py-4 rounded-xl shadow-2xl flex items-center transform transition-all duration-300 translate-x-full opacity-0 w-[90vw] max-w-sm mb-2`;
+            toast.innerHTML = `<i class="fas ${icon} text-lg md:text-xl mr-3 shrink-0"></i><span class="font-bold text-sm leading-tight">${msg}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.classList.remove('translate-x-full', 'opacity-0'), 10);
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        const DB_KEY = 'vpn_orders_db';
-        const GOOGLE_MAIL_API = "https://script.google.com/macros/s/AKfycbyQjEln9By0HuUPtboqJpb1INI6rRp52BxvHR8HaE5fs8qojfgau1R_27P4RyLLxXIp/exec";
-        let ordersDb = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-        let currentCmsDevice = 'android';
-
-        const packageOptions = [
-            "Gói 1 Tháng - 70.000đ (1000GB)", "Gói Cao Cấp - 150.000đ (3000GB)", "Gói 1 Năm - 300.000đ (200GB/tháng)",
-            "Không Giới Hạn - 70.000đ (200GB)", "Không Giới Hạn - 180.000đ (2000GB)", "Không Giới Hạn - 320.000đ (6000GB)"
-        ];
-
-        function checkAdmin() {
+        async function checkAdmin() {
             if(document.getElementById('adminPass').value === "admin2026") {
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('adminPanel').classList.remove('hidden');
-                document.getElementById('editPkg').innerHTML = packageOptions.map(p => `<option value="${p}">${p}</option>`).join('');
-                renderOrders(); loadCmsData(); showToast("Đăng nhập thành công!");
+                showToast("Đăng nhập thành công, đang tải dữ liệu...", "info");
+                await fetchOrders(); await fetchCms();
             } else showToast("Sai mật khẩu!", "error");
         }
 
@@ -155,49 +154,49 @@
             document.getElementById('btn-'+t).className = "px-6 py-3 rounded-xl font-bold bg-indigo-600 text-white shadow-md";
         }
 
+        // --- KẾT NỐI MÁY CHỦ ĐƠN HÀNG ---
+        async function fetchOrders() {
+            try {
+                const res = await fetch(API_URL + "/api/orders");
+                ordersDb = await res.json();
+                renderOrders();
+                showToast("Dữ liệu đơn hàng đã được cập nhật!", "success");
+            } catch(e) { showToast("Lỗi kết nối API Cloudflare!", "error"); }
+        }
+
         function renderOrders() {
-            ordersDb = JSON.parse(localStorage.getItem(DB_KEY)) || [];
             const tbody = document.getElementById('orderTable'); tbody.innerHTML = '';
             ordersDb.forEach((o) => {
                 let badge = o.status === 'pending' ? '<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold border border-yellow-200">⏳ Chờ duyệt</span>' : 
                             (o.status === 'success' ? '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200">✅ Thành công</span>' : 
                             '<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">❌ Từ chối</span>');
                 
-                let supportTag = o.needSupport ? `<span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded ml-2 font-bold uppercase border border-blue-200">Hỗ trợ Zalo/Call</span>` : '';
+                let supportTag = o.needSupport ? `<span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded ml-2 font-bold uppercase border border-blue-200">Hỗ trợ Cài đặt</span>` : '';
 
                 tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition">
                     <td class="p-5 font-mono font-bold text-indigo-600">${o.id}</td>
-                    <td class="p-5"><p class="font-bold text-slate-800">${o.email} ${supportTag}</p><p class="text-xs text-slate-400 mt-1"><i class="fas fa-phone mr-1"></i> ${o.zalo || 'Không'}</p></td>
-                    <td class="p-5 font-bold text-slate-600">${o.pkg}</td>
-                    <td class="p-5">${badge}</td>
+                    <td class="p-5"><p class="font-bold text-slate-800">${o.email} ${supportTag}</p><p class="text-xs text-slate-500 mt-1"><i class="fas fa-credit-card mr-1"></i>${o.method || 'Bank'} | <i class="fas fa-phone mx-1"></i> ${o.zalo || 'Không'}</p></td>
+                    <td class="p-5 font-bold text-slate-600 text-xs">${o.pkg}</td><td class="p-5">${badge}</td>
                     <td class="p-5 text-right whitespace-nowrap">
                         <button onclick="openEditModal('${o.id}')" class="text-indigo-600 font-bold hover:underline px-3 py-1 bg-indigo-50 rounded mr-2"><i class="fas fa-edit mr-1"></i>Sửa</button>
                         <button onclick="deleteOrder('${o.id}')" class="text-red-500 font-bold hover:underline px-3 py-1 bg-red-50 rounded"><i class="fas fa-trash-alt mr-1"></i>Xóa</button>
-                    </td>
-                </tr>`;
+                    </td></tr>`;
             });
-        }
-
-        function deleteOrder(id) {
-            if(confirm('CẢNH BÁO: Xóa vĩnh viễn đơn hàng ' + id + '?')) {
-                ordersDb = ordersDb.filter(x => x.id !== id);
-                localStorage.setItem(DB_KEY, JSON.stringify(ordersDb));
-                renderOrders(); showToast("Đã xóa thành công!", "info");
-            }
         }
 
         function openEditModal(id) {
             let o;
-            if (id) {
+            if(id) {
                 o = ordersDb.find(x => x.id === id);
-                document.getElementById('modalTitle').innerText = `Cập nhật Đơn Hàng`;
+                document.getElementById('modalTitle').innerText = `Chỉnh sửa Đơn Hàng`;
                 document.getElementById('editId').value = o.id;
             } else {
                 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; let newId = 'DH-'; for(let i=0; i<10; i++) newId += chars.charAt(Math.floor(Math.random()*chars.length));
-                o = { id: newId, email: '', pkg: packageOptions[0], status: 'pending', info: '', reason: '' };
+                o = { id: newId, email: '', pkg: 'Gói 1 Tháng', status: 'pending', info: '', reason: '' };
                 document.getElementById('modalTitle').innerText = `Tạo Đơn Thủ Công`;
                 document.getElementById('editId').value = o.id;
             }
+            
             document.getElementById('editEmail').value = o.email || '';
             document.getElementById('editPkg').value = o.pkg;
             document.getElementById('editStatus').value = o.status;
@@ -212,10 +211,11 @@
             document.getElementById('fieldFailed').classList.toggle('hidden', s !== 'failed');
         }
 
-        async function saveOrder() {
+        async function saveOrderToCloud() {
             const id = document.getElementById('editId').value;
             let o = ordersDb.find(x => x.id === id);
-            if(!o) { o = { id: id, needSupport: false, date: new Date().toLocaleString() }; ordersDb.unshift(o); }
+            let isNew = false;
+            if(!o) { o = { id: id, needSupport: false, date: new Date().toLocaleString() }; ordersDb.unshift(o); isNew = true; }
 
             o.email = document.getElementById('editEmail').value;
             o.pkg = document.getElementById('editPkg').value;
@@ -223,57 +223,77 @@
             o.info = document.getElementById('editLink').value;
             o.reason = document.getElementById('editReason').value;
 
-            localStorage.setItem(DB_KEY, JSON.stringify(ordersDb));
-            
-            if(document.getElementById('sendMailCheck').checked && o.email) {
-                const btn = event.target; const oldTxt = btn.innerText; btn.innerText = "ĐANG GỬI EMAIL..."; btn.disabled = true;
-                let subject = "Trinh Hg VPN - Cập nhật đơn hàng"; let msg = "";
-                
-                let contactBlock = `<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:20px; margin-top:25px; text-align:center;">
-                    <p style="margin:0 0 10px 0; color:#475569; font-size:14px;">${o.needSupport ? '<span style="color:#ef4444; font-weight:bold;">Bạn đã yêu cầu Admin call hỗ trợ cài đặt!</span> Vui lòng liên hệ ngay:' : 'Cần hỗ trợ? Đội ngũ của chúng tôi sẵn sàng 24/7'}</p>
-                    <a href="https://zalo.me/0917678211" style="display:inline-block; background:#0ea5e9; color:white; padding:10px 20px; text-decoration:none; border-radius:8px; font-weight:bold; margin-right:10px;">Chat Zalo</a>
-                    <a href="https://www.facebook.com/trinh.hg.57" style="display:inline-block; background:#3b82f6; color:white; padding:10px 20px; text-decoration:none; border-radius:8px; font-weight:bold;">Chat Messenger</a>
-                </div>`;
+            const btn = event.target; const oldTxt = btn.innerText; btn.innerText = "ĐANG LƯU..."; btn.disabled = true;
 
-                if(o.status === 'success') {
-                    subject = "Trinh Hg VPN - Kích hoạt dịch vụ thành công";
-                    msg = `<div style="font-family:sans-serif; max-width:600px; margin:auto; background:#ffffff; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden;">
-                        <div style="background:linear-gradient(135deg, #4f46e5, #9333ea); padding:20px; text-align:center;"><h2 style="color:white; margin:0; font-size:22px;">KÍCH HOẠT THÀNH CÔNG</h2></div>
-                        <div style="padding:30px;">
-                            <p>Xin chào, Gói VPN <b>${o.pkg}</b> của bạn đã sẵn sàng.</p>
-                            <div style="background:#f1f5f9; border-left:4px solid #4f46e5; padding:15px; border-radius:8px; margin:20px 0; text-align:center;">
-                                <p style="margin:0; font-size:12px; color:#64748b; font-weight:bold;">MÃ ĐƠN HÀNG</p>
-                                <p style="margin:5px 0 0 0; font-size:26px; font-weight:900; color:#4f46e5; word-break:break-all; letter-spacing:1px;">${o.id}</p>
-                            </div>
-                            <div style="text-align:center; margin:25px 0;">
-                                <a href="https://vpntrinhhg.pages.dev" style="background:#1e293b; color:white; padding:12px 25px; border-radius:8px; text-decoration:none; font-weight:bold;">TRUY CẬP CỔNG KHÁCH HÀNG</a>
-                                <p style="font-size:13px; color:#64748b; margin-top:15px;">👉 <i>Tra cứu bằng <b>Mã Đơn Hàng</b> hoặc <b>Email</b> đều được nhé!</i></p>
-                            </div>
-                            ${contactBlock}
-                        </div></div>`;
-                } else if(o.status === 'failed') {
-                    subject = "Trinh Hg VPN - Đơn hàng bị từ chối";
-                    msg = `<div style="font-family:sans-serif; max-width:600px; margin:auto; border:1px solid #fecaca; border-radius:16px; overflow:hidden;">
-                        <div style="background:#ef4444; padding:20px; text-align:center;"><h2 style="color:white; margin:0;">Giao dịch thất bại</h2></div>
-                        <div style="padding:30px;"><p>Xin chào, Đơn hàng <b>${o.id}</b> của bạn không thể kích hoạt.</p><div style="background:#fef2f2; border:1px solid #fca5a5; padding:15px; border-radius:8px; color:#b91c1c; font-weight:bold; margin:20px 0;">Lý do: ${o.reason}</div>${contactBlock}</div></div>`;
-                }
+            try {
+                // LƯU LÊN CLOUDFLARE KV
+                await fetch(API_URL + "/api/orders", { method: "POST", body: JSON.stringify(ordersDb) });
+                showToast("Đã đồng bộ đơn hàng lên hệ thống Cloud!", "success");
 
-                try {
+                // GỬI EMAIL NẾU TICK
+                if(document.getElementById('sendMailCheck').checked && o.email) {
+                    btn.innerText = "ĐANG GỬI EMAIL...";
+                    let subject = "Trinh Hg VPN - Cập nhật đơn hàng"; let msg = "";
+                    let contactBlock = `<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:20px; margin-top:25px; text-align:center;">
+                        <p style="margin:0 0 10px 0; color:#475569; font-size:14px;">${o.needSupport ? '<span style="color:#ef4444; font-weight:bold;">Bạn đã yêu cầu Admin call hỗ trợ cài đặt!</span> Vui lòng liên hệ ngay:' : 'Cần hỗ trợ? Đội ngũ của chúng tôi sẵn sàng 24/7'}</p>
+                        <a href="https://zalo.me/0917678211" style="display:inline-block; background:#0ea5e9; color:white; padding:10px 20px; text-decoration:none; border-radius:8px; font-weight:bold; margin-right:10px;">Chat Zalo</a>
+                        <a href="https://www.facebook.com/trinh.hg.57" style="display:inline-block; background:#3b82f6; color:white; padding:10px 20px; text-decoration:none; border-radius:8px; font-weight:bold;">Chat Messenger</a>
+                    </div>`;
+
+                    if(o.status === 'success') {
+                        subject = "Trinh Hg VPN - Kích hoạt dịch vụ thành công";
+                        msg = `<div style="font-family:sans-serif; max-width:600px; margin:auto; background:#ffffff; border:1px solid #e2e8f0; border-radius:16px; overflow:hidden;">
+                            <div style="background:linear-gradient(135deg, #4f46e5, #9333ea); padding:20px; text-align:center;"><h2 style="color:white; margin:0; font-size:22px;">KÍCH HOẠT THÀNH CÔNG</h2></div>
+                            <div style="padding:30px;">
+                                <p>Xin chào, Gói VPN <b>${o.pkg}</b> của bạn đã sẵn sàng.</p>
+                                <div style="background:#f1f5f9; border-left:4px solid #4f46e5; padding:15px; border-radius:8px; margin:20px 0; text-align:center;">
+                                    <p style="margin:0; font-size:12px; color:#64748b; font-weight:bold;">MÃ ĐƠN HÀNG</p>
+                                    <p style="margin:5px 0 0 0; font-size:26px; font-weight:900; color:#4f46e5; word-break:break-all; letter-spacing:1px;">${o.id}</p>
+                                </div>
+                                <div style="text-align:center; margin:25px 0;">
+                                    <a href="https://vpntrinhhg.pages.dev" style="background:#1e293b; color:white; padding:12px 25px; border-radius:8px; text-decoration:none; font-weight:bold;">TRUY CẬP CỔNG KHÁCH HÀNG</a>
+                                    <p style="font-size:13px; color:#64748b; margin-top:15px;">👉 <i>Tra cứu bằng <b>Mã Đơn Hàng</b> hoặc <b>Email</b> đều được nhé!</i></p>
+                                </div>
+                                ${contactBlock}
+                            </div></div>`;
+                    } else if(o.status === 'failed') {
+                        subject = "Trinh Hg VPN - Đơn hàng bị từ chối";
+                        msg = `<div style="font-family:sans-serif; max-width:600px; margin:auto; border:1px solid #fecaca; border-radius:16px; overflow:hidden;">
+                            <div style="background:#ef4444; padding:20px; text-align:center;"><h2 style="color:white; margin:0;">Giao dịch thất bại</h2></div>
+                            <div style="padding:30px;"><p>Xin chào, Đơn hàng <b>${o.id}</b> của bạn không thể kích hoạt.</p><div style="background:#fef2f2; border:1px solid #fca5a5; padding:15px; border-radius:8px; color:#b91c1c; font-weight:bold; margin:20px 0;">Lý do: ${o.reason}</div>${contactBlock}</div></div>`;
+                    }
+
                     await fetch(GOOGLE_MAIL_API, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({to: o.email, subject: subject, html: msg}) });
-                    showToast("Đã lưu và Gửi Email Thành Công!");
-                } catch(e) { showToast("Lỗi khi gửi API Email!", "error"); }
-                
-                btn.innerText = oldTxt; btn.disabled = false;
-            } else showToast("Đã lưu thành công (Không gửi mail)!");
+                    showToast("Đã gửi Email cho khách hàng!", "success");
+                }
+            } catch(e) { showToast("Lỗi khi kết nối hệ thống!", "error"); }
 
+            btn.innerText = oldTxt; btn.disabled = false;
             renderOrders(); document.getElementById('modalEdit').classList.add('hidden');
         }
 
-        // --- CMS TOOLBAR ---
+        async function deleteOrder(id) {
+            if(confirm('CẢNH BÁO: Xóa vĩnh viễn đơn hàng ' + id + '?')) {
+                ordersDb = ordersDb.filter(x => x.id !== id);
+                try {
+                    await fetch(API_URL + "/api/orders", { method: "POST", body: JSON.stringify(ordersDb) });
+                    renderOrders(); showToast("Đã xóa vĩnh viễn trên Cloudflare!", "info");
+                } catch(e) { showToast("Lỗi khi xóa!", "error"); }
+            }
+        }
+
+        // --- KẾT NỐI MÁY CHỦ CMS ---
+        async function fetchCms() {
+            try {
+                const res = await fetch(API_URL + "/api/cms"); cmsDb = await res.json();
+                document.getElementById('cmsGuide').value = cmsDb[currentCmsDevice] || '';
+            } catch(e) { console.log("Lỗi tải CMS"); }
+        }
+
         function changeCmsDevice(dev) {
             document.querySelectorAll('.dev-btn').forEach(b => { b.classList.remove('active', 'border-indigo-500', 'bg-indigo-50', 'text-indigo-700'); b.classList.add('border-slate-200', 'text-slate-600'); });
             document.getElementById('cms-btn-' + dev).classList.add('active', 'border-indigo-500', 'bg-indigo-50', 'text-indigo-700'); document.getElementById('cms-btn-' + dev).classList.remove('border-slate-200', 'text-slate-600');
-            currentCmsDevice = dev; document.getElementById('cmsGuide').value = localStorage.getItem('cms_' + dev + '_guide') || '';
+            currentCmsDevice = dev; document.getElementById('cmsGuide').value = cmsDb[dev] || '';
         }
 
         function insertMacro(type) {
@@ -285,17 +305,15 @@
             box.value += str;
         }
 
-        function saveCms() {
-            localStorage.setItem('cms_' + currentCmsDevice + '_guide', document.getElementById('cmsGuide').value);
-            showToast('Đã lưu bài viết lên Web Khách Hàng!');
+        async function saveCmsToCloud() {
+            cmsDb[currentCmsDevice] = document.getElementById('cmsGuide').value;
+            const btn = event.target; const oldTxt = btn.innerText; btn.innerText = "ĐANG LƯU..."; btn.disabled = true;
+            try {
+                await fetch(API_URL + "/api/cms", { method: "POST", body: JSON.stringify(cmsDb) });
+                showToast('Đã lưu bài viết lên hệ thống Cloud!', "success");
+            } catch(e) { showToast("Lỗi khi lưu CMS!", "error"); }
+            btn.innerText = oldTxt; btn.disabled = false;
         }
-
-        // AUTO-UPDATE KHI CÓ ĐƠN MỚI TỪ BÊN KHÁCH (REALTIME LOCAL)
-        window.addEventListener('storage', (e) => {
-            if (e.key === DB_KEY && !document.getElementById('adminPanel').classList.contains('hidden')) {
-                renderOrders(); // Tự động load lại bảng khi có đơn mới
-            }
-        });
     </script>
 </body>
 </html>
