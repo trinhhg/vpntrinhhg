@@ -1,0 +1,38 @@
+// Worker Script (Node.js/JS)
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    
+    // API: Khách đặt hàng
+    if (url.pathname === "/api/order" && request.method === "POST") {
+      const data = await request.json();
+      const orderId = "UNIDY-" + Math.random().toString(36).substring(2, 7).toUpperCase();
+      
+      // 1. Lưu vào KV Storage
+      await env.VPN_DB.put(orderId, JSON.stringify({ ...data, status: 'pending', date: new Date() }));
+      
+      // 2. Gửi Email 1 cho khách (Đang xử lý)
+      await sendEmail(data.email, "Đơn hàng đang chờ xử lý", "Chúng tôi đã nhận được thanh toán của bạn cho mã đơn " + orderId);
+      
+      // 3. Gửi Email báo cho Admin
+      await sendEmail(env.ADMIN_EMAIL, "CÓ ĐƠN MỚI!", `Khách ${data.email} vừa đặt gói ${data.package}`);
+
+      return new Response(JSON.stringify({ orderId }), { status: 200 });
+    }
+
+    // API: Admin duyệt đơn
+    if (url.pathname === "/api/admin/approve" && request.method === "POST") {
+      const { orderId, status, info, reason } = await request.json();
+      const order = JSON.parse(await env.VPN_DB.get(orderId));
+      
+      if (status === 'success') {
+        await sendEmail(order.email, "Đơn hàng hoàn tất - Unidy VPN", "Thông tin gói của bạn: " + info);
+      } else {
+        await sendEmail(order.email, "Đơn hàng gặp sự cố", "Lý do: " + reason);
+      }
+      
+      await env.VPN_DB.put(orderId, JSON.stringify({ ...order, status, info, reason }));
+      return new Response("OK");
+    }
+  }
+}
