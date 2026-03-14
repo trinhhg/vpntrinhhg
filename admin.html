@@ -1,0 +1,35 @@
+<div class="p-8">
+    <h1 class="text-3xl font-bold mb-8">Hệ thống quản lý Unidy VPN</h1>
+    
+    <div class="grid grid-cols-4 gap-4 mb-8">
+        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+            <p class="text-gray-400 text-sm">Đơn đang chờ</p>
+            <p id="pendingCount" class="text-2xl font-bold text-yellow-400">0</p>
+        </div>
+        </div>
+
+    <table class="w-full bg-gray-900 rounded-xl overflow-hidden">
+        <thead class="bg-gray-800 text-left">
+            <tr>
+                <th class="p-4">Mã đơn</th>
+                <th class="p-4">Khách hàng</th>
+                <th class="p-4">Gói mua</th>
+                <th class="p-4">Trạng thái</th>
+                <th class="p-4">Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="orderTable">
+            </tbody>
+    </table>
+</div>
+
+<div id="approveModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center">
+    <div class="bg-gray-800 p-6 rounded-2xl w-96">
+        <h3 class="text-xl font-bold mb-4">Duyệt đơn hàng</h3>
+        <textarea id="activationLink" class="w-full bg-gray-900 border p-3 rounded-xl mb-4" placeholder="Dán link Subscription hoặc thông tin tài khoản..."></textarea>
+        <div class="flex gap-2">
+            <button onclick="submitApprove('success')" class="flex-1 bg-green-600 py-2 rounded-lg">Gửi Mail Thành Công</button>
+            <button onclick="submitApprove('failed')" class="flex-1 bg-red-600 py-2 rounded-lg">Báo Lỗi (Nhập lý do)</button>
+        </div>
+    </div>
+</div>
