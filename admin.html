@@ -163,7 +163,7 @@
                             (o.status === 'success' ? '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200">✅ Thành công</span>' : 
                             '<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">❌ Từ chối</span>');
                 
-                let supportTag = o.needSupport ? `<span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded ml-2 font-bold uppercase border border-blue-200">Hỗ trợ Cài đặt</span>` : '';
+                let supportTag = o.needSupport ? `<span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded ml-2 font-bold uppercase border border-blue-200">Hỗ trợ Zalo/Call</span>` : '';
 
                 tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition">
                     <td class="p-5 font-mono font-bold text-indigo-600">${o.id}</td>
@@ -289,6 +289,13 @@
             localStorage.setItem('cms_' + currentCmsDevice + '_guide', document.getElementById('cmsGuide').value);
             showToast('Đã lưu bài viết lên Web Khách Hàng!');
         }
+
+        // AUTO-UPDATE KHI CÓ ĐƠN MỚI TỪ BÊN KHÁCH (REALTIME LOCAL)
+        window.addEventListener('storage', (e) => {
+            if (e.key === DB_KEY && !document.getElementById('adminPanel').classList.contains('hidden')) {
+                renderOrders(); // Tự động load lại bảng khi có đơn mới
+            }
+        });
     </script>
 </body>
 </html>
