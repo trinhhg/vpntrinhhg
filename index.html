@@ -21,6 +21,11 @@
 </head>
 <body class="min-h-screen flex flex-col relative overflow-x-hidden">
 
+    <div id="toastContainer" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3"></div>
+
+    <div class="fixed top-[-20%] left-[-10%] w-[500px] h-[500px] bg-indigo-200 rounded-full mix-blend-multiply filter blur-[100px] opacity-50 pointer-events-none"></div>
+    <div class="fixed bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-purple-200 rounded-full mix-blend-multiply filter blur-[100px] opacity-50 pointer-events-none"></div>
+
     <nav class="glass-ui sticky top-4 z-50 w-[95%] max-w-6xl mx-auto rounded-2xl px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 mt-4">
         <div class="font-extrabold text-2xl tracking-tighter cursor-pointer flex items-center" onclick="logout()">
             <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white mr-3 shadow-lg"><i class="fas fa-shield-alt"></i></div>
@@ -28,51 +33,65 @@
         </div>
         
         <div id="searchBar" class="relative w-full md:w-96">
-            <input type="text" id="loginInput" onkeyup="if(event.key==='Enter') login()" class="w-full bg-slate-100 border border-slate-200 rounded-full px-5 py-3 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none font-medium" placeholder="Nhập Email hoặc Mã Đơn...">
-            <button onclick="login()" class="absolute right-2 top-1.5 w-10 h-10 bg-indigo-600 rounded-full text-white hover:bg-indigo-700 transition"><i class="fas fa-arrow-right"></i></button>
+            <input type="text" id="loginInput" onkeyup="if(event.key==='Enter') login()" class="w-full bg-slate-100 border border-slate-200 rounded-full px-5 py-3 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none font-medium" placeholder="Nhập Mã Đơn Hàng hoặc Email...">
+            <button onclick="login()" class="absolute right-2 top-1.5 w-10 h-10 bg-indigo-600 rounded-full text-white hover:bg-indigo-700 transition"><i class="fas fa-search"></i></button>
         </div>
         
         <div id="userMenu" class="hidden flex items-center gap-4">
             <span class="text-sm text-indigo-700 font-bold bg-indigo-50 px-4 py-2 rounded-full border border-indigo-100"><i class="fas fa-user-circle mr-2"></i>Cổng Khách Hàng</span>
-            <button onclick="logout()" class="text-sm bg-slate-100 text-slate-600 font-bold px-4 py-2 rounded-full hover:bg-slate-200">Đăng xuất</button>
+            <button onclick="logout()" class="text-sm bg-slate-100 text-slate-600 font-bold px-4 py-2 rounded-full hover:bg-slate-200 transition"><i class="fas fa-sign-out-alt"></i> Thoát</button>
         </div>
     </nav>
 
-    <main class="flex-grow z-10 relative px-4 py-10 max-w-6xl mx-auto w-full">
+    <main class="flex-grow z-10 relative px-4 py-10 max-w-7xl mx-auto w-full">
         
         <div id="view-portal" class="view-section">
             <div class="glass-ui p-8 rounded-3xl mb-10">
                 <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 border-b border-slate-100 pb-6 mb-6">
-                    <div><h2 class="text-3xl font-extrabold text-slate-800 mb-2">Dịch vụ của bạn</h2><p id="portalStatus"></p></div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-right">
-                        <p class="text-xs text-slate-500 uppercase font-bold">Mã Hợp Đồng</p>
-                        <p id="portalOrderId" class="text-indigo-600 font-mono font-bold text-xl"></p>
-                        <p id="portalPackage" class="text-sm text-slate-700 font-bold mt-1"></p>
+                    <div><h2 class="text-3xl font-extrabold text-slate-800 mb-2">Thông tin Dịch vụ</h2><p id="portalStatus"></p></div>
+                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-100 text-left md:text-right">
+                        <p class="text-xs text-slate-500 uppercase font-black tracking-wider mb-1">Mã Đơn Hàng</p>
+                        <p id="portalOrderId" class="text-indigo-600 font-mono font-bold text-2xl uppercase"></p>
+                        <p id="portalPackage" class="text-sm text-slate-700 font-bold mt-2 bg-white px-3 py-1 rounded-md inline-block border border-slate-200"></p>
                     </div>
                 </div>
 
-                <div id="portalContentPending" class="hidden bg-yellow-50 border border-yellow-200 p-6 rounded-2xl flex items-center mb-6">
-                    <i class="fas fa-hourglass-half text-4xl text-yellow-500 mr-4"></i>
-                    <div><h4 class="font-bold text-yellow-800 text-lg">Đang chờ duyệt</h4><p class="text-yellow-700 text-sm">Vui lòng đợi Admin kiểm tra giao dịch và kích hoạt đơn hàng.</p></div>
+                <div id="portalContentPending" class="hidden bg-yellow-50 border border-yellow-200 p-8 rounded-2xl flex items-center mb-6">
+                    <i class="fas fa-hourglass-half text-5xl text-yellow-500 mr-6"></i>
+                    <div>
+                        <h4 class="font-extrabold text-yellow-800 text-xl mb-1">Đơn hàng đang chờ xử lý</h4>
+                        <p class="text-yellow-700 text-sm">Vui lòng đợi Admin kiểm tra giao dịch và cấp link. Bạn không cần làm gì thêm, hệ thống sẽ gửi Email ngay khi hoàn tất.</p>
+                    </div>
                 </div>
 
                 <div id="portalContentSuccess" class="hidden">
-                    <div class="bg-indigo-50 border border-indigo-100 p-6 rounded-2xl mb-8">
-                        <h3 class="text-indigo-900 font-bold mb-3"><i class="fas fa-link mr-2"></i>Link Đăng Ký (Subscription URL):</h3>
-                        <div class="flex"><input type="text" id="subLink" readonly class="flex-1 bg-white border border-indigo-200 rounded-l-xl p-4 text-sm font-mono outline-none"><button onclick="copyToClipboard('subLink')" class="bg-indigo-600 text-white font-bold px-8 rounded-r-xl">COPY</button></div>
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-8 rounded-2xl mb-8">
+                        <h3 class="text-indigo-900 font-bold mb-4 flex items-center text-lg"><i class="fas fa-link mr-2"></i>Link Đăng Ký (Subscription URL):</h3>
+                        <div class="flex shadow-sm">
+                            <input type="text" id="subLink" readonly class="flex-1 bg-white border border-indigo-200 border-r-0 rounded-l-xl p-4 text-sm font-mono text-slate-700 outline-none">
+                            <button onclick="copyToClipboard('subLink')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 rounded-r-xl transition">COPY LINK</button>
+                        </div>
                     </div>
 
-                    <h3 class="text-2xl font-bold text-slate-800 mb-6 border-b border-slate-100 pb-4"><i class="fas fa-download mr-2 text-indigo-500"></i>Cài đặt & Hướng dẫn</h3>
+                    <div class="bg-red-50 border border-red-100 rounded-2xl p-6 mb-10 flex">
+                        <i class="fas fa-exclamation-triangle text-3xl text-red-500 mr-4"></i>
+                        <div>
+                            <h4 class="text-red-700 font-bold text-lg mb-1">LƯU Ý QUAN TRỌNG</h4>
+                            <p class="text-sm text-red-600">Lưu lại <b>Mã Đơn Hàng</b>. Bạn có thể tra cứu đơn này bằng Mã Đơn hoặc Email trong suốt quá trình sử dụng. Trinh Hg VPN sẽ cập nhật app mới nhất và cách chống chặn tại đây.</p>
+                        </div>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-slate-800 mb-6 border-b border-slate-100 pb-4"><i class="fas fa-download mr-2 text-indigo-500"></i>Trung tâm Tải xuống & Hướng dẫn</h3>
                     
                     <div class="flex flex-wrap gap-3 mb-6">
-                        <button onclick="showGuide('android')" id="btn-dev-android" class="dev-btn bg-white border-2 border-slate-200 px-6 py-3 rounded-xl font-bold text-slate-600 transition flex items-center"><i class="fab fa-android text-green-500 text-xl mr-2"></i> Android</button>
-                        <button onclick="showGuide('windows')" id="btn-dev-windows" class="dev-btn bg-white border-2 border-slate-200 px-6 py-3 rounded-xl font-bold text-slate-600 transition flex items-center"><i class="fab fa-windows text-blue-500 text-xl mr-2"></i> Windows</button>
-                        <button onclick="showGuide('macos')" id="btn-dev-macos" class="dev-btn bg-white border-2 border-slate-200 px-6 py-3 rounded-xl font-bold text-slate-600 transition flex items-center"><i class="fab fa-apple text-slate-800 text-xl mr-2"></i> MacOS</button>
-                        <button onclick="showGuide('ios')" id="btn-dev-ios" class="dev-btn bg-white border-2 border-slate-200 px-6 py-3 rounded-xl font-bold text-slate-600 transition flex items-center"><i class="fab fa-app-store-ios text-blue-400 text-xl mr-2"></i> iOS</button>
+                        <button onclick="showGuide('android')" id="btn-dev-android" class="dev-btn bg-white border border-slate-200 px-6 py-3 rounded-xl font-bold text-slate-600 transition flex items-center shadow-sm"><i class="fab fa-android text-green-500 text-xl mr-2"></i> Android</button>
+                        <button onclick="showGuide('windows')" id="btn-dev-windows" class="dev-btn bg-white border border-slate-200 px-6 py-3 rounded-xl font-bold text-slate-600 transition flex items-center shadow-sm"><i class="fab fa-windows text-blue-500 text-xl mr-2"></i> Windows</button>
+                        <button onclick="showGuide('macos')" id="btn-dev-macos" class="dev-btn bg-white border border-slate-200 px-6 py-3 rounded-xl font-bold text-slate-600 transition flex items-center shadow-sm"><i class="fab fa-apple text-slate-800 text-xl mr-2"></i> MacOS</button>
+                        <button onclick="showGuide('ios')" id="btn-dev-ios" class="dev-btn bg-white border border-slate-200 px-6 py-3 rounded-xl font-bold text-slate-600 transition flex items-center shadow-sm"><i class="fab fa-app-store-ios text-blue-400 text-xl mr-2"></i> iOS</button>
                     </div>
 
-                    <div id="guideContent" class="hidden bg-white border border-slate-200 p-8 rounded-2xl shadow-sm">
-                        <div id="guideText" class="prose prose-slate max-w-none text-slate-700 leading-relaxed"></div>
+                    <div id="guideContent" class="hidden bg-white border border-slate-200 p-8 rounded-2xl shadow-sm min-h-[200px]">
+                        <div id="guideText" class="text-slate-700 leading-relaxed font-medium"></div>
                     </div>
                 </div>
             </div>
@@ -80,59 +99,73 @@
             <div class="text-center mb-8 mt-16">
                 <h3 class="text-3xl font-extrabold text-slate-800">Gia hạn & Mua thêm</h3>
             </div>
-            <div class="flex justify-center gap-3 mb-8 bg-white p-2 rounded-full w-fit mx-auto border border-slate-100">
-                <button onclick="renderPortalPackages('all')" id="ptab-all" class="tab-btn active text-white bg-indigo-600 px-6 py-2 rounded-full font-bold">Tất cả</button>
-                <button onclick="renderPortalPackages('cycle')" id="ptab-cycle" class="tab-btn text-slate-600 px-6 py-2 rounded-full font-bold">Theo Chu kỳ</button>
-                <button onclick="renderPortalPackages('usage')" id="ptab-usage" class="tab-btn text-slate-600 px-6 py-2 rounded-full font-bold">Dung lượng</button>
+            <div class="flex justify-center gap-3 mb-8 bg-white p-2 rounded-full w-fit mx-auto border border-slate-100 shadow-sm">
+                <button onclick="renderPortalPackages('all')" id="ptab-all" class="tab-btn active text-white bg-indigo-600 px-6 py-2.5 rounded-full font-bold">Tất cả</button>
+                <button onclick="renderPortalPackages('cycle')" id="ptab-cycle" class="tab-btn text-slate-600 hover:bg-slate-50 px-6 py-2.5 rounded-full font-bold">Theo Chu kỳ</button>
+                <button onclick="renderPortalPackages('usage')" id="ptab-usage" class="tab-btn text-slate-600 hover:bg-slate-50 px-6 py-2.5 rounded-full font-bold">Dung lượng</button>
             </div>
             <div class="grid md:grid-cols-3 gap-8" id="packagesContainerPortal"></div>
         </div>
 
         <div id="view-store" class="view-section active">
             <div id="welcomeBanner" class="text-center mb-16 mt-10">
-                <h1 class="text-5xl md:text-6xl font-extrabold mb-6 text-slate-800 tracking-tight">Vượt rào cản. <br><span class="gradient-text">Kết nối thế giới.</span></h1>
+                <h1 class="text-5xl md:text-6xl font-extrabold mb-6 text-slate-800 tracking-tight leading-tight">Vượt rào cản. <br><span class="gradient-text">Kết nối thế giới.</span></h1>
+                <p class="text-lg text-slate-600 font-medium max-w-3xl mx-auto leading-relaxed">Trải nghiệm VPN chất lượng cao từ ba nhà mạng viễn thông lớn. Không giới hạn băng thông, bảo mật quyền riêng tư toàn diện. Hỗ trợ cài đặt miễn phí 24/7.</p>
             </div>
 
-            <div class="flex justify-center gap-3 mb-10 bg-white p-2 rounded-full w-fit mx-auto border border-slate-100">
-                <button onclick="renderHomePackages('all')" id="htab-all" class="tab-btn active text-white bg-indigo-600 px-6 py-2 rounded-full font-bold">Tất cả</button>
-                <button onclick="renderHomePackages('cycle')" id="htab-cycle" class="tab-btn text-slate-600 px-6 py-2 rounded-full font-bold">Theo Chu kỳ</button>
-                <button onclick="renderHomePackages('usage')" id="htab-usage" class="tab-btn text-slate-600 px-6 py-2 rounded-full font-bold">Dung lượng</button>
+            <div class="flex justify-center gap-3 mb-10 bg-white p-2 rounded-full w-fit mx-auto border border-slate-100 shadow-sm">
+                <button onclick="renderHomePackages('all')" id="htab-all" class="tab-btn active text-white bg-indigo-600 px-6 py-2.5 rounded-full font-bold">Tất cả</button>
+                <button onclick="renderHomePackages('cycle')" id="htab-cycle" class="tab-btn text-slate-600 hover:bg-slate-50 px-6 py-2.5 rounded-full font-bold">Theo Chu kỳ</button>
+                <button onclick="renderHomePackages('usage')" id="htab-usage" class="tab-btn text-slate-600 hover:bg-slate-50 px-6 py-2.5 rounded-full font-bold">Dung lượng</button>
             </div>
             <div class="grid md:grid-cols-3 gap-8 mb-16" id="packagesContainerHome"></div>
 
-            <div id="checkoutSection" class="hidden glass-ui p-8 rounded-3xl border border-indigo-100 mt-10">
+            <div id="checkoutSection" class="hidden glass-ui p-8 md:p-10 rounded-3xl border border-indigo-100 mt-10">
                 <div class="flex justify-between items-center mb-8 border-b border-slate-100 pb-4">
-                    <h3 class="text-2xl font-extrabold flex items-center"><div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-lg flex justify-center items-center mr-3"><i class="fas fa-shopping-cart"></i></div> Hoàn tất thanh toán</h3>
-                    <button onclick="cancelCheckout()" class="text-slate-400 hover:text-red-500 text-xl"><i class="fas fa-times"></i></button>
+                    <h3 class="text-2xl font-extrabold flex items-center"><div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex justify-center items-center mr-4 shadow-inner"><i class="fas fa-shopping-cart text-xl"></i></div> Hoàn tất thanh toán</h3>
+                    <button onclick="cancelCheckout()" class="text-slate-400 hover:text-red-500 bg-slate-50 w-10 h-10 rounded-full flex justify-center items-center transition"><i class="fas fa-times text-xl"></i></button>
                 </div>
                 
                 <form id="orderForm" onsubmit="submitOrder(event)">
-                    <div class="grid md:grid-cols-2 gap-8">
+                    <div class="grid md:grid-cols-2 gap-10">
                         <div>
-                            <div class="bg-indigo-50 p-6 rounded-2xl mb-5">
-                                <p class="text-sm font-bold text-indigo-600 uppercase">Gói đã chọn</p>
-                                <p id="selectedPackageName" class="text-xl font-black text-slate-800"></p>
-                                <p id="selectedPackagePrice" class="text-3xl font-black text-indigo-600 mt-2"></p>
+                            <div class="bg-indigo-50 p-6 rounded-2xl mb-6 border border-indigo-100">
+                                <p class="text-sm font-bold text-indigo-600 uppercase tracking-wider mb-1">Gói Đang Chọn</p>
+                                <p id="selectedPackageName" class="text-xl font-black text-slate-800 leading-snug"></p>
+                                <p id="selectedPackagePrice" class="text-3xl font-black text-indigo-600 mt-3"></p>
                             </div>
                             
-                            <input type="email" id="cusEmail" class="w-full bg-white border rounded-xl p-4 mb-4" placeholder="Email nhận thông tin (Bắt buộc)" required>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Email nhận thông tin (Bắt buộc)</label>
+                            <input type="email" id="cusEmail" class="w-full bg-white border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 rounded-xl p-4 mb-6 outline-none transition" placeholder="abc@gmail.com" required>
                             
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
                                 <label class="flex items-start space-x-3 cursor-pointer">
                                     <input type="checkbox" id="needSupport" onchange="toggleZalo()" class="mt-1 w-5 h-5 accent-indigo-600">
-                                    <span class="font-bold">Cần Order Call / Zalo cài đặt (Miễn phí)</span>
+                                    <span class="font-bold text-slate-800">Cần Order Call / Hỗ trợ Zalo cài đặt (Miễn phí)</span>
                                 </label>
-                                <input type="text" id="cusZalo" class="w-full bg-white border rounded-xl p-3 mt-3 hidden" placeholder="Số điện thoại / Zalo">
+                                <input type="text" id="cusZalo" class="w-full bg-white border border-slate-200 rounded-xl p-3 mt-4 hidden outline-none focus:border-indigo-500 transition" placeholder="Nhập số điện thoại / Zalo của bạn">
                             </div>
-                            <button type="submit" id="btnConfirm" class="w-full mt-5 bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg">TẠO MÃ QR THANH TOÁN</button>
+                            <button type="submit" id="btnConfirm" class="w-full mt-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 text-white font-bold py-4 rounded-xl shadow-lg transition text-lg tracking-wide">TẠO MÃ QR THANH TOÁN</button>
                         </div>
 
-                        <div id="qrContainer" class="hidden flex flex-col items-center justify-center border-2 border-dashed border-indigo-200 rounded-2xl p-6">
-                            <img id="qrImage" src="" class="w-56 h-56 rounded-xl shadow-md mb-4">
-                            <div class="text-sm font-bold text-center w-full">
-                                <p>Số tiền: <span id="qrAmount" class="text-red-600 text-lg"></span></p>
-                                <p class="mt-2 text-slate-500">Nội dung chuyển khoản (Bấm copy):</p>
-                                <div class="bg-yellow-100 text-yellow-800 text-xl p-2 rounded-lg cursor-pointer mt-1" onclick="copyText(currentOrderId)"> <span id="qrMemo"></span> <i class="far fa-copy"></i></div>
+                        <div class="bg-slate-50 border border-slate-200 p-8 rounded-3xl h-fit">
+                            <h4 class="font-extrabold text-slate-800 text-lg mb-6 flex items-center"><i class="fas fa-clipboard-list text-indigo-500 mr-2"></i>Thông tin Chuyển khoản</h4>
+                            
+                            <div id="qrContainer" class="hidden mb-6 flex flex-col items-center border-b border-slate-200 pb-6">
+                                <img id="qrImage" src="" class="w-48 h-48 rounded-2xl shadow-md border-2 border-indigo-100 mb-3">
+                                <p class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-widest">Quét QR bằng App Bank</p>
+                            </div>
+
+                            <div class="space-y-4 text-sm font-medium">
+                                <p class="text-slate-500 uppercase tracking-widest text-[10px] font-black">Hoặc nhập thủ công:</p>
+                                <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100"><span class="text-slate-500">Ngân hàng:</span><strong class="text-slate-800 text-base">MBBank</strong></div>
+                                <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100"><span class="text-slate-500">Chủ TK:</span><strong class="text-slate-800 text-base">TRINH THI XUAN HUONG</strong></div>
+                                <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100"><span class="text-slate-500">Số TK:</span><strong class="text-indigo-600 font-bold text-lg bg-indigo-50 px-3 py-1 rounded-lg cursor-pointer hover:bg-indigo-100" onclick="copyText('0917678211')">0917678211 <i class="far fa-copy ml-1"></i></strong></div>
+                                <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100"><span class="text-slate-500">Số tiền:</span><strong id="qrAmount" class="text-red-500 font-bold text-lg">---</strong></div>
+                                <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-200 text-center">
+                                    <span class="block text-slate-600 text-xs font-bold mb-2">Nội dung chuyển khoản (Bấm copy):</span>
+                                    <strong id="qrMemo" class="block w-full text-center bg-white text-slate-800 font-mono text-xl py-2 rounded-lg cursor-pointer border border-slate-200 shadow-sm hover:bg-slate-50 transition" onclick="copyText(currentOrderId)">---</strong>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -142,12 +175,32 @@
     </main>
 
     <div class="fixed bottom-6 right-6 flex flex-col space-y-3 z-50">
-        <a href="https://www.facebook.com/trinh.hg.57" target="_blank" class="bg-blue-600 w-14 h-14 flex items-center justify-center rounded-full text-white shadow-xl hover:-translate-y-1 transition"><i class="fab fa-facebook-messenger text-2xl"></i></a>
-        <a href="https://zalo.me/0917678211" target="_blank" class="bg-blue-400 w-14 h-14 flex items-center justify-center rounded-full text-white shadow-xl hover:-translate-y-1 transition"><h1 class="text-xs font-black">Zalo</h1></a>
+        <a href="https://www.facebook.com/trinh.hg.57" target="_blank" class="bg-blue-600 w-14 h-14 flex items-center justify-center rounded-full text-white shadow-xl hover:-translate-y-1 transition group relative">
+            <i class="fab fa-facebook-messenger text-2xl"></i>
+        </a>
+        <a href="https://zalo.me/0917678211" target="_blank" class="bg-blue-400 w-14 h-14 flex items-center justify-center rounded-full text-white shadow-xl hover:-translate-y-1 transition group relative">
+            <h1 class="text-xs font-black">Zalo</h1>
+        </a>
     </div>
 
     <script>
+        // --- Custom Toasts ---
+        function showToast(msg, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const bg = type === 'error' ? 'bg-red-500' : (type === 'info' ? 'bg-blue-500' : 'bg-green-500');
+            const icon = type === 'error' ? 'fa-times-circle' : (type === 'info' ? 'fa-info-circle' : 'fa-check-circle');
+            
+            toast.className = `${bg} text-white px-6 py-4 rounded-xl shadow-2xl flex items-center transform transition-all duration-300 translate-x-full opacity-0 max-w-sm`;
+            toast.innerHTML = `<i class="fas ${icon} text-xl mr-3 shrink-0"></i><span class="font-bold text-sm leading-tight">${msg}</span>`;
+            
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-x-full', 'opacity-0'), 10);
+            setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3500);
+        }
+
         const DB_KEY = 'vpn_orders_db';
+        const SESSION_KEY = 'vpn_portal_session_24h';
         
         const packages = [
             { id: 'c1', type: 'cycle', fullName: 'Gói 1 Tháng - 70.000đ (1000GB)', name: 'Gói 1 Tháng', price: 70000, priceStr: '70.000đ', time: '1 Tháng', data: '1000GB', tag: '🔥 BEST SELLER', tagColor: 'bg-red-500 text-white' },
@@ -158,21 +211,27 @@
             { id: 'd3', type: 'usage', fullName: 'Không Giới Hạn - 320.000đ (6000GB)', name: 'Không Giới Hạn', price: 320000, priceStr: '320.000đ', time: 'Vĩnh viễn', data: '6000GB', tag: '' },
         ];
 
-        let currentPackage = null;
-        let currentOrderId = '';
+        let currentPackage = null; let currentOrderId = '';
 
+        // Đã phục hồi đầy đủ các dòng chi tiết của thẻ
         function genHTML(pkg) {
-            return `<div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg transition relative flex flex-col justify-between ${pkg.tag==='🔥 BEST SELLER'?'ring-2 ring-red-500':''}">
+            return `<div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition relative flex flex-col justify-between ${pkg.tag==='🔥 BEST SELLER'?'ring-2 ring-red-500':''}">
                 ${pkg.tag ? `<span class="absolute -top-4 right-6 ${pkg.tagColor} text-xs px-4 py-1.5 rounded-full font-black shadow-sm uppercase">${pkg.tag}</span>` : ''}
                 <div>
-                    <h3 class="font-extrabold text-xl text-slate-800 mb-1">${pkg.name}</h3>
-                    <p class="text-sm font-bold text-slate-500 mb-5"><i class="far fa-clock text-indigo-400 mr-1"></i> ${pkg.time}</p>
-                    <div class="text-4xl font-black text-indigo-600 mb-6">${pkg.priceStr}</div>
-                    <ul class="text-sm space-y-3 mb-8 text-slate-600 font-medium">
-                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3 text-lg"></i>Dung lượng: <strong class="ml-1 text-slate-800">${pkg.data}</strong></li>
+                    <h3 class="font-extrabold text-2xl text-slate-800 mb-1">${pkg.name}</h3>
+                    <p class="text-sm font-bold text-slate-500 mb-6"><i class="far fa-clock text-indigo-400 mr-1"></i> ${pkg.time}</p>
+                    <div class="text-4xl font-black text-indigo-600 mb-8 border-b border-slate-100 pb-6">${pkg.priceStr}</div>
+                    
+                    <ul class="text-sm space-y-3 mb-8 text-slate-600 font-medium leading-relaxed">
+                        <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-3 text-base shrink-0"></i><span>Dung lượng: <strong class="text-slate-800">${pkg.data}</strong></span></li>
+                        <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-3 text-base shrink-0"></i><span>Mở khóa phát trực tuyến ổn định</span></li>
+                        <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-3 text-base shrink-0"></i><span>Đường truyền chất lượng cao (3 nhà mạng)</span></li>
+                        <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-3 text-base shrink-0"></i><span>Mã hóa bảo vệ quyền riêng tư</span></li>
+                        <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-3 text-base shrink-0"></i><span>Không giới hạn số lượng thiết bị</span></li>
+                        <li class="flex items-start"><i class="fas fa-info-circle text-indigo-400 mt-1 mr-3 text-base shrink-0"></i><span class="text-xs text-slate-500">Giới hạn hàng ngày: 10% tổng dung lượng</span></li>
                     </ul>
                 </div>
-                <button onclick="openCheckout('${pkg.id}')" class="w-full bg-slate-50 text-indigo-600 font-bold py-4 rounded-xl border border-indigo-100 hover:bg-indigo-600 hover:text-white transition">Đăng ký Gói</button>
+                <button onclick="openCheckout('${pkg.id}')" class="w-full bg-indigo-50 text-indigo-700 font-bold py-4 rounded-xl hover:bg-indigo-600 hover:text-white transition shadow-sm">Đăng ký Gói Này</button>
             </div>`;
         }
 
@@ -192,23 +251,20 @@
             currentPackage = packages.find(p => p.id === pkgId);
             const checkout = document.getElementById('checkoutSection');
             
-            // Di chuyển Form Thanh toán vào đúng chỗ (Home hoặc Portal)
-            if(document.getElementById('view-portal').classList.contains('active')) {
-                document.getElementById('view-portal').appendChild(checkout);
-            } else {
-                document.getElementById('view-store').appendChild(checkout);
-            }
+            if(document.getElementById('view-portal').classList.contains('active')) document.getElementById('view-portal').appendChild(checkout);
+            else document.getElementById('view-store').appendChild(checkout);
 
-            checkout.classList.remove('hidden');
-            checkout.scrollIntoView({ behavior: 'smooth' });
+            checkout.classList.remove('hidden'); checkout.scrollIntoView({ behavior: 'smooth' });
             
             document.getElementById('selectedPackageName').innerText = currentPackage.fullName;
             document.getElementById('selectedPackagePrice').innerText = currentPackage.priceStr;
             document.getElementById('qrContainer').classList.add('hidden');
+            document.getElementById('qrAmount').innerText = currentPackage.priceStr; // Fill manual box early
+            document.getElementById('qrMemo').innerText = "Tạo mã để lấy Nội dung";
             
             const btn = document.getElementById('btnConfirm');
-            btn.innerText = 'TẠO MÃ QR THANH TOÁN';
-            btn.className = 'w-full mt-5 bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg';
+            btn.innerText = 'TẠO MÃ QR & NỘI DUNG CHUYỂN KHOẢN';
+            btn.className = 'w-full mt-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-4 rounded-xl shadow-lg hover:opacity-90';
             currentOrderId = '';
         }
 
@@ -224,80 +280,85 @@
                 currentOrderId = 'DH-'; for(let i=0; i<10; i++) currentOrderId += chars.charAt(Math.floor(Math.random()*chars.length));
                 
                 document.getElementById('qrImage').src = `https://img.vietqr.io/image/mbbank-0917678211-compact.png?amount=${currentPackage.price}&addInfo=${currentOrderId}&accountName=TRINH THI XUAN HUONG`;
-                document.getElementById('qrAmount').innerText = currentPackage.priceStr;
-                document.getElementById('qrMemo').innerText = currentOrderId;
+                document.getElementById('qrMemo').innerHTML = `${currentOrderId} <i class="far fa-copy ml-2"></i>`;
                 
                 document.getElementById('qrContainer').classList.remove('hidden');
-                btn.innerText = 'TÔI ĐÃ CHUYỂN KHOẢN XONG';
-                btn.className = 'w-full mt-5 bg-green-600 text-white font-bold py-4 rounded-xl shadow-lg';
+                btn.innerText = 'XÁC NHẬN ĐÃ CHUYỂN KHOẢN';
+                btn.className = 'w-full mt-6 bg-green-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-green-700';
+                showToast("Đã tạo Mã Đơn. Vui lòng Bank đúng số tiền và nội dung!", "info");
             } else {
                 let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
                 db.unshift({ 
-                    id: currentOrderId, 
-                    email: document.getElementById('cusEmail').value, 
-                    zalo: document.getElementById('cusZalo').value,
-                    needSupport: document.getElementById('needSupport').checked,
-                    pkg: currentPackage.fullName, 
-                    status: 'pending', 
-                    date: new Date().toLocaleString() 
+                    id: currentOrderId, email: document.getElementById('cusEmail').value, zalo: document.getElementById('cusZalo').value,
+                    needSupport: document.getElementById('needSupport').checked, pkg: currentPackage.fullName, status: 'pending', date: new Date().toLocaleString() 
                 });
                 localStorage.setItem(DB_KEY, JSON.stringify(db));
 
-                alert(`Đơn hàng tạo thành công! Mã: ${currentOrderId}\nVui lòng chờ Admin duyệt.`);
+                showToast(`Gửi Đơn thành công! Mã: ${currentOrderId}. Admin đang xử lý!`, "success");
                 cancelCheckout(); document.getElementById('orderForm').reset();
-                document.getElementById('loginInput').value = currentOrderId; login();
             }
         }
 
-        function login() {
+        function login(silent = false) {
             const input = document.getElementById('loginInput').value.trim().toUpperCase();
             if(!input) return;
             let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
             let o = db.find(x => x.id === input || x.email.toUpperCase() === input);
-            if(!o) { alert('Không tìm thấy đơn hàng!'); return; }
+            if(!o) { showToast('Không tìm thấy Đơn hàng hoặc Email này!', 'error'); return; }
 
-            document.getElementById('view-store').classList.remove('active');
-            document.getElementById('view-portal').classList.add('active');
-            document.getElementById('userMenu').classList.remove('hidden');
-            document.getElementById('checkoutSection').classList.add('hidden');
+            // Lưu Session 24h
+            localStorage.setItem(SESSION_KEY, JSON.stringify({ id: o.id, time: new Date().getTime() }));
+            if(!silent) showToast(`Chào mừng trở lại Cổng Khách Hàng!`, "info");
 
-            document.getElementById('portalOrderId').innerText = o.id;
-            document.getElementById('portalPackage').innerText = o.pkg;
+            document.getElementById('view-store').classList.remove('active'); document.getElementById('view-portal').classList.add('active');
+            document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('checkoutSection').classList.add('hidden');
+            document.getElementById('portalOrderId').innerText = o.id; document.getElementById('portalPackage').innerText = o.pkg;
 
             const st = document.getElementById('portalStatus');
             document.getElementById('portalContentPending').classList.toggle('hidden', o.status !== 'pending');
             document.getElementById('portalContentSuccess').classList.toggle('hidden', o.status !== 'success');
             
-            if(o.status === 'pending') st.innerHTML = '<span class="text-yellow-600 bg-yellow-100 px-3 py-1 rounded-full"><i class="fas fa-circle-notch fa-spin mr-1"></i>Đang chờ duyệt</span>';
+            if(o.status === 'pending') st.innerHTML = '<span class="text-yellow-700 font-bold bg-yellow-100 px-3 py-1.5 rounded-full text-xs uppercase"><i class="fas fa-circle-notch fa-spin mr-1"></i>Đang chờ duyệt</span>';
             else if (o.status === 'success') {
-                st.innerHTML = '<span class="text-green-600 bg-green-100 px-3 py-1 rounded-full"><i class="fas fa-check-circle mr-1"></i>Đã kích hoạt</span>';
+                st.innerHTML = '<span class="text-green-700 font-bold bg-green-100 px-3 py-1.5 rounded-full text-xs uppercase"><i class="fas fa-check-circle mr-1"></i>Đã kích hoạt</span>';
                 document.getElementById('subLink').value = o.info || '';
                 showGuide('android');
-            } else st.innerHTML = `<span class="text-red-600 bg-red-100 px-3 py-1 rounded-full">Lỗi/Từ chối</span>`;
+            } else st.innerHTML = `<span class="text-red-700 font-bold bg-red-100 px-3 py-1.5 rounded-full text-xs uppercase">Bị từ chối</span>`;
             
             renderPortalPackages('all');
         }
 
         function logout() {
-            document.getElementById('view-portal').classList.remove('active');
-            document.getElementById('view-store').classList.add('active');
-            document.getElementById('userMenu').classList.add('hidden');
-            document.getElementById('loginInput').value = '';
+            localStorage.removeItem(SESSION_KEY);
+            document.getElementById('view-portal').classList.remove('active'); document.getElementById('view-store').classList.add('active');
+            document.getElementById('userMenu').classList.add('hidden'); document.getElementById('loginInput').value = '';
+            showToast("Đã đăng xuất khỏi Cổng!", "info");
         }
 
         function showGuide(dev) {
-            document.querySelectorAll('.dev-btn').forEach(b => { b.classList.remove('active', 'border-indigo-500'); });
-            document.getElementById('btn-dev-' + dev).classList.add('active', 'border-indigo-500');
+            document.querySelectorAll('.dev-btn').forEach(b => { b.classList.remove('active', 'border-indigo-500', 'bg-indigo-50'); });
+            document.getElementById('btn-dev-' + dev).classList.add('active', 'border-indigo-500', 'bg-indigo-50');
             document.getElementById('guideContent').classList.remove('hidden');
             
-            const html = localStorage.getItem('cms_' + dev + '_guide') || '<p class="text-slate-500 italic">Admin chưa viết hướng dẫn cho thiết bị này.</p>';
+            const html = localStorage.getItem('cms_' + dev + '_guide') || '<div class="text-center py-10"><i class="fas fa-file-alt text-4xl text-slate-300 mb-4 block"></i><p class="text-slate-500 font-bold">Admin chưa cấu hình ứng dụng cho hệ điều hành này.</p></div>';
             document.getElementById('guideText').innerHTML = html;
         }
 
-        function copyText(t) { navigator.clipboard.writeText(t); alert('Đã copy: ' + t); }
-        function copyToClipboard(id) { const e = document.getElementById(id); e.select(); document.execCommand('copy'); alert('Đã copy link!'); }
+        function copyText(t) { navigator.clipboard.writeText(t); showToast('Đã Copy: ' + t, 'success'); }
+        function copyToClipboard(id) { const e = document.getElementById(id); e.select(); document.execCommand('copy'); showToast('Đã copy Link VPN thành công!', 'success'); }
 
-        renderHomePackages('all');
+        // Logic tự động đăng nhập 24h
+        window.onload = function() {
+            renderHomePackages('all');
+            const session = localStorage.getItem(SESSION_KEY);
+            if(session) {
+                const data = JSON.parse(session);
+                if(new Date().getTime() - data.time < 24 * 60 * 60 * 1000) {
+                    document.getElementById('loginInput').value = data.id;
+                    login(true); // silent login
+                } else localStorage.removeItem(SESSION_KEY);
+            }
+        }
     </script>
 </body>
 </html>
