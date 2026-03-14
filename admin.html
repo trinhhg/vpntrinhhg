@@ -14,6 +14,7 @@
     </style>
 </head>
 <body class="min-h-screen">
+    
     <div id="loginScreen" class="fixed inset-0 bg-slate-50 z-50 flex items-center justify-center">
         <div class="glass-card p-10 w-96 text-center">
             <h2 class="text-2xl font-extrabold mb-8 text-slate-800">Admin Panel</h2>
@@ -46,7 +47,7 @@
 
         <div id="tab-cms" class="hidden glass-card p-8">
             <h2 class="text-2xl font-bold mb-2">Kho Ứng dụng & Hướng dẫn Cài đặt</h2>
-            <p class="text-slate-500 mb-8">Hỗ trợ thiết kế nhiều nút tải app cho cùng một nền tảng.</p>
+            <p class="text-slate-500 mb-8">Nội dung mày soạn ở đây sẽ hiển thị y hệt bên trang Cổng Khách Hàng.</p>
             
             <div class="space-y-6 max-w-4xl">
                 <div>
@@ -61,13 +62,14 @@
                 
                 <div>
                     <div class="flex justify-between items-end mb-2">
-                        <label class="block font-bold text-slate-700">2. Nội dung & Các Link Tải phần mềm:</label>
-                        <button onclick="insertTemplate()" class="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-indigo-200"><i class="fas fa-magic mr-1"></i> Chèn Mẫu Nhiều Nút Tải Đẹp</button>
+                        <label class="block font-bold text-slate-700">2. Soạn thảo Hướng dẫn (Có thể chèn nút tải):</label>
+                        <button onclick="insertTemplate()" class="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-indigo-200 shadow-sm"><i class="fas fa-magic mr-1"></i> Chèn Mẫu Nút Tải Đẹp</button>
                     </div>
-                    <textarea id="cmsGuide" rows="14" class="w-full p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-mono text-sm bg-slate-800 text-green-400" placeholder="Viết nội dung dạng HTML vào đây..."></textarea>
-                    <p class="text-xs text-slate-400 mt-2">* Mày chỉ cần thay chữ <b>"LINK-TAI-CUA-MAY-O-DAY"</b> trong đoạn code bằng link Google Drive/Mediafire của mày là nút tải sẽ hoạt động.</p>
+                    <textarea id="cmsGuide" rows="16" class="w-full p-5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-base bg-white text-slate-800 leading-relaxed shadow-inner" placeholder="Cứ gõ chữ bình thường vào đây... Muốn xuống dòng thì gõ Enter..."></textarea>
+                    
+                    <p class="text-xs text-slate-500 mt-3 bg-slate-50 p-3 rounded-lg border border-slate-100"><i class="fas fa-info-circle text-indigo-500 mr-1"></i> <b>Mẹo:</b> Mày cứ viết văn bản hướng dẫn bình thường. Nếu muốn tạo Nút tải app xịn xò, hãy bấm nút "Chèn Mẫu" màu xanh ở góc trên bên phải, sau đó chỉ cần thay chữ bằng link của mày.</p>
                 </div>
-                <button onclick="saveCms()" class="bg-indigo-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg w-full">LƯU NỘI DUNG NÀY LÊN WEB KHÁCH HÀNG</button>
+                <button onclick="saveCms()" class="bg-indigo-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg w-full hover:bg-indigo-700 transition">💾 LƯU NỘI DUNG NÀY LÊN WEB KHÁCH HÀNG</button>
             </div>
         </div>
     </div>
@@ -77,8 +79,8 @@
             <h3 class="text-xl font-bold mb-4">Duyệt Đơn: <span id="actOrderId" class="text-indigo-600"></span></h3>
             <label class="block font-bold text-slate-800 mb-2">🟢 Dán Link VPN:</label>
             <input type="text" id="actSubLink" class="w-full p-3 border rounded-lg mb-4" placeholder="Dán link lấy từ web nguồn vào đây...">
-            <button onclick="processOrder('success')" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg">XÁC NHẬN DUYỆT & GỬI GMAIL</button>
-            <button onclick="document.getElementById('modalAction').classList.add('hidden')" class="w-full mt-2 bg-slate-100 py-2 rounded-lg font-bold">Hủy</button>
+            <button onclick="processOrder('success')" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-green-700">XÁC NHẬN DUYỆT & GỬI GMAIL</button>
+            <button onclick="document.getElementById('modalAction').classList.add('hidden')" class="w-full mt-2 bg-slate-100 text-slate-600 hover:bg-slate-200 py-2 rounded-lg font-bold">Hủy bỏ</button>
         </div>
     </div>
 
@@ -86,8 +88,8 @@
         const DB_KEY = 'vpn_orders_db';
         let ordersDb = JSON.parse(localStorage.getItem(DB_KEY)) || [];
 
-        // LINK GOOGLE APPS SCRIPT CỦA MÀY (Sẽ lấy ở Bước 3)
-        const GOOGLE_MAIL_API = "https://script.google.com/macros/s/AKfyc.../exec"; 
+        // ĐÃ LẮP LINK API GMAIL CỦA MÀY VÀO ĐÂY
+        const GOOGLE_MAIL_API = "https://script.google.com/macros/s/AKfycbyQjEln9By0HuUPtboqJpb1INI6rRp52BxvHR8HaE5fs8qojfgau1R_27P4RyLLxXIp/exec"; 
 
         function checkAdmin() {
             if(document.getElementById('adminPass').value === "admin2026") {
@@ -112,7 +114,7 @@
                 let badge = o.status === 'pending' ? '<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold">Chờ duyệt</span>' : '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">Đã duyệt</span>';
                 tbody.innerHTML += `<tr class="border-b">
                     <td class="p-5 font-mono font-bold text-indigo-600">${o.id}</td><td class="p-5">${o.email}</td><td class="p-5">${o.pkg}</td><td class="p-5">${badge}</td>
-                    <td class="p-5 text-right">${o.status === 'pending' ? `<button onclick="openAction('${o.id}')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold">Xử lý</button>` : ''}</td>
+                    <td class="p-5 text-right">${o.status === 'pending' ? `<button onclick="openAction('${o.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold shadow">Xử lý</button>` : ''}</td>
                 </tr>`;
             });
         }
@@ -125,26 +127,40 @@
             o.status = type; o.info = document.getElementById('actSubLink').value;
             localStorage.setItem(DB_KEY, JSON.stringify(ordersDb));
             
-            // LỆNH BẮN GMAIL TỰ ĐỘNG
-            if(!GOOGLE_MAIL_API.includes("AKfyc...")) {
-                const btn = event.target; btn.innerText = "ĐANG GỬI GMAIL...";
-                try {
-                    await fetch(GOOGLE_MAIL_API, {
-                        method: 'POST', mode: 'no-cors',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            to: o.email, 
-                            subject: "VPN của bạn đã được kích hoạt!", 
-                            html: `<h2>Chào bạn, đơn hàng ${o.id} đã kích hoạt thành công.</h2><p>Truy cập web vpntrinhhg.pages.dev để lấy Link VPN và tải ứng dụng nhé.</p>`
-                        })
-                    });
-                } catch(e) { console.log(e); }
-            } else { alert('Mày chưa cài Link API Gmail. Nhìn xem UI OK chưa rồi setup Email sau!'); }
+            // LỆNH BẮN GMAIL TỰ ĐỘNG BẰNG API CỦA MÀY
+            const btn = event.target; 
+            const originalText = btn.innerText;
+            btn.innerText = "ĐANG GỬI GMAIL...";
+            try {
+                await fetch(GOOGLE_MAIL_API, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        to: o.email, 
+                        subject: "Trinh Hg VPN - Kích hoạt dịch vụ thành công!", 
+                        html: `<div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden;">
+                                <div style="background: #4f46e5; padding: 20px; text-align: center; color: white;">
+                                    <h2>Kích hoạt thành công!</h2>
+                                </div>
+                                <div style="padding: 20px; color: #333;">
+                                    <p>Xin chào,</p>
+                                    <p>Cảm ơn bạn đã tin tưởng. Gói dịch vụ VPN của bạn đã được kích hoạt.</p>
+                                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                                        <p style="margin: 0; font-size: 14px; color: #64748b;">Mã Đơn Hàng tra cứu:</p>
+                                        <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold; color: #4f46e5;">${o.id}</p>
+                                    </div>
+                                    <p>Vui lòng truy cập website <a href="https://vpntrinhhg.pages.dev" style="color: #4f46e5; font-weight: bold;">vpntrinhhg.pages.dev</a> và nhập Mã Đơn Hàng trên vào thanh tìm kiếm ở đầu trang để lấy <b>Link VPN</b> và xem <b>Hướng dẫn cài đặt</b>.</p>
+                                </div>
+                               </div>`
+                    })
+                });
+            } catch(e) { console.log("Lỗi gửi mail:", e); }
 
+            btn.innerText = originalText;
             renderOrders(); document.getElementById('modalAction').classList.add('hidden');
         }
 
-        // CMS Logic Cải Tiến (Đa ứng dụng)
+        // CMS Logic Cải Tiến
         function loadCmsData() {
             const dev = document.getElementById('cmsDevice').value;
             document.getElementById('cmsGuide').value = localStorage.getItem('cms_' + dev + '_guide') || '';
@@ -152,25 +168,30 @@
 
         function saveCms() {
             localStorage.setItem('cms_' + document.getElementById('cmsDevice').value + '_guide', document.getElementById('cmsGuide').value);
-            alert('Lưu thành công!');
+            alert('Đã lưu nội dung lên Web chính thành công!');
         }
 
         function insertTemplate() {
-            const temp = `<div style="display: flex; gap: 10px; margin-bottom: 20px;">
-    <a href="LINK-TAI-CUA-MAY-O-DAY" target="_blank" style="background: #4f46e5; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; text-decoration: none;">⬇️ Tải V2rayNG</a>
+            const temp = `<div style="display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;">
+    <a href="LINK-APP-THU-1-CUA-BAN-O-DAY" target="_blank" style="background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">⬇️ TẢI APP CHÍNH (V2RAY)</a>
     
-    <a href="LINK-TAI-CUA-MAY-O-DAY" target="_blank" style="background: #0ea5e9; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; text-decoration: none;">⬇️ Tải NekoBox</a>
+    <a href="LINK-APP-THU-2-CUA-BAN-O-DAY" target="_blank" style="background: #0ea5e9; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">⬇️ TẢI APP PHỤ (NEKOBOX)</a>
 </div>
 
-<h3>Hướng dẫn cài đặt nhanh:</h3>
-<ol>
-    <li>Tải 1 trong các ứng dụng ở trên về và cài đặt.</li>
-    <li>Mở app lên, bấm vào dấu + ở góc phải.</li>
-    <li>Chọn "Nhập từ Clipboard" (Nhớ copy Link VPN ở trên trước).</li>
-    <li>Bấm kết nối là xong!</li>
-</ol>`;
+<h3 style="font-size: 18px; font-weight: bold; color: #1e293b; margin-bottom: 12px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Hướng dẫn cài đặt nhanh:</h3>
+<p style="margin-bottom: 10px;"><b>Bước 1:</b> Bấm vào nút màu xanh ở trên để tải app về máy và cài đặt.</p>
+<p style="margin-bottom: 10px;"><b>Bước 2:</b> Copy cái <b>Link Đăng Ký (Subscription URL)</b> ở phía trên.</p>
+<p style="margin-bottom: 10px;"><b>Bước 3:</b> Mở app vừa tải lên, bấm vào dấu + ở góc phải màn hình.</p>
+<p style="margin-bottom: 10px;"><b>Bước 4:</b> Chọn mục <i>"Nhập cấu hình từ Clipboard"</i>.</p>
+<p style="margin-bottom: 10px;"><b>Bước 5:</b> Bấm biểu tượng chữ V hoặc nút tròn bự để kết nối. Tận hưởng mạng xịn nhé!</p>`;
+            
             const box = document.getElementById('cmsGuide');
-            box.value = temp + "\n\n" + box.value;
+            // Nếu khung đang trống thì dán đè luôn, nếu có chữ rồi thì chèn thêm xuống dưới
+            if (box.value.trim() === '') {
+                box.value = temp;
+            } else {
+                box.value = box.value + "\n\n" + temp;
+            }
         }
     </script>
 </body>
