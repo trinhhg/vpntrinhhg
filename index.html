@@ -1,0 +1,25 @@
+<nav class="glass sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="font-extrabold text-2xl tracking-tighter"><span class="gradient-text">Unidy VPN</span></div>
+    
+    <div class="relative w-full md:w-96">
+        <input type="text" id="globalSearch" onkeyup="if(event.key==='Enter') login()" 
+               class="w-full bg-gray-800 border border-gray-600 rounded-full px-5 py-2 text-sm focus:border-indigo-500 outline-none" 
+               placeholder="Nhập Email hoặc Mã đơn hàng để vào Portal...">
+        <button onclick="login()" class="absolute right-3 top-1.5 text-indigo-400 hover:text-white"><i class="fas fa-search"></i></button>
+    </div>
+</nav>
+
+<div class="flex justify-center space-x-2 my-8">
+    <button onclick="filterPackages('all')" class="tab-btn active">Tất cả</button>
+    <button onclick="filterPackages('cycle')" class="tab-btn">Chu kỳ</button>
+    <button onclick="filterPackages('usage')" class="tab-btn">Dung lượng</button>
+</div>
+
+<div class="fixed bottom-6 right-6 flex flex-col space-y-3 z-[100]">
+    <a href="https://www.facebook.com/trinh.hg.57" target="_blank" class="bg-blue-600 w-14 h-14 flex items-center justify-center rounded-full text-white shadow-2xl hover:scale-110 transition">
+        <i class="fab fa-facebook-messenger text-2xl"></i>
+    </a>
+    <a href="https://zalo.me/0917678211" target="_blank" class="bg-green-500 w-14 h-14 flex items-center justify-center rounded-full text-white shadow-2xl hover:scale-110 transition">
+        <i class="fas fa-comment-dots text-2xl"></i>
+    </a>
+</div>
