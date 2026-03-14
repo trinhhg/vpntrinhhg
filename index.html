@@ -1,25 +1,374 @@
-<nav class="glass sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-    <div class="font-extrabold text-2xl tracking-tighter"><span class="gradient-text">Unidy VPN</span></div>
-    
-    <div class="relative w-full md:w-96">
-        <input type="text" id="globalSearch" onkeyup="if(event.key==='Enter') login()" 
-               class="w-full bg-gray-800 border border-gray-600 rounded-full px-5 py-2 text-sm focus:border-indigo-500 outline-none" 
-               placeholder="Nhập Email hoặc Mã đơn hàng để vào Portal...">
-        <button onclick="login()" class="absolute right-3 top-1.5 text-indigo-400 hover:text-white"><i class="fas fa-search"></i></button>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidy VPN - Tốc độ & Bảo mật</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-hover:hover { background: rgba(30, 41, 59, 0.9); border-color: rgba(99, 102, 241, 0.5); }
+        .gradient-text { background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; color: transparent; }
+        .view-section { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-btn { padding: 0.5rem 1.5rem; border-radius: 9999px; font-weight: 600; transition: all 0.3s; color: #94a3b8; }
+        .tab-btn.active { background-color: #4f46e5; color: white; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <div class="fixed top-[-10%] left-[-10%] w-96 h-96 bg-indigo-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 z-0 pointer-events-none"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 z-0 pointer-events-none"></div>
+
+    <nav class="glass sticky top-0 z-50 w-full px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="font-extrabold text-2xl tracking-tighter cursor-pointer" onclick="logout()">
+            <i class="fas fa-shield-halved text-indigo-500 mr-2"></i><span class="gradient-text">Unidy VPN</span>
+        </div>
+        
+        <div id="searchBar" class="relative w-full md:w-96">
+            <input type="text" id="loginInput" onkeyup="if(event.key==='Enter') login()" 
+                   class="w-full bg-gray-800 border border-gray-600 rounded-full px-5 py-2.5 text-sm text-white focus:border-indigo-500 outline-none placeholder-gray-400" 
+                   placeholder="Nhập Email hoặc Mã đơn hàng...">
+            <button onclick="login()" class="absolute right-4 top-2.5 text-indigo-400 hover:text-white"><i class="fas fa-arrow-right"></i></button>
+        </div>
+        
+        <div id="userMenu" class="hidden flex items-center gap-3">
+            <span class="text-sm text-green-400 font-bold"><i class="fas fa-circle-user mr-1"></i>Đã đăng nhập</span>
+            <button onclick="logout()" class="text-xs bg-red-500/20 text-red-400 px-3 py-1.5 rounded-full hover:bg-red-500/40 transition">Thoát</button>
+        </div>
+    </nav>
+
+    <main class="flex-grow z-10 relative px-4 py-8 max-w-6xl mx-auto w-full">
+        
+        <div id="view-portal" class="view-section">
+            <div class="glass p-8 rounded-3xl mb-8 border-l-4 border-green-500">
+                <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6 border-b border-gray-700 pb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-1">Cổng Khách Hàng</h2>
+                        <p class="text-sm text-gray-400">Trạng thái: <span class="text-green-400 font-bold"><i class="fas fa-check-circle mr-1"></i>Đã kích hoạt</span></p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm text-gray-400">Mã đơn: <span id="portalOrderId" class="text-white font-mono font-bold uppercase"></span></p>
+                        <p class="text-xs text-gray-500 mt-1">Gói: <span id="portalPackage" class="text-indigo-300"></span></p>
+                    </div>
+                </div>
+
+                <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-6">
+                    <h4 class="text-red-400 font-bold flex items-center mb-1"><i class="fas fa-exclamation-triangle mr-2"></i>LƯU Ý QUAN TRỌNG</h4>
+                    <p class="text-sm text-red-200/80">Bạn hãy lưu lại Mã Đơn Hàng và thường xuyên truy cập vào trang này. Chúng tôi sẽ liên tục cập nhật các phiên bản App/Phần mềm VPN mới nhất, chống chặn tốt nhất tại đây để đảm bảo đường truyền của bạn luôn ổn định.</p>
+                </div>
+
+                <div class="bg-gray-800/50 p-5 rounded-xl border border-gray-600 mb-8">
+                    <h3 class="text-white font-bold mb-3">Link Đăng Ký (Subscription URL) của bạn:</h3>
+                    <div class="flex">
+                        <input type="text" id="subLink" readonly value="Đang cập nhật link cấu hình... Vui lòng kiểm tra Email" class="flex-1 bg-gray-900 border border-gray-700 rounded-l-lg p-3 text-sm font-mono text-gray-400 outline-none">
+                        <button onclick="copyToClipboard('subLink')" class="bg-indigo-600 hover:bg-indigo-500 px-6 rounded-r-lg font-bold text-sm transition">COPY</button>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-white mb-4 border-b border-gray-700 pb-2"><i class="fas fa-download mr-2 text-indigo-400"></i>Tải Ứng Dụng & Hướng Dẫn</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <a href="#" class="bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-xl p-4 text-center transition group">
+                        <i class="fab fa-android text-4xl text-green-500 mb-2 group-hover:scale-110 transition"></i>
+                        <p class="font-bold text-white text-sm">Android (APK)</p>
+                    </a>
+                    <a href="#" class="bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-xl p-4 text-center transition group">
+                        <i class="fab fa-windows text-4xl text-blue-400 mb-2 group-hover:scale-110 transition"></i>
+                        <p class="font-bold text-white text-sm">Windows (EXE)</p>
+                    </a>
+                    <a href="#" class="bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-xl p-4 text-center transition group">
+                        <i class="fab fa-apple text-4xl text-gray-300 mb-2 group-hover:scale-110 transition"></i>
+                        <p class="font-bold text-white text-sm">MacOS (DMG)</p>
+                    </a>
+                    <a href="#" class="bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-xl p-4 text-center transition group">
+                        <i class="fab fa-app-store-ios text-4xl text-blue-500 mb-2 group-hover:scale-110 transition"></i>
+                        <p class="font-bold text-white text-sm">iOS (App Store)</p>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-white"><i class="fas fa-cart-plus text-indigo-400 mr-2"></i>Gia hạn & Mua thêm</h3>
+            </div>
+        </div>
+
+        <div id="view-store" class="view-section active">
+            <div id="welcomeBanner" class="text-center mb-10 mt-8">
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Mạng nhanh. <span class="gradient-text">Không giới hạn.</span></h1>
+                <p class="text-gray-400">Trải nghiệm VPN chất lượng cao - Hỗ trợ cài đặt miễn phí</p>
+            </div>
+
+            <div class="flex justify-center flex-wrap gap-2 mb-10">
+                <button onclick="filterPackages('all')" id="tab-all" class="tab-btn active bg-indigo-600 text-white">Tất cả</button>
+                <button onclick="filterPackages('cycle')" id="tab-cycle" class="tab-btn bg-gray-800 hover:bg-gray-700">Theo Chu kỳ</button>
+                <button onclick="filterPackages('usage')" id="tab-usage" class="tab-btn bg-gray-800 hover:bg-gray-700">Theo Dung lượng</button>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-12" id="packagesContainer">
+                </div>
+
+            <div id="checkoutSection" class="hidden glass p-6 md:p-8 rounded-3xl shadow-2xl border-indigo-500/50">
+                <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
+                    <h3 class="text-2xl font-bold text-white"><i class="fas fa-money-check-dollar text-indigo-400 mr-2"></i>Thanh toán đơn hàng</h3>
+                    <button onclick="cancelCheckout()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <form id="orderForm" onsubmit="submitOrder(event)" class="space-y-4">
+                        <div class="bg-indigo-900/30 p-4 rounded-xl border border-indigo-500/30 mb-4">
+                            <p class="text-sm text-gray-300">Bạn đang chọn gói:</p>
+                            <p id="selectedPackageName" class="text-lg font-bold text-white"></p>
+                            <p id="selectedPackagePrice" class="text-2xl font-black text-indigo-400"></p>
+                        </div>
+                        
+                        <div>
+                            <input type="email" id="cusEmail" class="w-full bg-gray-800 border border-gray-600 rounded-xl p-3 text-white focus:border-indigo-500 outline-none" placeholder="Email nhận thông tin VPN (Bắt buộc)" required>
+                        </div>
+                        <div>
+                            <input type="text" id="cusFb" class="w-full bg-gray-800 border border-gray-600 rounded-xl p-3 text-white focus:border-indigo-500 outline-none" placeholder="Link Facebook của bạn (Không bắt buộc)">
+                        </div>
+                        <div class="bg-gray-800/50 p-4 rounded-xl border border-gray-600">
+                            <label class="flex items-start space-x-3 cursor-pointer">
+                                <input type="checkbox" id="needSupport" onchange="toggleZalo()" class="mt-1 w-4 h-4 rounded border-gray-600 text-indigo-600 focus:ring-indigo-500 bg-gray-700">
+                                <div>
+                                    <span class="block font-medium text-white">Cần hỗ trợ cài đặt Zalo/Call (Miễn phí)</span>
+                                </div>
+                            </label>
+                            <input type="text" id="cusZalo" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white outline-none mt-3 hidden" placeholder="Nhập số điện thoại/Zalo của bạn">
+                        </div>
+
+                        <div id="qrContainer" class="hidden flex flex-col items-center justify-center bg-white p-4 rounded-xl">
+                            <p class="text-gray-800 font-bold mb-2">Quét mã để Bank</p>
+                            <img id="qrImage" src="" alt="QR" class="w-48 h-48 mb-3">
+                            <div class="w-full text-sm text-gray-600 space-y-2">
+                                <p>NH: <strong>MBBank</strong></p>
+                                <p>STK: <strong id="copyStk" class="text-indigo-600 cursor-pointer" onclick="copyText('0917678211')">0917678211 <i class="far fa-copy"></i></strong></p>
+                                <p>Chủ TK: <strong>TRINH THI XUAN HUONG</strong></p>
+                                <p>Số tiền: <strong id="qrAmount" class="text-red-500"></strong></p>
+                                <p>Nội dung: <strong id="qrMemo" class="bg-yellow-200 text-black px-2 py-0.5 rounded cursor-pointer" onclick="copyText(currentOrderId)"> <i class="far fa-copy"></i></strong></p>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btnConfirm" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition uppercase">
+                            Tạo mã QR Thanh toán
+                        </button>
+                    </form>
+
+                    <div class="bg-gray-800/50 p-6 rounded-2xl border border-gray-700 h-fit">
+                        <h4 class="font-bold text-white mb-4"><i class="fas fa-info-circle text-indigo-400 mr-2"></i>Hướng dẫn mua hàng</h4>
+                        <ol class="list-decimal list-inside space-y-3 text-sm text-gray-300">
+                            <li>Điền Email chính xác để nhận thông tin gói.</li>
+                            <li>Bấm <strong>Tạo mã QR</strong> để hệ thống tạo đơn.</li>
+                            <li>Dùng App Ngân hàng quét mã QR (hệ thống đã điền sẵn số tiền và nội dung).</li>
+                            <li>Sau khi chuyển khoản thành công, bấm nút <strong>"Đã chuyển khoản"</strong>.</li>
+                            <li>Hệ thống sẽ gửi Email xác nhận và kích hoạt gói cho bạn.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="fixed bottom-6 right-6 flex flex-col space-y-3 z-50">
+        <a href="https://www.facebook.com/trinh.hg.57" target="_blank" class="bg-blue-600 w-14 h-14 flex items-center justify-center rounded-full text-white shadow-lg hover:scale-110 transition">
+            <i class="fab fa-facebook-messenger text-2xl"></i>
+        </a>
+        <a href="https://zalo.me/0917678211" target="_blank" class="bg-green-500 w-14 h-14 flex items-center justify-center rounded-full text-white shadow-lg hover:scale-110 transition flex-col">
+            <i class="fas fa-comment-dots text-xl"></i>
+        </a>
     </div>
-</nav>
 
-<div class="flex justify-center space-x-2 my-8">
-    <button onclick="filterPackages('all')" class="tab-btn active">Tất cả</button>
-    <button onclick="filterPackages('cycle')" class="tab-btn">Chu kỳ</button>
-    <button onclick="filterPackages('usage')" class="tab-btn">Dung lượng</button>
-</div>
+    <script>
+        const packages = [
+            { id: 'c1', type: 'cycle', name: 'Gói 1 Tháng', price: 70000, priceStr: '70.000 VNĐ', time: '1 Tháng', data: '1000GB', tag: '🔥 BEST SELLER', tagColor: 'bg-red-500' },
+            { id: 'c2', type: 'cycle', name: 'Gói Cao Cấp', price: 150000, priceStr: '150.000 VNĐ', time: '1 Tháng', data: '3000GB', tag: '' },
+            { id: 'c3', type: 'cycle', name: 'Gói 1 Năm', price: 300000, priceStr: '300.000 VNĐ', time: '1 Năm', data: '200GB/tháng', tag: 'Khuyên dùng' },
+            { id: 'd1', type: 'usage', name: 'Không Giới Hạn Thời Gian', price: 70000, priceStr: '70.000 VNĐ', time: 'Vĩnh viễn', data: '200GB', tag: '' },
+            { id: 'd2', type: 'usage', name: 'Không Giới Hạn Thời Gian', price: 180000, priceStr: '180.000 VNĐ', time: 'Vĩnh viễn', data: '2000GB', tag: '' },
+            { id: 'd3', type: 'usage', name: 'Không Giới Hạn Thời Gian', price: 320000, priceStr: '320.000 VNĐ', time: 'Vĩnh viễn', data: '6000GB', tag: '' },
+        ];
 
-<div class="fixed bottom-6 right-6 flex flex-col space-y-3 z-[100]">
-    <a href="https://www.facebook.com/trinh.hg.57" target="_blank" class="bg-blue-600 w-14 h-14 flex items-center justify-center rounded-full text-white shadow-2xl hover:scale-110 transition">
-        <i class="fab fa-facebook-messenger text-2xl"></i>
-    </a>
-    <a href="https://zalo.me/0917678211" target="_blank" class="bg-green-500 w-14 h-14 flex items-center justify-center rounded-full text-white shadow-2xl hover:scale-110 transition">
-        <i class="fas fa-comment-dots text-2xl"></i>
-    </a>
-</div>
+        let currentPackage = null;
+        let currentOrderId = '';
+
+        function renderPackages(filter = 'all') {
+            const container = document.getElementById('packagesContainer');
+            container.innerHTML = '';
+            
+            packages.forEach(pkg => {
+                if(filter !== 'all' && pkg.type !== filter) return;
+
+                const card = document.createElement('div');
+                card.className = `glass p-6 rounded-2xl glass-hover transition cursor-pointer relative flex flex-col justify-between ${pkg.tag === '🔥 BEST SELLER' ? 'border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.2)]' : ''}`;
+                
+                card.innerHTML = `
+                    ${pkg.tag ? `<span class="absolute -top-3 right-4 ${pkg.tagColor || 'bg-indigo-500'} text-white text-xs px-3 py-1 rounded-full font-bold shadow-md">${pkg.tag}</span>` : ''}
+                    <div>
+                        <h3 class="font-bold text-lg text-white mb-1">${pkg.name}</h3>
+                        <p class="text-sm text-gray-400 mb-4"><i class="far fa-clock mr-1"></i> ${pkg.time}</p>
+                        <div class="text-3xl font-black text-indigo-400 mb-6">${pkg.priceStr}</div>
+                        
+                        <ul class="text-sm space-y-2 mb-6 text-gray-300">
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Dung lượng: ${pkg.data}</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Phát trực tuyến ổn định</li>
+                            <li><i class="fas fa-check-circle text-green-500 mr-2"></i>Không giới hạn thiết bị</li>
+                            <li><i class="fas fa-info-circle text-gray-500 mr-2"></i>Giới hạn ngày: 10% tổng</li>
+                        </ul>
+                    </div>
+                    <button onclick="openCheckout('${pkg.id}')" class="w-full bg-gray-800 hover:bg-indigo-600 text-white font-bold py-3 rounded-xl transition border border-gray-600 hover:border-indigo-500">Mua Gói Ngay</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterPackages(type) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white', 'active');
+                btn.classList.add('bg-gray-800', 'text-gray-400');
+            });
+            document.getElementById(`tab-${type}`).classList.add('bg-indigo-600', 'text-white', 'active');
+            document.getElementById(`tab-${type}`).classList.remove('bg-gray-800', 'text-gray-400');
+            renderPackages(type);
+        }
+
+        function openCheckout(pkgId) {
+            currentPackage = packages.find(p => p.id === pkgId);
+            document.getElementById('checkoutSection').classList.remove('hidden');
+            document.getElementById('checkoutSection').scrollIntoView({ behavior: 'smooth' });
+            
+            document.getElementById('selectedPackageName').innerText = currentPackage.name + ' (' + currentPackage.data + ')';
+            document.getElementById('selectedPackagePrice').innerText = currentPackage.priceStr;
+            
+            document.getElementById('qrContainer').classList.add('hidden');
+            document.getElementById('btnConfirm').innerText = 'TẠO MÃ QR THANH TOÁN';
+            document.getElementById('btnConfirm').classList.replace('bg-green-600', 'bg-indigo-600');
+            currentOrderId = '';
+        }
+
+        function cancelCheckout() {
+            document.getElementById('checkoutSection').classList.add('hidden');
+            currentPackage = null;
+        }
+
+        function toggleZalo() {
+            const zInput = document.getElementById('cusZalo');
+            if(document.getElementById('needSupport').checked) {
+                zInput.classList.remove('hidden');
+                zInput.required = true;
+            } else {
+                zInput.classList.add('hidden');
+                zInput.required = false;
+            }
+        }
+
+        function submitOrder(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnConfirm');
+            
+            if(!currentOrderId) {
+                currentOrderId = 'DH-' + Math.random().toString(36).substring(2, 7).toUpperCase();
+                
+                // API VietQR tự động sinh mã của MBBank
+                const qrUrl = `https://img.vietqr.io/image/mbbank-0917678211-compact.png?amount=${currentPackage.price}&addInfo=${currentOrderId}&accountName=TRINH THI XUAN HUONG`;
+                
+                document.getElementById('qrImage').src = qrUrl;
+                document.getElementById('qrAmount').innerText = currentPackage.priceStr;
+                document.getElementById('qrMemo').innerHTML = `${currentOrderId} <i class="far fa-copy"></i>`;
+                
+                document.getElementById('qrContainer').classList.remove('hidden');
+                
+                btn.innerText = 'TÔI ĐÃ CHUYỂN KHOẢN XONG';
+                btn.classList.replace('bg-indigo-600', 'bg-green-600');
+            } 
+            else {
+                const email = document.getElementById('cusEmail').value;
+                const fb = document.getElementById('cusFb').value;
+                const needSup = document.getElementById('needSupport').checked;
+                const zalo = document.getElementById('cusZalo').value;
+
+                btn.innerText = 'ĐANG GỬI ĐƠN...';
+                btn.disabled = true;
+
+                // (Sau này code Worker sẽ gọi API ở đoạn này)
+
+                setTimeout(() => {
+                    alert(`Gửi đơn thành công!\nMã đơn: ${currentOrderId}\nHệ thống đang xử lý và sẽ gửi Mail cho bạn.`);
+                    setSession(email, currentOrderId, currentPackage.name);
+                    cancelCheckout();
+                    document.getElementById('orderForm').reset();
+                    btn.disabled = false;
+                    btn.innerText = 'TẠO MÃ QR THANH TOÁN';
+                    btn.classList.replace('bg-green-600', 'bg-indigo-600');
+                    currentOrderId = '';
+                }, 1000);
+            }
+        }
+
+        function setSession(identifier, orderId, pkgName) {
+            const data = { id: identifier, order: orderId, pkg: pkgName, time: new Date().getTime() };
+            localStorage.setItem('unidy_session', JSON.stringify(data));
+            checkSession();
+        }
+
+        function checkSession() {
+            const session = localStorage.getItem('unidy_session');
+            if(!session) return false;
+
+            const data = JSON.parse(session);
+            const now = new Date().getTime();
+            const hoursDiff = (now - data.time) / (1000 * 60 * 60);
+
+            if(hoursDiff > 24) {
+                localStorage.removeItem('unidy_session');
+                return false;
+            }
+
+            document.getElementById('view-store').classList.remove('active');
+            document.getElementById('view-portal').classList.add('active');
+            document.getElementById('searchBar').classList.add('hidden');
+            document.getElementById('userMenu').classList.remove('hidden');
+            document.getElementById('welcomeBanner').classList.add('hidden');
+
+            document.getElementById('portalOrderId').innerText = data.order;
+            document.getElementById('portalPackage').innerText = data.pkg;
+            
+            return true;
+        }
+
+        function login() {
+            const input = document.getElementById('loginInput').value.trim();
+            if(!input) return;
+            setSession(input, (input.includes('-') ? input : 'DH-XXXXX'), 'Gói Đã Mua');
+        }
+
+        function logout() {
+            localStorage.removeItem('unidy_session');
+            document.getElementById('view-portal').classList.remove('active');
+            document.getElementById('view-store').classList.add('active');
+            document.getElementById('searchBar').classList.remove('hidden');
+            document.getElementById('userMenu').classList.add('hidden');
+            document.getElementById('welcomeBanner').classList.remove('hidden');
+            document.getElementById('loginInput').value = '';
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            alert('Đã copy: ' + text);
+        }
+        function copyToClipboard(elementId) {
+            const el = document.getElementById(elementId);
+            el.select();
+            document.execCommand('copy');
+            alert('Đã copy link cấu hình!');
+        }
+
+        renderPackages();
+        checkSession();
+    </script>
+</body>
+</html>
