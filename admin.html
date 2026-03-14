@@ -1,35 +1,234 @@
-<div class="p-8">
-    <h1 class="text-3xl font-bold mb-8">Hệ thống quản lý Unidy VPN</h1>
-    
-    <div class="grid grid-cols-4 gap-4 mb-8">
-        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
-            <p class="text-gray-400 text-sm">Đơn đang chờ</p>
-            <p id="pendingCount" class="text-2xl font-bold text-yellow-400">0</p>
-        </div>
-        </div>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Trinh Hg VPN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass-panel { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="min-h-screen">
 
-    <table class="w-full bg-gray-900 rounded-xl overflow-hidden">
-        <thead class="bg-gray-800 text-left">
-            <tr>
-                <th class="p-4">Mã đơn</th>
-                <th class="p-4">Khách hàng</th>
-                <th class="p-4">Gói mua</th>
-                <th class="p-4">Trạng thái</th>
-                <th class="p-4">Hành động</th>
-            </tr>
-        </thead>
-        <tbody id="orderTable">
-            </tbody>
-    </table>
-</div>
-
-<div id="approveModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center">
-    <div class="bg-gray-800 p-6 rounded-2xl w-96">
-        <h3 class="text-xl font-bold mb-4">Duyệt đơn hàng</h3>
-        <textarea id="activationLink" class="w-full bg-gray-900 border p-3 rounded-xl mb-4" placeholder="Dán link Subscription hoặc thông tin tài khoản..."></textarea>
-        <div class="flex gap-2">
-            <button onclick="submitApprove('success')" class="flex-1 bg-green-600 py-2 rounded-lg">Gửi Mail Thành Công</button>
-            <button onclick="submitApprove('failed')" class="flex-1 bg-red-600 py-2 rounded-lg">Báo Lỗi (Nhập lý do)</button>
+    <div id="loginScreen" class="fixed inset-0 bg-gray-900 z-50 flex flex-col items-center justify-center">
+        <div class="glass-panel p-8 rounded-3xl w-96 text-center shadow-2xl">
+            <i class="fas fa-user-shield text-5xl text-indigo-500 mb-4"></i>
+            <h2 class="text-2xl font-bold mb-6">Quản trị Hệ thống</h2>
+            <input type="password" id="adminPass" class="w-full bg-gray-800 border border-gray-600 rounded-xl p-3 text-white text-center mb-4 focus:outline-none focus:border-indigo-500" placeholder="Nhập mật khẩu Admin...">
+            <button onclick="checkAdmin()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3 rounded-xl transition">ĐĂNG NHẬP</button>
+            <p id="loginError" class="text-red-400 text-sm mt-3 hidden">Sai mật khẩu!</p>
         </div>
     </div>
-</div>
+
+    <div id="adminPanel" class="hidden p-6 md:p-10 max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-8 border-b border-gray-700 pb-4">
+            <h1 class="text-3xl font-extrabold text-white"><i class="fas fa-server text-indigo-500 mr-3"></i>Trinh Hg VPN - Admin Dashboard</h1>
+            <button onclick="location.reload()" class="bg-gray-800 px-4 py-2 rounded-lg text-sm hover:bg-gray-700"><i class="fas fa-sign-out-alt mr-2"></i>Thoát</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="glass-panel p-5 rounded-2xl border-l-4 border-yellow-500">
+                <p class="text-gray-400 text-sm">Đơn đang chờ (Bank)</p>
+                <p id="countPending" class="text-3xl font-black text-yellow-500 mt-1">0</p>
+            </div>
+            <div class="glass-panel p-5 rounded-2xl border-l-4 border-green-500">
+                <p class="text-gray-400 text-sm">Đã kích hoạt thành công</p>
+                <p id="countSuccess" class="text-3xl font-black text-green-500 mt-1">0</p>
+            </div>
+            <div class="glass-panel p-5 rounded-2xl border-l-4 border-red-500">
+                <p class="text-gray-400 text-sm">Đơn lỗi / Hủy</p>
+                <p id="countFailed" class="text-3xl font-black text-red-500 mt-1">0</p>
+            </div>
+            <div class="glass-panel p-5 rounded-2xl flex items-center justify-center">
+                <button onclick="openManualOrder()" class="w-full h-full bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold flex flex-col items-center justify-center transition">
+                    <i class="fas fa-plus-circle text-2xl mb-1"></i> Tạo đơn thủ công
+                </button>
+            </div>
+        </div>
+
+        <div class="glass-panel rounded-2xl overflow-hidden shadow-lg">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-gray-800 text-gray-300">
+                        <tr>
+                            <th class="p-4">Mã Đơn</th>
+                            <th class="p-4">Khách Hàng</th>
+                            <th class="p-4">Gói Mua</th>
+                            <th class="p-4">Trạng Thái</th>
+                            <th class="p-4">Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderTable" class="divide-y divide-gray-700">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalManualOrder" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+        <div class="glass-panel p-6 rounded-2xl w-full max-w-md">
+            <h3 class="text-xl font-bold mb-4 text-white">Tạo Đơn Hàng Mới</h3>
+            <div class="space-y-3">
+                <input type="text" id="manId" class="w-full bg-gray-900 border border-gray-600 p-3 rounded-lg text-white font-mono uppercase" placeholder="Mã đơn (VD: DH-TEST1)">
+                <input type="email" id="manEmail" class="w-full bg-gray-900 border border-gray-600 p-3 rounded-lg text-white" placeholder="Email khách hàng">
+                <input type="text" id="manPkg" class="w-full bg-gray-900 border border-gray-600 p-3 rounded-lg text-white" placeholder="Tên gói (VD: Gói VIP 150k)">
+                <div class="flex gap-2 mt-4">
+                    <button onclick="saveManualOrder()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 py-2 rounded-lg font-bold">Lưu Đơn</button>
+                    <button onclick="closeModals()" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg">Hủy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalAction" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+        <div class="glass-panel p-6 rounded-2xl w-full max-w-lg border border-indigo-500">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-white">Xử lý Đơn <span id="actOrderId" class="text-indigo-400"></span></h3>
+                <button onclick="closeModals()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <p class="text-sm text-gray-400 mb-4">Email khách: <strong id="actEmail" class="text-white"></strong></p>
+
+            <div class="space-y-4">
+                <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl">
+                    <label class="block text-green-400 font-bold mb-2 text-sm"><i class="fas fa-check-circle mr-1"></i>DUYỆT & GỬI LINK</label>
+                    <textarea id="actSubLink" rows="2" class="w-full bg-gray-900 border border-gray-600 p-3 rounded-lg text-white text-sm outline-none focus:border-green-500 font-mono" placeholder="Dán Subscription Link VPN vào đây..."></textarea>
+                    <button onclick="processOrder('success')" class="w-full mt-2 bg-green-600 hover:bg-green-500 text-white font-bold py-2 rounded-lg shadow-lg">Xác nhận Đã Thu Tiền & Gửi Mail Cấp Gói</button>
+                </div>
+
+                <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl">
+                    <label class="block text-red-400 font-bold mb-2 text-sm"><i class="fas fa-times-circle mr-1"></i>TỪ CHỐI & BÁO LỖI</label>
+                    <input type="text" id="actReason" class="w-full bg-gray-900 border border-gray-600 p-3 rounded-lg text-white text-sm outline-none focus:border-red-500" placeholder="Lý do (VD: Chuyển sai số tiền, Không thấy tiền vào bank...)">
+                    <button onclick="processOrder('failed')" class="w-full mt-2 bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-lg shadow-lg">Từ chối đơn & Gửi Mail Báo Lỗi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mật khẩu Admin
+        const ADMIN_PASS = "admin2026"; 
+        let currentProcessId = null;
+
+        // Dữ liệu giả lập
+        let ordersDb = JSON.parse(localStorage.getItem('admin_orders')) || [
+            { id: 'DH-SAMPLE', email: 'khachhang@gmail.com', pkg: 'Gói VIP 3 Tháng', status: 'pending', date: new Date().toLocaleString() }
+        ];
+
+        function checkAdmin() {
+            const pass = document.getElementById('adminPass').value;
+            if(pass === ADMIN_PASS) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+                renderOrders();
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        }
+
+        function renderOrders() {
+            const tbody = document.getElementById('orderTable');
+            tbody.innerHTML = '';
+            
+            let p = 0, s = 0, f = 0;
+
+            ordersDb.forEach((order, index) => {
+                let statusHtml = '';
+                if(order.status === 'pending') {
+                    statusHtml = '<span class="bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded text-xs font-bold border border-yellow-500/50">Đang chờ xử lý</span>';
+                    p++;
+                } else if(order.status === 'success') {
+                    statusHtml = '<span class="bg-green-500/20 text-green-500 px-2 py-1 rounded text-xs font-bold border border-green-500/50">Đã cấp gói</span>';
+                    s++;
+                } else {
+                    statusHtml = '<span class="bg-red-500/20 text-red-500 px-2 py-1 rounded text-xs font-bold border border-red-500/50">Đã hủy/Lỗi</span>';
+                    f++;
+                }
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-800/50 transition border-b border-gray-700/50">
+                        <td class="p-4 font-mono font-bold text-indigo-300">${order.id}</td>
+                        <td class="p-4">
+                            <p class="text-white">${order.email}</p>
+                            <p class="text-xs text-gray-500">${order.date}</p>
+                        </td>
+                        <td class="p-4 text-sm">${order.pkg}</td>
+                        <td class="p-4">${statusHtml}</td>
+                        <td class="p-4">
+                            ${order.status === 'pending' ? 
+                                `<button onclick="openAction('${order.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded text-sm font-bold shadow transition">Xử lý ngay</button>` 
+                                : 
+                                `<button onclick="deleteOrder(${index})" class="text-gray-500 hover:text-red-400 text-sm"><i class="fas fa-trash"></i> Xóa</button>`
+                            }
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('countPending').innerText = p;
+            document.getElementById('countSuccess').innerText = s;
+            document.getElementById('countFailed').innerText = f;
+            localStorage.setItem('admin_orders', JSON.stringify(ordersDb));
+        }
+
+        // --- CÁC HÀM XỬ LÝ GIAO DIỆN MODAL ---
+        function openManualOrder() { document.getElementById('modalManualOrder').classList.remove('hidden'); }
+        function closeModals() { 
+            document.getElementById('modalManualOrder').classList.add('hidden'); 
+            document.getElementById('modalAction').classList.add('hidden');
+        }
+
+        function saveManualOrder() {
+            const id = document.getElementById('manId').value.toUpperCase() || 'DH-' + Math.floor(Math.random()*10000);
+            const email = document.getElementById('manEmail').value || 'no-email@test.com';
+            const pkg = document.getElementById('manPkg').value || 'Gói Tự Nhập';
+
+            ordersDb.unshift({ id, email, pkg, status: 'pending', date: new Date().toLocaleString() });
+            renderOrders();
+            closeModals();
+            
+            // Xóa form
+            document.getElementById('manId').value = '';
+            document.getElementById('manEmail').value = '';
+            document.getElementById('manPkg').value = '';
+        }
+
+        function openAction(orderId) {
+            currentProcessId = orderId;
+            const order = ordersDb.find(o => o.id === orderId);
+            document.getElementById('actOrderId').innerText = order.id;
+            document.getElementById('actEmail').innerText = order.email;
+            document.getElementById('modalAction').classList.remove('hidden');
+        }
+
+        function processOrder(type) {
+            const order = ordersDb.find(o => o.id === currentProcessId);
+            order.status = type;
+            
+            if(type === 'success') {
+                const link = document.getElementById('actSubLink').value;
+                order.info = link;
+                alert(`MÔ PHỎNG WORKER: Đã gửi Email Thành Công cho ${order.email}\nNội dung: ${link}`);
+            } else {
+                const reason = document.getElementById('actReason').value;
+                order.reason = reason;
+                alert(`MÔ PHỎNG WORKER: Đã gửi Email Báo Lỗi cho ${order.email}\nLý do: ${reason}`);
+            }
+
+            renderOrders();
+            closeModals();
+        }
+
+        function deleteOrder(index) {
+            if(confirm('Bạn có chắc muốn xóa bản ghi này?')) {
+                ordersDb.splice(index, 1);
+                renderOrders();
+            }
+        }
+    </script>
+</body>
+</html>
