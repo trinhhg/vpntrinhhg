@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trinh Hg VPN - Quản Trị Hệ Thống</title>
+    <title>Trinh Hg VPN - Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -14,54 +14,30 @@
     </style>
 </head>
 <body class="min-h-screen">
-
     <div id="loginScreen" class="fixed inset-0 bg-slate-50 z-50 flex items-center justify-center">
         <div class="glass-card p-10 w-96 text-center">
-            <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner"><i class="fas fa-fingerprint"></i></div>
-            <h2 class="text-2xl font-extrabold mb-2 text-slate-800">Admin Panel</h2>
-            <p class="text-sm text-slate-500 mb-8">Trinh Hg VPN System</p>
+            <h2 class="text-2xl font-extrabold mb-8 text-slate-800">Admin Panel</h2>
             <input type="password" id="adminPass" class="w-full bg-slate-100 border-transparent rounded-xl p-4 text-center mb-4 focus:ring-2 focus:ring-indigo-500 outline-none font-bold tracking-widest" placeholder="Mật khẩu...">
-            <button onclick="checkAdmin()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-200 transition">ĐĂNG NHẬP</button>
+            <button onclick="checkAdmin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl transition">ĐĂNG NHẬP</button>
         </div>
     </div>
 
     <div id="adminPanel" class="hidden max-w-7xl mx-auto p-4 md:p-8">
         <div class="flex justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
             <h1 class="text-2xl font-extrabold"><span class="gradient-text">Trinh Hg VPN</span> Dashboard</h1>
-            <button onclick="location.reload()" class="bg-red-50 text-red-600 px-5 py-2.5 rounded-xl font-bold hover:bg-red-100 transition"><i class="fas fa-sign-out-alt mr-2"></i>Thoát</button>
+            <button onclick="location.reload()" class="bg-red-50 text-red-600 px-5 py-2.5 rounded-xl font-bold hover:bg-red-100">Thoát</button>
         </div>
 
         <div class="flex space-x-3 mb-8">
-            <button onclick="switchTab('tab-orders')" id="btn-tab-orders" class="px-6 py-3 rounded-xl font-bold bg-indigo-600 text-white shadow-md shadow-indigo-100 transition">📦 Quản lý Đơn hàng</button>
-            <button onclick="switchTab('tab-cms')" id="btn-tab-cms" class="px-6 py-3 rounded-xl font-bold bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 transition">🛠️ Cấu hình App & Bài viết</button>
+            <button onclick="switchTab('tab-orders')" id="btn-tab-orders" class="px-6 py-3 rounded-xl font-bold bg-indigo-600 text-white shadow-md">📦 Quản lý Đơn hàng</button>
+            <button onclick="switchTab('tab-cms')" id="btn-tab-cms" class="px-6 py-3 rounded-xl font-bold bg-white text-slate-600 border border-slate-200">🛠️ Quản lý Kho Ứng Dụng</button>
         </div>
 
         <div id="tab-orders">
-            <div class="grid grid-cols-3 gap-6 mb-8">
-                <div class="glass-card p-6 border-b-4 border-yellow-400">
-                    <p class="text-slate-500 font-bold text-sm uppercase tracking-wider mb-1">Đang chờ duyệt</p>
-                    <p id="countPending" class="text-4xl font-black text-slate-800">0</p>
-                </div>
-                <div class="glass-card p-6 border-b-4 border-green-500">
-                    <p class="text-slate-500 font-bold text-sm uppercase tracking-wider mb-1">Đã kích hoạt</p>
-                    <p id="countSuccess" class="text-4xl font-black text-slate-800">0</p>
-                </div>
-                <button onclick="openManualOrder()" class="glass-card p-6 border-2 border-dashed border-indigo-300 bg-indigo-50/50 hover:bg-indigo-50 text-indigo-700 flex flex-col items-center justify-center transition group">
-                    <i class="fas fa-plus-circle text-3xl mb-2 group-hover:scale-110 transition"></i>
-                    <span class="font-bold">Tạo đơn thủ công</span>
-                </button>
-            </div>
-
             <div class="glass-card overflow-hidden">
                 <table class="w-full text-left text-sm">
                     <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
-                        <tr>
-                            <th class="p-5 font-bold">Mã Đơn Hàng</th>
-                            <th class="p-5 font-bold">Thông tin Khách</th>
-                            <th class="p-5 font-bold">Gói Dịch Vụ</th>
-                            <th class="p-5 font-bold">Trạng Thái</th>
-                            <th class="p-5 font-bold text-right">Hành động</th>
-                        </tr>
+                        <tr><th class="p-5 font-bold">Mã Đơn</th><th class="p-5 font-bold">Khách</th><th class="p-5 font-bold">Gói</th><th class="p-5 font-bold">Trạng Thái</th><th class="p-5 text-right">Hành động</th></tr>
                     </thead>
                     <tbody id="orderTable" class="divide-y divide-slate-100"></tbody>
                 </table>
@@ -69,182 +45,132 @@
         </div>
 
         <div id="tab-cms" class="hidden glass-card p-8">
-            <div class="max-w-4xl">
-                <h2 class="text-2xl font-bold mb-2">Trung tâm Tải xuống & Hướng dẫn</h2>
-                <p class="text-slate-500 mb-8">Nội dung mày lưu ở đây sẽ hiển thị trực tiếp cho khách hàng trong Portal.</p>
-                
-                <div class="space-y-6">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-2">1. Chọn Nền tảng / Thiết bị:</label>
-                        <select id="cmsDevice" class="w-full p-4 border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none font-bold" onchange="loadCmsData()">
-                            <option value="android">🤖 Thiết bị Android (APK)</option>
-                            <option value="windows">💻 Máy tính Windows (EXE/ZIP)</option>
-                            <option value="macos">🍏 Máy tính MacOS (DMG)</option>
-                            <option value="ios">📱 Apple iOS (App Store)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-2">2. Đường dẫn tải File (Drive, Mediafire, AppStore...):</label>
-                        <input type="text" id="cmsLink" class="w-full p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="https://...">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-2">3. Bài viết Hướng dẫn (Hỗ trợ HTML):</label>
-                        <textarea id="cmsGuide" rows="10" class="w-full p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-mono text-sm bg-slate-50" placeholder="<h3>Bước 1: Tải app</h3><p>Mở file vừa tải về và cài đặt...</p>"></textarea>
-                        <p class="text-xs text-slate-400 mt-2">* Mày có thể dùng thẻ &lt;img src='link-anh'&gt; để chèn ảnh minh họa vào đây.</p>
-                    </div>
-                    <button onclick="saveCms()" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-indigo-200 hover:opacity-90 transition">💾 LƯU NỘI DUNG LÊN WEB CHÍNH</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="modalAction" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="glass-card p-8 w-full max-w-lg">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-slate-800">Duyệt Đơn: <span id="actOrderId" class="text-indigo-600 font-mono"></span></h3>
-                <button onclick="document.getElementById('modalAction').classList.add('hidden')" class="text-slate-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
-            </div>
+            <h2 class="text-2xl font-bold mb-2">Kho Ứng dụng & Hướng dẫn Cài đặt</h2>
+            <p class="text-slate-500 mb-8">Hỗ trợ thiết kế nhiều nút tải app cho cùng một nền tảng.</p>
             
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 mb-6">
-                <p class="text-sm text-slate-500">Khách hàng: <strong id="actEmail" class="text-slate-800"></strong></p>
-                <p class="text-sm text-slate-500 mt-1">Gói mua: <strong id="actPkg" class="text-indigo-600"></strong></p>
-            </div>
-
-            <div class="space-y-6">
-                <div class="border-l-4 border-green-500 pl-4">
-                    <label class="block font-bold text-slate-800 mb-2">🟢 Kích Hoạt & Cấp Link Subscription:</label>
-                    <input type="text" id="actSubLink" class="w-full p-3 border border-slate-200 rounded-lg mb-3 focus:border-green-500 outline-none" placeholder="Dán link lấy từ web nguồn vào đây...">
-                    <button onclick="processOrder('success')" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow-md transition">XÁC NHẬN DUYỆT & GỬI MAIL</button>
+            <div class="space-y-6 max-w-4xl">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-2">1. Chọn Nền tảng:</label>
+                    <select id="cmsDevice" class="w-full p-4 border border-slate-200 rounded-xl outline-none font-bold bg-slate-50" onchange="loadCmsData()">
+                        <option value="android">📱 Hệ điều hành Android</option>
+                        <option value="windows">💻 Hệ điều hành Windows</option>
+                        <option value="macos">🍏 Hệ điều hành MacOS</option>
+                        <option value="ios">🍎 Hệ điều hành iOS</option>
+                    </select>
                 </div>
-                <hr class="border-slate-100">
-                <div class="border-l-4 border-red-500 pl-4">
-                    <label class="block font-bold text-slate-800 mb-2">🔴 Báo Lỗi / Từ chối:</label>
-                    <input type="text" id="actReason" class="w-full p-3 border border-slate-200 rounded-lg mb-3 focus:border-red-500 outline-none" placeholder="Lý do: Không nhận được tiền...">
-                    <button onclick="processOrder('failed')" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 rounded-lg transition">HỦY ĐƠN & GỬI MAIL</button>
+                
+                <div>
+                    <div class="flex justify-between items-end mb-2">
+                        <label class="block font-bold text-slate-700">2. Nội dung & Các Link Tải phần mềm:</label>
+                        <button onclick="insertTemplate()" class="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-indigo-200"><i class="fas fa-magic mr-1"></i> Chèn Mẫu Nhiều Nút Tải Đẹp</button>
+                    </div>
+                    <textarea id="cmsGuide" rows="14" class="w-full p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-mono text-sm bg-slate-800 text-green-400" placeholder="Viết nội dung dạng HTML vào đây..."></textarea>
+                    <p class="text-xs text-slate-400 mt-2">* Mày chỉ cần thay chữ <b>"LINK-TAI-CUA-MAY-O-DAY"</b> trong đoạn code bằng link Google Drive/Mediafire của mày là nút tải sẽ hoạt động.</p>
                 </div>
+                <button onclick="saveCms()" class="bg-indigo-600 text-white font-bold px-8 py-4 rounded-xl shadow-lg w-full">LƯU NỘI DUNG NÀY LÊN WEB KHÁCH HÀNG</button>
             </div>
         </div>
     </div>
 
-    <div id="modalManualOrder" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="glass-card p-8 w-full max-w-md space-y-4">
-            <h3 class="font-bold text-xl mb-2">Tạo đơn Test thủ công</h3>
-            <input type="email" id="manEmail" class="w-full p-4 border border-slate-200 rounded-xl outline-none" placeholder="Email khách...">
-            <input type="text" id="manPkg" class="w-full p-4 border border-slate-200 rounded-xl outline-none" value="Gói 1 Tháng">
-            <button onclick="saveManualOrder()" class="w-full bg-indigo-600 text-white py-4 font-bold rounded-xl shadow-md">TẠO ĐƠN VÀO HỆ THỐNG</button>
-            <button onclick="document.getElementById('modalManualOrder').classList.add('hidden')" class="w-full bg-slate-100 text-slate-600 py-4 font-bold rounded-xl">HỦY</button>
+    <div id="modalAction" class="hidden fixed inset-0 bg-slate-900/40 z-50 flex items-center justify-center p-4">
+        <div class="glass-card p-8 w-full max-w-lg">
+            <h3 class="text-xl font-bold mb-4">Duyệt Đơn: <span id="actOrderId" class="text-indigo-600"></span></h3>
+            <label class="block font-bold text-slate-800 mb-2">🟢 Dán Link VPN:</label>
+            <input type="text" id="actSubLink" class="w-full p-3 border rounded-lg mb-4" placeholder="Dán link lấy từ web nguồn vào đây...">
+            <button onclick="processOrder('success')" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg">XÁC NHẬN DUYỆT & GỬI GMAIL</button>
+            <button onclick="document.getElementById('modalAction').classList.add('hidden')" class="w-full mt-2 bg-slate-100 py-2 rounded-lg font-bold">Hủy</button>
         </div>
     </div>
 
     <script>
-        const DB_KEY = 'vpn_orders_db'; // Dùng chung key với index.html
+        const DB_KEY = 'vpn_orders_db';
         let ordersDb = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+
+        // LINK GOOGLE APPS SCRIPT CỦA MÀY (Sẽ lấy ở Bước 3)
+        const GOOGLE_MAIL_API = "https://script.google.com/macros/s/AKfyc.../exec"; 
 
         function checkAdmin() {
             if(document.getElementById('adminPass').value === "admin2026") {
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('adminPanel').classList.remove('hidden');
-                renderOrders();
-                loadCmsData();
+                renderOrders(); loadCmsData();
             } else alert('Sai pass!');
         }
 
-        function switchTab(tabId) {
-            document.getElementById('tab-orders').classList.add('hidden');
-            document.getElementById('tab-cms').classList.add('hidden');
-            document.getElementById(tabId).classList.remove('hidden');
-            
-            document.getElementById('btn-tab-orders').className = "px-6 py-3 rounded-xl font-bold bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 transition";
-            document.getElementById('btn-tab-cms').className = "px-6 py-3 rounded-xl font-bold bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 transition";
-            
-            document.getElementById('btn-' + tabId).className = "px-6 py-3 rounded-xl font-bold bg-indigo-600 text-white shadow-md shadow-indigo-100 transition";
+        function switchTab(t) {
+            document.getElementById('tab-orders').classList.add('hidden'); document.getElementById('tab-cms').classList.add('hidden');
+            document.getElementById(t).classList.remove('hidden');
+            document.getElementById('btn-tab-orders').className = "px-6 py-3 rounded-xl font-bold bg-white text-slate-600 border border-slate-200";
+            document.getElementById('btn-tab-cms').className = "px-6 py-3 rounded-xl font-bold bg-white text-slate-600 border border-slate-200";
+            document.getElementById('btn-'+t).className = "px-6 py-3 rounded-xl font-bold bg-indigo-600 text-white shadow-md";
         }
 
         function renderOrders() {
             ordersDb = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-            const tbody = document.getElementById('orderTable');
-            tbody.innerHTML = '';
-            let p=0, s=0;
-            
-            ordersDb.forEach((order) => {
-                if(order.status === 'pending') p++; else if(order.status === 'success') s++;
-                
-                let badge = '';
-                if(order.status === 'pending') badge = '<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold border border-yellow-200">⏳ Chờ duyệt</span>';
-                else if(order.status === 'success') badge = '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200">✅ Đã duyệt</span>';
-                else badge = '<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">❌ Lỗi/Hủy</span>';
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="p-5 font-mono font-bold text-indigo-600">${order.id}</td>
-                        <td class="p-5"><p class="font-bold text-slate-800">${order.email}</p><p class="text-xs text-slate-400">${order.date || ''}</p></td>
-                        <td class="p-5 text-slate-600 font-medium">${order.pkg}</td>
-                        <td class="p-5">${badge}</td>
-                        <td class="p-5 text-right">
-                            ${order.status === 'pending' ? `<button onclick="openAction('${order.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold shadow-sm transition">Xử lý ngay</button>` : `<button onclick="deleteOrder('${order.id}')" class="text-slate-400 hover:text-red-500"><i class="fas fa-trash"></i></button>`}
-                        </td>
-                    </tr>`;
+            const tbody = document.getElementById('orderTable'); tbody.innerHTML = '';
+            ordersDb.forEach((o) => {
+                let badge = o.status === 'pending' ? '<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold">Chờ duyệt</span>' : '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">Đã duyệt</span>';
+                tbody.innerHTML += `<tr class="border-b">
+                    <td class="p-5 font-mono font-bold text-indigo-600">${o.id}</td><td class="p-5">${o.email}</td><td class="p-5">${o.pkg}</td><td class="p-5">${badge}</td>
+                    <td class="p-5 text-right">${o.status === 'pending' ? `<button onclick="openAction('${o.id}')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold">Xử lý</button>` : ''}</td>
+                </tr>`;
             });
-            document.getElementById('countPending').innerText = p;
-            document.getElementById('countSuccess').innerText = s;
-        }
-
-        function openManualOrder() { document.getElementById('modalManualOrder').classList.remove('hidden'); }
-        
-        function saveManualOrder() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let id = 'DH-'; for(let i=0; i<10; i++) id += chars.charAt(Math.floor(Math.random()*chars.length));
-            ordersDb.unshift({ id: id, email: document.getElementById('manEmail').value, pkg: document.getElementById('manPkg').value, status: 'pending', date: new Date().toLocaleString() });
-            localStorage.setItem(DB_KEY, JSON.stringify(ordersDb));
-            renderOrders(); document.getElementById('modalManualOrder').classList.add('hidden');
         }
 
         let curId = null;
-        function openAction(id) {
-            curId = id; const o = ordersDb.find(x => x.id === id);
-            document.getElementById('actOrderId').innerText = o.id;
-            document.getElementById('actEmail').innerText = o.email;
-            document.getElementById('actPkg').innerText = o.pkg;
-            document.getElementById('modalAction').classList.remove('hidden');
-        }
+        function openAction(id) { curId = id; document.getElementById('actOrderId').innerText = id; document.getElementById('modalAction').classList.remove('hidden'); }
 
-        function processOrder(type) {
+        async function processOrder(type) {
             const o = ordersDb.find(x => x.id === curId);
-            o.status = type;
-            
-            if(type === 'success') {
-                o.info = document.getElementById('actSubLink').value;
-                alert(`Đã duyệt đơn! Bên Portal của khách giờ sẽ hiện Link VPN.\n(Đã gửi giả lập API Mail cho ${o.email})`);
-            } else {
-                o.reason = document.getElementById('actReason').value;
-                alert(`Đã hủy đơn và báo lỗi cho khách: ${o.reason}`);
-            }
-            
+            o.status = type; o.info = document.getElementById('actSubLink').value;
             localStorage.setItem(DB_KEY, JSON.stringify(ordersDb));
-            renderOrders();
-            document.getElementById('modalAction').classList.add('hidden');
+            
+            // LỆNH BẮN GMAIL TỰ ĐỘNG
+            if(!GOOGLE_MAIL_API.includes("AKfyc...")) {
+                const btn = event.target; btn.innerText = "ĐANG GỬI GMAIL...";
+                try {
+                    await fetch(GOOGLE_MAIL_API, {
+                        method: 'POST', mode: 'no-cors',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            to: o.email, 
+                            subject: "VPN của bạn đã được kích hoạt!", 
+                            html: `<h2>Chào bạn, đơn hàng ${o.id} đã kích hoạt thành công.</h2><p>Truy cập web vpntrinhhg.pages.dev để lấy Link VPN và tải ứng dụng nhé.</p>`
+                        })
+                    });
+                } catch(e) { console.log(e); }
+            } else { alert('Mày chưa cài Link API Gmail. Nhìn xem UI OK chưa rồi setup Email sau!'); }
+
+            renderOrders(); document.getElementById('modalAction').classList.add('hidden');
         }
 
-        function deleteOrder(id) {
-            if(confirm('Xóa hẳn đơn này khỏi hệ thống?')) {
-                ordersDb = ordersDb.filter(x => x.id !== id);
-                localStorage.setItem(DB_KEY, JSON.stringify(ordersDb));
-                renderOrders();
-            }
-        }
-
-        // CMS Logic
+        // CMS Logic Cải Tiến (Đa ứng dụng)
         function loadCmsData() {
             const dev = document.getElementById('cmsDevice').value;
-            document.getElementById('cmsLink').value = localStorage.getItem('cms_' + dev + '_link') || '';
             document.getElementById('cmsGuide').value = localStorage.getItem('cms_' + dev + '_guide') || '';
         }
 
         function saveCms() {
-            const dev = document.getElementById('cmsDevice').value;
-            localStorage.setItem('cms_' + dev + '_link', document.getElementById('cmsLink').value);
-            localStorage.setItem('cms_' + dev + '_guide', document.getElementById('cmsGuide').value);
-            alert('Đã đồng bộ bài viết/link cho ' + dev + ' sang trang khách hàng!');
+            localStorage.setItem('cms_' + document.getElementById('cmsDevice').value + '_guide', document.getElementById('cmsGuide').value);
+            alert('Lưu thành công!');
+        }
+
+        function insertTemplate() {
+            const temp = `<div style="display: flex; gap: 10px; margin-bottom: 20px;">
+    <a href="LINK-TAI-CUA-MAY-O-DAY" target="_blank" style="background: #4f46e5; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; text-decoration: none;">⬇️ Tải V2rayNG</a>
+    
+    <a href="LINK-TAI-CUA-MAY-O-DAY" target="_blank" style="background: #0ea5e9; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; text-decoration: none;">⬇️ Tải NekoBox</a>
+</div>
+
+<h3>Hướng dẫn cài đặt nhanh:</h3>
+<ol>
+    <li>Tải 1 trong các ứng dụng ở trên về và cài đặt.</li>
+    <li>Mở app lên, bấm vào dấu + ở góc phải.</li>
+    <li>Chọn "Nhập từ Clipboard" (Nhớ copy Link VPN ở trên trước).</li>
+    <li>Bấm kết nối là xong!</li>
+</ol>`;
+            const box = document.getElementById('cmsGuide');
+            box.value = temp + "\n\n" + box.value;
         }
     </script>
 </body>
