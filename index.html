@@ -14,6 +14,9 @@
         .view-section.active { display: block; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .tab-btn.active { background-color: #4f46e5 !important; color: white !important; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3); }
+        /* Tùy chỉnh FAQ details */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative">
@@ -23,8 +26,8 @@
     <nav id="mainNav" class="glass-ui sticky top-2 md:top-4 z-50 w-[95%] max-w-7xl mx-auto rounded-2xl px-4 md:px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-3 transition-transform duration-300">
         <div class="font-extrabold text-xl md:text-2xl tracking-tighter cursor-pointer flex items-center text-indigo-700 w-full md:w-auto justify-between md:justify-start" onclick="logout()">
             <div class="flex items-center"><i class="fas fa-shield-alt text-2xl md:text-3xl mr-2"></i> <span data-i18n="brand">Trinh Hg VPN</span></div>
-            <select id="langSelectMobile" onchange="changeLanguage(this.value)" class="md:hidden bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-lg px-2 py-1 text-xs font-bold outline-none">
-                <option value="vi">VN</option><option value="en">EN</option><option value="zh">CN</option>
+            <select id="langSelectMobile" onchange="changeLanguage(this.value)" class="md:hidden bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-lg px-2 py-1 text-base font-bold outline-none">
+                <option value="vi">🇻🇳</option><option value="en">🇬🇧</option><option value="zh">🇨🇳</option>
             </select>
         </div>
         
@@ -99,6 +102,8 @@
         <div id="view-store" class="view-section active">
             <div id="welcomeBanner" class="text-center mb-8 md:mb-10 mt-2 md:mt-4">
                 <h1 class="text-3xl md:text-5xl font-extrabold mb-3 text-slate-800 leading-tight" data-i18n="hero_title">Vượt rào cản. <span class="text-indigo-600">Kết nối thế giới.</span></h1>
+                <p class="text-xs md:text-base text-slate-600 font-medium px-4" data-i18n="hero_desc">Trải nghiệm VPN chất lượng cao từ ba nhà mạng viễn thông lớn.</p>
+                <p class="mt-4 text-sm md:text-base text-slate-600 font-medium px-4" data-i18n="contact_test">Cần test truy cập app nào thì hãy <span class="text-red-600 font-bold">liên hệ admin qua Mess hoặc Zalo</span> bên dưới.</p>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-10 max-w-5xl mx-auto">
@@ -141,7 +146,7 @@
                                 <input type="text" id="cusZalo" class="w-full border border-slate-200 rounded-lg p-2.5 mt-3 hidden outline-none text-xs md:text-sm" placeholder="Zalo / Telegram...">
                             </div>
 
-                            <button type="submit" id="btnConfirm" class="w-full bg-indigo-600 text-white font-bold py-3.5 md:py-4 rounded-xl text-sm md:text-lg uppercase" data-i18n="btn_create_order">TẠO MÃ QR CHUYỂN KHOẢN</button>
+                            <button type="submit" id="btnConfirm" class="w-full bg-indigo-600 text-white font-bold py-3 md:py-4 rounded-xl text-sm md:text-lg uppercase" data-i18n="btn_create_order">TẠO MÃ QR CHUYỂN KHOẢN</button>
                         </div>
 
                         <div class="bg-slate-50 border border-slate-200 p-5 md:p-8 rounded-xl md:rounded-3xl" id="checkoutRightCol"></div>
@@ -150,21 +155,37 @@
             </div>
         </div>
         
-        <div class="mt-16 mb-10 max-w-4xl mx-auto">
+        <div class="mt-16 mb-10 max-w-4xl mx-auto px-2">
             <h3 class="text-xl md:text-2xl font-extrabold text-center mb-6 text-slate-800" data-i18n="faq_title">Câu hỏi thường gặp (FAQ)</h3>
-            <div class="space-y-4">
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <h4 class="font-bold text-indigo-700 text-sm md:text-base mb-1" data-i18n="faq_1_q">Làm sao để lấy Hướng dẫn và Link cài đặt?</h4>
-                    <p class="text-slate-600 text-xs md:text-sm" data-i18n="faq_1_a">Sau khi thanh toán và được duyệt, bạn nhập <b>Mã Đơn Hàng</b> hoặc <b>Email</b> vào thanh tìm kiếm trên cùng để vào Cổng Khách Hàng. Mọi thứ ở trong đó.</p>
-                </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <h4 class="font-bold text-indigo-700 text-sm md:text-base mb-1" data-i18n="faq_2_q">Có những phương thức thanh toán nào?</h4>
-                    <p class="text-slate-600 text-xs md:text-sm" data-i18n="faq_2_a">Chúng tôi hỗ trợ Chuyển khoản Ngân hàng VN, Alipay, WeChat Pay và Crypto (USDT). Vui lòng chọn ở màn hình Đặt đơn.</p>
-                </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <h4 class="font-bold text-indigo-700 text-sm md:text-base mb-1" data-i18n="faq_3_q">Tôi đổi điện thoại có dùng tiếp được không?</h4>
-                    <p class="text-slate-600 text-xs md:text-sm" data-i18n="faq_3_a">Có. Bạn chỉ cần tra cứu lại Mã Đơn Hàng trên web để lấy lại Link cấu hình và dán vào máy mới.</p>
-                </div>
+            <div class="space-y-3">
+                <details class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 group cursor-pointer">
+                    <summary class="font-bold text-indigo-700 text-sm md:text-base flex justify-between items-center outline-none">
+                        <span data-i18n="faq_1_q">Làm sao để lấy Hướng dẫn và Link cài đặt?</span>
+                        <span class="transition group-open:rotate-180 text-slate-400"><i class="fas fa-chevron-down"></i></span>
+                    </summary>
+                    <p class="text-slate-600 text-xs md:text-sm mt-3 leading-relaxed" data-i18n="faq_1_a">Sau khi thanh toán và được duyệt, bạn nhập <b>Mã Đơn Hàng</b> hoặc <b>Email</b> vào thanh tìm kiếm trên cùng để vào Cổng Khách Hàng. Mọi thứ ở trong đó.</p>
+                </details>
+                <details class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 group cursor-pointer">
+                    <summary class="font-bold text-indigo-700 text-sm md:text-base flex justify-between items-center outline-none">
+                        <span data-i18n="faq_4_q">VPN hỗ trợ truy cập những ứng dụng nào?</span>
+                        <span class="transition group-open:rotate-180 text-slate-400"><i class="fas fa-chevron-down"></i></span>
+                    </summary>
+                    <p class="text-slate-600 text-xs md:text-sm mt-3 leading-relaxed" data-i18n="faq_4_a">Hỗ trợ lướt siêu mượt các app như: <b>TikTok, Facebook, Messenger, Threads, Instagram, Locket, Telegram, Zalo, YouTube...</b> Cần test truy cập app nào thì nhắn tin với Admin nhé.</p>
+                </details>
+                <details class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 group cursor-pointer">
+                    <summary class="font-bold text-indigo-700 text-sm md:text-base flex justify-between items-center outline-none">
+                        <span data-i18n="faq_2_q">Có những phương thức thanh toán nào?</span>
+                        <span class="transition group-open:rotate-180 text-slate-400"><i class="fas fa-chevron-down"></i></span>
+                    </summary>
+                    <p class="text-slate-600 text-xs md:text-sm mt-3 leading-relaxed" data-i18n="faq_2_a">Chúng tôi hỗ trợ Chuyển khoản Ngân hàng VN, Alipay, WeChat Pay và Crypto (USDT). Vui lòng chọn ở màn hình Đặt đơn.</p>
+                </details>
+                <details class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 group cursor-pointer">
+                    <summary class="font-bold text-indigo-700 text-sm md:text-base flex justify-between items-center outline-none">
+                        <span data-i18n="faq_3_q">Tôi đổi điện thoại có dùng tiếp được không?</span>
+                        <span class="transition group-open:rotate-180 text-slate-400"><i class="fas fa-chevron-down"></i></span>
+                    </summary>
+                    <p class="text-slate-600 text-xs md:text-sm mt-3 leading-relaxed" data-i18n="faq_3_a">Có. Bạn chỉ cần tra cứu lại Mã Đơn Hàng trên web để lấy lại Link cấu hình và dán vào máy mới.</p>
+                </details>
             </div>
         </div>
 
@@ -174,8 +195,8 @@
         <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <p class="text-sm font-bold text-slate-500">© 2026 Trinh Hg VPN. All rights reserved.</p>
             <div class="flex gap-3">
-                <a href="https://zalo.me/0917678211" target="_blank" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-100 transition"><i class="fas fa-phone mr-1"></i> Zalo Support</a>
-                <a href="https://www.facebook.com/trinh.hg.57" target="_blank" class="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-100 transition"><i class="fab fa-facebook-messenger mr-1"></i> Messenger</a>
+                <a href="https://zalo.me/0917678211" target="_blank" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-blue-100 transition"><i class="fas fa-phone mr-1"></i> Zalo Support</a>
+                <a href="https://www.facebook.com/trinh.hg.57" target="_blank" class="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-indigo-100 transition"><i class="fab fa-facebook-messenger mr-1"></i> Messenger</a>
             </div>
         </div>
     </footer>
@@ -184,14 +205,16 @@
         const API_URL = "https://vpn-api.doicucden.workers.dev"; 
         const GOOGLE_MAIL_API = "https://script.google.com/macros/s/AKfycbyQjEln9By0HuUPtboqJpb1INI6rRp52BxvHR8HaE5fs8qojfgau1R_27P4RyLLxXIp/exec";
         const SESSION_KEY = 'vpn_portal_session_24h';
+        const DB_KEY = 'vpn_orders_db';
 
-        // TỪ ĐIỂN DỊCH RẠCH RÒI 3 NGÔN NGỮ
+        // TỪ ĐIỂN
         const i18n = {
             vi: {
                 brand: "Trinh Hg VPN", search_placeholder: "Nhập Mã Đơn hoặc Email...", portal_btn: "Cổng Khách",
                 portal_title: "Cổng Khách Hàng", renew_title: "Gia hạn Dịch vụ", order_id_label: "Mã Đơn", pkg_name_label: "Gói Dịch Vụ", pkg_data_label: "Dung Lượng", pkg_time_label: "Thời Hạn",
                 pending_title: "Đơn hàng đang chờ xử lý", btn_refresh: "Làm mới", btn_copy: "COPY LINK",
                 hero_title: "Vượt rào cản. <span class='text-indigo-600'>Kết nối thế giới.</span>", hero_desc: "Trải nghiệm VPN chất lượng cao từ ba nhà mạng lớn.",
+                contact_test: "Cần test truy cập app nào thì hãy <span class='text-red-600 font-bold'>liên hệ admin qua Mess hoặc Zalo</span> bên dưới.",
                 feat_1: "Mở khóa mọi nền tảng", feat_2: "Ping thấp, Game mượt", feat_3: "Bảo mật No-log", feat_4: "Đa nền tảng",
                 tab_all: "Tất cả", tab_cycle: "Theo Chu kỳ", tab_usage: "Dung lượng", checkout_title: "Thanh toán",
                 email_placeholder: "Email nhận thông tin (Bắt buộc)", btn_create_order: "TẠO ĐƠN & LẤY MÃ", btn_paid: "ĐÃ CHUYỂN KHOẢN",
@@ -199,13 +222,16 @@
                 guide_title: "Hướng dẫn Thanh toán", guide_desc: "Điền Email, chọn phương thức và bấm Tạo Đơn để lấy thông tin.",
                 data_label: "Dung lượng:", dev_label: "Không giới hạn thiết bị", speed_label: "Băng thông > 100Gbps", btn_buy: "Đăng ký Gói Này",
                 copy_memo: "Nội dung chuyển khoản:", copy_amount: "Số tiền:", need_support: "Cần Hỗ trợ Cài đặt (Zalo/Tele)",
-                faq_title: "Câu hỏi thường gặp (FAQ)", faq_1_q: "Làm sao lấy Hướng dẫn?", faq_1_a: "Nhập Mã Đơn hoặc Email vào thanh tìm kiếm trên cùng để vào Cổng Khách Hàng.", faq_2_q: "Có những phương thức thanh toán nào?", faq_2_a: "Chuyển khoản Bank VN, Alipay, WeChat Pay và Crypto.", faq_3_q: "Đổi máy tính/điện thoại có dùng được không?", faq_3_a: "Có. Tra cứu lại mã đơn trên web để lấy cấu hình."
+                faq_title: "Câu hỏi thường gặp (FAQ)", faq_1_q: "Làm sao lấy Hướng dẫn?", faq_1_a: "Nhập Mã Đơn hoặc Email vào thanh tìm kiếm trên cùng để vào Cổng Khách Hàng.", 
+                faq_4_q: "VPN hỗ trợ truy cập những ứng dụng nào?", faq_4_a: "Hỗ trợ lướt siêu mượt các app như: <b>TikTok, Facebook, Messenger, Threads, Instagram, Locket, Telegram, Zalo, YouTube...</b> Cần test truy cập app nào thì nhắn tin với Admin nhé.",
+                faq_2_q: "Có những phương thức thanh toán nào?", faq_2_a: "Chuyển khoản Bank VN, Alipay, WeChat Pay và Crypto.", faq_3_q: "Đổi máy tính/điện thoại có dùng được không?", faq_3_a: "Có. Tra cứu lại mã đơn trên web để lấy cấu hình."
             },
             en: {
                 brand: "Trinh Hg VPN", search_placeholder: "Order ID or Email...", portal_btn: "Portal",
                 portal_title: "Client Portal", renew_title: "Renew Service", order_id_label: "Order ID", pkg_name_label: "Package", pkg_data_label: "Data", pkg_time_label: "Duration",
                 pending_title: "Order is pending approval", btn_refresh: "Refresh", btn_copy: "COPY URL",
                 hero_title: "Break barriers. <span class='text-indigo-600'>Connect the world.</span>", hero_desc: "Premium VPN experience with unlimited bandwidth.",
+                contact_test: "Want to test an app? <span class='text-red-600 font-bold'>Contact Admin via Messenger/Zalo</span> below.",
                 feat_1: "Unblock everything", feat_2: "Low Ping Gaming", feat_3: "Strict No-log", feat_4: "Multi-platform",
                 tab_all: "All", tab_cycle: "By Cycle", tab_usage: "By Data", checkout_title: "Checkout",
                 email_placeholder: "Email (Required)", btn_create_order: "CREATE ORDER & PAY", btn_paid: "I HAVE PAID",
@@ -213,13 +239,16 @@
                 guide_title: "Payment Instructions", guide_desc: "Enter Email, select payment method and Create Order.",
                 data_label: "Data:", dev_label: "Unlimited devices", speed_label: "Speed > 100Gbps", btn_buy: "Subscribe Now",
                 copy_memo: "Transfer Memo:", copy_amount: "Amount:", need_support: "Need Setup Support",
-                faq_title: "Frequently Asked Questions", faq_1_q: "Where is the guide?", faq_1_a: "Enter your Order ID in the top search bar to access the Portal.", faq_2_q: "Payment methods?", faq_2_a: "Vietnam Bank, Alipay, WeChat, Crypto.", faq_3_q: "Can I change my device?", faq_3_a: "Yes. Just re-enter your Order ID to get the setup link."
+                faq_title: "Frequently Asked Questions", faq_1_q: "Where is the guide?", faq_1_a: "Enter your Order ID in the top search bar to access the Portal.", 
+                faq_4_q: "What apps does the VPN support?", faq_4_a: "Supports smooth browsing for: <b>TikTok, Facebook, Messenger, Threads, Instagram, Telegram, Zalo, YouTube...</b> Message Admin to test any app.",
+                faq_2_q: "Payment methods?", faq_2_a: "Vietnam Bank, Alipay, WeChat, Crypto.", faq_3_q: "Can I change my device?", faq_3_a: "Yes. Just re-enter your Order ID to get the setup link."
             },
             zh: {
                 brand: "Trinh Hg VPN", search_placeholder: "输入订单号或邮箱...", portal_btn: "客户门户",
                 portal_title: "客户门户", renew_title: "续费服务", order_id_label: "订单号", pkg_name_label: "套餐", pkg_data_label: "流量", pkg_time_label: "时间",
                 pending_title: "订单正在处理中", btn_refresh: "刷新", btn_copy: "复制链接",
                 hero_title: "突破界限。 <span class='text-indigo-600'>连接世界。</span>", hero_desc: "体验优质VPN，不限带宽，保护隐私。",
+                contact_test: "想要测试应用程序？ 请在下面<span class='text-red-600 font-bold'>联系管理员</span>。",
                 feat_1: "解锁所有平台", feat_2: "低延迟游戏", feat_3: "无日志记录", feat_4: "多平台支持",
                 tab_all: "全部", tab_cycle: "按周期", tab_usage: "按流量", checkout_title: "结账",
                 email_placeholder: "您的电子邮件 (必填)", btn_create_order: "创建订单", btn_paid: "我已付款",
@@ -227,17 +256,19 @@
                 guide_title: "付款说明", guide_desc: "输入邮箱，选择付款方式并创建订单。",
                 data_label: "流量:", dev_label: "无限制设备", speed_label: "带宽 > 100Gbps", btn_buy: "立即订阅",
                 copy_memo: "转账备注:", copy_amount: "金额:", need_support: "需要人工设置支持",
-                faq_title: "常见问题", faq_1_q: "如何获取教程？", faq_1_a: "在顶部搜索栏输入您的订单号即可进入客户门户。", faq_2_q: "有哪些付款方式？", faq_2_a: "我们支持支付宝，微信和加密货币。", faq_3_q: "可以更换设备吗？", faq_3_a: "可以，重新查询订单号即可获取配置链接。"
+                faq_title: "常见问题", faq_1_q: "如何获取教程？", faq_1_a: "在顶部搜索栏输入您的订单号即可进入客户门户。", 
+                faq_4_q: "VPN支持哪些应用程序？", faq_4_a: "支持流畅浏览：<b>TikTok、Facebook、Messenger、Threads、Instagram、Telegram、YouTube...</b> 联系管理员测试任何应用。",
+                faq_2_q: "有哪些付款方式？", faq_2_a: "我们支持支付宝，微信和加密货币。", faq_3_q: "可以更换设备吗？", faq_3_a: "可以，重新查询订单号即可获取配置链接。"
             }
         };
 
         const pkgs = [
-            { id: 'c1', type: 'cycle', vi: { name: 'Gói 1 Tháng', price: '70.000đ', time: '1 Tháng' }, en: { name: '1 Month Plan', price: '$3.00', time: '1 Month' }, zh: { name: '1个月套餐', price: '17.5 CNY', time: '1个月' }, usd: 3, vnd: 70000, cny: 17.5, data: '1000GB', tag: '🔥 BEST SELLER' },
-            { id: 'c2', type: 'cycle', vi: { name: 'Gói Cao Cấp', price: '150.000đ', time: '1 Tháng' }, en: { name: 'Premium Plan', price: '$6.00', time: '1 Month' }, zh: { name: '高级套餐', price: '35 CNY', time: '1个月' }, usd: 6, vnd: 150000, cny: 35, data: '3000GB', tag: '' },
-            { id: 'c3', type: 'cycle', vi: { name: 'Gói 1 Năm', price: '300.000đ', time: '1 Năm' }, en: { name: '1 Year Plan', price: '$12.00', time: '1 Year' }, zh: { name: '包年套餐', price: '70 CNY', time: '1年' }, usd: 12, vnd: 300000, cny: 70, data: '200GB/tháng', tag: 'Khuyên dùng' },
-            { id: 'd1', type: 'usage', vi: { name: 'Không Giới Hạn', price: '70.000đ', time: 'Vĩnh viễn' }, en: { name: 'Unlimited Data', price: '$3.00', time: 'Lifetime' }, zh: { name: '不限时流量', price: '17.5 CNY', time: '永久' }, usd: 3, vnd: 70000, cny: 17.5, data: '200GB', tag: '' },
-            { id: 'd2', type: 'usage', vi: { name: 'Không Giới Hạn', price: '180.000đ', time: 'Vĩnh viễn' }, en: { name: 'Unlimited Data', price: '$7.00', time: 'Lifetime' }, zh: { name: '不限时流量', price: '45 CNY', time: '永久' }, usd: 7, vnd: 180000, cny: 45, data: '2000GB', tag: '' },
-            { id: 'd3', type: 'usage', vi: { name: 'Không Giới Hạn', price: '320.000đ', time: 'Vĩnh viễn' }, en: { name: 'Unlimited Data', price: '$13.00', time: 'Lifetime' }, zh: { name: '不限时流量', price: '80 CNY', time: '永久' }, usd: 13, vnd: 320000, cny: 80, data: '6000GB', tag: '' },
+            { id: 'c1', type: 'cycle', vi: { name: 'Gói 1 Tháng', price: '70.000đ', time: '1 Tháng' }, en: { name: '1 Month Plan', price: '$3.00', time: '1 Month' }, zh: { name: '1个月套餐', price: '17.5 CNY', time: '1个月' }, usd: 3, vnd: 70000, cny: 17.5, data: '1000GB', tag: {vi:'🔥 BÁN CHẠY', en:'🔥 BEST SELLER', zh:'🔥 热销'} },
+            { id: 'c2', type: 'cycle', vi: { name: 'Gói Cao Cấp', price: '150.000đ', time: '1 Tháng' }, en: { name: 'Premium Plan', price: '$6.00', time: '1 Month' }, zh: { name: '高级套餐', price: '35 CNY', time: '1个月' }, usd: 6, vnd: 150000, cny: 35, data: '3000GB', tag: null },
+            { id: 'c3', type: 'cycle', vi: { name: 'Gói 1 Năm', price: '300.000đ', time: '1 Năm' }, en: { name: '1 Year Plan', price: '$12.00', time: '1 Year' }, zh: { name: '包年套餐', price: '70 CNY', time: '1年' }, usd: 12, vnd: 300000, cny: 70, data: '200GB/tháng', tag: {vi:'Khuyên dùng', en:'Recommended', zh:'推荐'} },
+            { id: 'd1', type: 'usage', vi: { name: 'Không Giới Hạn', price: '70.000đ', time: 'Vĩnh viễn' }, en: { name: 'Unlimited Data', price: '$3.00', time: 'Lifetime' }, zh: { name: '不限时流量', price: '17.5 CNY', time: '永久' }, usd: 3, vnd: 70000, cny: 17.5, data: '200GB', tag: null },
+            { id: 'd2', type: 'usage', vi: { name: 'Không Giới Hạn', price: '180.000đ', time: 'Vĩnh viễn' }, en: { name: 'Unlimited Data', price: '$7.00', time: 'Lifetime' }, zh: { name: '不限时流量', price: '45 CNY', time: '永久' }, usd: 7, vnd: 180000, cny: 45, data: '2000GB', tag: null },
+            { id: 'd3', type: 'usage', vi: { name: 'Không Giới Hạn', price: '320.000đ', time: 'Vĩnh viễn' }, en: { name: 'Unlimited Data', price: '$13.00', time: 'Lifetime' }, zh: { name: '不限时流量', price: '80 CNY', time: '永久' }, usd: 13, vnd: 320000, cny: 80, data: '6000GB', tag: null },
         ];
 
         let lang = 'vi'; let currentPackage = null; let currentOrderId = ''; let cmsCache = {}; let autoPollInterval;
@@ -252,6 +283,25 @@
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
+        // HÀM FETCH THÔNG MINH CHỐNG LỖI MẠNG (Fallback LocalStorage)
+        async function apiGet(path) {
+            try {
+                let res = await fetch(API_URL + path);
+                if(!res.ok) throw new Error("HTTP error");
+                let data = await res.json();
+                localStorage.setItem(path === '/api/orders' ? DB_KEY : 'cms_backup', JSON.stringify(data));
+                return data;
+            } catch(e) {
+                console.warn("API Bị chặn, dùng bộ nhớ phụ", e);
+                return JSON.parse(localStorage.getItem(path === '/api/orders' ? DB_KEY : 'cms_backup')) || (path === '/api/orders' ? [] : {});
+            }
+        }
+        async function apiPost(path, data) {
+            localStorage.setItem(path === '/api/orders' ? DB_KEY : 'cms_backup', JSON.stringify(data)); // Luôn lưu dự phòng
+            try { await fetch(API_URL + path, { method: "POST", body: JSON.stringify(data) }); } 
+            catch(e) { console.warn("API Bị chặn, chỉ lưu cục bộ", e); }
+        }
+
         function changeLanguage(val) {
             lang = val; document.getElementById('langSelectMobile').value = val; document.getElementById('langSelectDesktop').value = val;
             document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = i18n[lang][el.getAttribute('data-i18n')]; });
@@ -263,7 +313,7 @@
         function genHTML(pkg) {
             const l = i18n[lang]; const p = pkg[lang];
             return `<div class="bg-white p-5 md:p-6 rounded-2xl md:rounded-3xl border border-slate-100 shadow-sm relative flex flex-col justify-between hover:shadow-lg transition">
-                ${pkg.tag ? `<span class="absolute -top-3 right-4 bg-red-500 text-white text-[10px] px-3 py-1 rounded-full font-black">${pkg.tag}</span>` : ''}
+                ${pkg.tag ? `<span class="absolute -top-3 right-4 ${pkg.tagColor || 'bg-red-500'} text-white text-[10px] px-3 py-1 rounded-full font-black">${pkg.tag[lang]}</span>` : ''}
                 <div>
                     <h3 class="font-extrabold text-lg md:text-xl">${p.name}</h3><p class="text-xs font-bold text-slate-500 mb-3">${p.time}</p>
                     <div class="text-2xl md:text-3xl font-black text-indigo-600 mb-4 border-b border-slate-100 pb-4">${p.price}</div>
@@ -306,27 +356,27 @@
         function renderPaymentBox() {
             const col = document.getElementById('checkoutRightCol'); const m = document.getElementById('payMethod').value; const btn = document.getElementById('btnConfirm');
             if(!currentOrderId) {
-                btn.innerText = i18n[lang].btn_create_order; btn.className = 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 md:py-4 rounded-xl text-sm md:text-base uppercase transition mt-6';
+                btn.innerText = i18n[lang].btn_create_order; btn.className = 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 md:py-4 rounded-xl text-sm md:text-base uppercase transition mt-4 md:mt-6';
                 col.innerHTML = `<h4 class="font-extrabold text-base md:text-lg mb-4 flex items-center"><i class="fas fa-info-circle text-indigo-500 mr-2"></i>${i18n[lang].guide_title}</h4><p class="text-sm text-slate-600 mb-4">${i18n[lang].guide_desc}</p>`;
                 return;
             }
-            btn.innerText = i18n[lang].btn_paid; btn.className = 'w-full mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-3 md:py-4 rounded-xl text-sm md:text-base shadow-lg uppercase transition';
+            btn.innerText = i18n[lang].btn_paid; btn.className = 'w-full mt-4 md:mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-3 md:py-4 px-2 rounded-xl text-sm md:text-base shadow-lg uppercase transition';
             if(m === 'bank') {
-                col.innerHTML = `<div class="text-center w-full"><div class="bg-indigo-50 p-2 rounded-xl inline-block mb-4"><img src="https://img.vietqr.io/image/mbbank-0917678211-compact.png?amount=${currentPackage.vnd}&addInfo=${currentOrderId}&accountName=TRINH THI XUAN HUONG" class="w-48 h-48 md:w-56 md:h-56 mx-auto rounded-xl mix-blend-multiply"></div>
+                col.innerHTML = `<div class="text-center w-full"><div class="bg-indigo-50 p-2 rounded-xl inline-block mb-4"><img src="https://img.vietqr.io/image/mbbank-0917678211-compact.png?amount=${currentPackage.vnd}&addInfo=${currentOrderId}&accountName=TRINH THI XUAN HUONG" class="w-40 h-40 md:w-56 md:h-56 mx-auto rounded-xl mix-blend-multiply"></div>
                     <div class="w-full text-left text-xs md:text-sm space-y-2 mb-4">
-                        <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100"><span class="text-slate-500">Chủ TK:</span><strong class="text-slate-800">TRINH THI XUAN HUONG</strong></div>
-                        <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100"><span class="text-slate-500">Số TK:</span><strong class="text-indigo-600 font-bold bg-indigo-50 px-2 py-1 rounded cursor-pointer" onclick="copyText('0917678211')">0917678211 <i class="far fa-copy ml-1"></i></strong></div>
-                        <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100"><span class="text-slate-500">${i18n[lang].copy_amount}</span><strong class="text-red-500 font-black text-base md:text-lg">${currentPackage.vi.price}</strong></div>
+                        <div class="flex justify-between items-center bg-white p-2.5 md:p-3 rounded-xl border border-slate-100"><span class="text-slate-500">Chủ TK:</span><strong class="text-slate-800">TRINH THI XUAN HUONG</strong></div>
+                        <div class="flex justify-between items-center bg-white p-2.5 md:p-3 rounded-xl border border-slate-100"><span class="text-slate-500">Số TK:</span><strong class="text-indigo-600 font-bold bg-indigo-50 px-2 py-1 rounded cursor-pointer" onclick="copyText('0917678211')">0917678211 <i class="far fa-copy ml-1"></i></strong></div>
+                        <div class="flex justify-between items-center bg-white p-2.5 md:p-3 rounded-xl border border-slate-100"><span class="text-slate-500">${i18n[lang].copy_amount}</span><strong class="text-red-500 font-black text-base md:text-lg">${currentPackage.vi.price}</strong></div>
                     </div>
                     <div class="bg-yellow-50 py-3 px-2 rounded-xl text-center w-full"><span class="block text-slate-600 text-[10px] font-bold mb-1 uppercase">${i18n[lang].copy_memo}</span><strong class="block w-full bg-white text-slate-800 font-mono text-lg md:text-xl py-2 rounded-lg cursor-pointer shadow-sm" onclick="copyText('${currentOrderId}')">${currentOrderId} <i class="far fa-copy"></i></strong></div></div>`;
             } else if (m === 'alipay') {
-                col.innerHTML = `<div class="text-center w-full"><h4 class="font-extrabold text-base md:text-lg mb-4">Alipay / WeChat Pay</h4>
-                    <div class="flex justify-center gap-4 mb-4">
+                col.innerHTML = `<div class="text-center w-full"><h4 class="font-extrabold text-slate-800 text-base md:text-lg mb-4">Alipay / WeChat Pay</h4>
+                    <div class="flex justify-center gap-4 mb-6">
                         <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-100"><img src="./alipay.jpg" class="w-24 h-24 md:w-32 md:h-32 rounded-lg object-cover"><p class="text-[10px] md:text-xs font-bold mt-2 text-blue-600">Alipay</p></div>
                         <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-100"><img src="./wechat.jpg" class="w-24 h-24 md:w-32 md:h-32 rounded-lg object-cover"><p class="text-[10px] md:text-xs font-bold mt-2 text-green-600">WeChat</p></div>
                     </div>
                     <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100 mb-4"><span class="text-slate-500 text-xs md:text-sm">${i18n[lang].copy_amount}</span><strong class="text-red-500 font-black text-lg md:text-xl">${currentPackage.cny} CNY</strong></div>
-                    <div class="bg-blue-50 p-4 rounded-xl text-center w-full"><span class="block text-slate-600 text-[10px] font-bold mb-1 uppercase">${i18n[lang].copy_memo}</span><strong class="block w-full bg-white text-slate-800 font-mono text-lg md:text-xl py-2 rounded-lg cursor-pointer shadow-sm" onclick="copyText('${currentOrderId}')">${currentOrderId} <i class="far fa-copy ml-1"></i></strong><p class="text-[10px] md:text-xs text-red-500 mt-2">Manual Input Required</p></div></div>`;
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-center w-full"><span class="block text-slate-600 text-[10px] font-bold mb-1 uppercase">${i18n[lang].copy_memo}</span><strong class="block w-full bg-white text-slate-800 font-mono text-lg md:text-xl py-2 rounded-lg cursor-pointer shadow-sm mb-2" onclick="copyText('${currentOrderId}')">${currentOrderId} <i class="far fa-copy ml-1"></i></strong><p class="text-[10px] md:text-xs text-red-500 font-bold">${lang==='zh'?'请手动输入金额和订单号！':(lang==='en'?'Please manually enter the amount and Memo!':'Vui lòng tự nhập số tiền và nội dung chuyển khoản!')}</p></div></div>`;
             } else {
                 col.innerHTML = `<div class="text-center py-10"><i class="fas fa-headset text-4xl text-slate-400 mb-3"></i><h3 class="text-lg font-black text-slate-700 mb-2">Contact Admin</h3><p class="text-xs text-slate-500">Submit order and contact Admin via Zalo/Tele.</p></div>`;
             }
@@ -341,81 +391,87 @@
                 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; currentOrderId = 'DH-'; for(let i=0; i<10; i++) currentOrderId += chars.charAt(Math.floor(Math.random()*chars.length));
                 renderPaymentBox();
                 
-                // NGẦM GỬI MAIL BÁO CHO ADMIN LUCAS
+                // BẮN MAIL BÁO ĐỘNG NGẦM CHO ADMIN
                 try {
                     await fetch(GOOGLE_MAIL_API, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
-                        to: "lucastanora@gmail.com", subject: `[CÓ ĐƠN] ${currentOrderId} - Khách đang xem QR`, 
-                        html: `<h2 style="color:blue">Khách vừa TẠO MÃ thanh toán!</h2><p>Mã: <b>${currentOrderId}</b></p><p>Gói: ${currentPackage.vi.name} (${currentPackage.data})</p><p>Email: ${document.getElementById('cusEmail').value}</p><p>Hỗ trợ: ${document.getElementById('needSupport').checked ? 'CÓ' : 'Không'}</p><p>Vui lòng trực hòm thư Bank, nếu tiền về hãy vào Admin duyệt ngay.</p>`
+                        to: "lucastanora@gmail.com", subject: `[BÁO ĐỘNG ĐƠN] ${currentOrderId} - Đang chờ Bank`, 
+                        html: `<h2 style="color:blue">Khách vừa TẠO MÃ thanh toán!</h2><p>Mã: <b>${currentOrderId}</b></p><p>Gói: ${currentPackage.vi.name} (${currentPackage.data})</p><p>Email khách: ${document.getElementById('cusEmail').value}</p><p>Vui lòng mở trang Admin để kiểm tra và duyệt nếu tiền về!</p>`
                     }) });
                 } catch(e) {}
             } else {
                 btn.innerText = "LOADING..."; btn.disabled = true;
-                try {
-                    let dbRes = await fetch(API_URL + "/api/orders"); let db = await dbRes.json();
-                    db.unshift({ id: currentOrderId, email: document.getElementById('cusEmail').value, zalo: document.getElementById('cusZalo').value, method: document.getElementById('payMethod').value, pkg: `${currentPackage.vi.name} - ${currentPackage.vi.price} / ${currentPackage.usd}$ / ${currentPackage.cny}¥ (${currentPackage.data})`, needSupport: document.getElementById('needSupport').checked, status: 'pending', date: new Date().toLocaleString() });
-                    await fetch(API_URL + "/api/orders", { method: "POST", body: JSON.stringify(db) });
-                    showToast(lang === 'vi' ? "Thành công!" : "Success!", "success"); cancelCheckout(); document.getElementById('orderForm').reset();
-                    document.getElementById('loginInput').value = currentOrderId; login(true);
-                } catch(e) { showToast("Lỗi mạng!", "error"); btn.innerText = "ERROR"; }
+                
+                let db = await apiGet("/api/orders");
+                db.unshift({ id: currentOrderId, email: document.getElementById('cusEmail').value, zalo: document.getElementById('cusZalo').value, method: document.getElementById('payMethod').value, pkg: `${currentPackage.vi.name} - ${currentPackage.vi.price} / ${currentPackage.usd}$ / ${currentPackage.cny}¥ (${currentPackage.data})`, needSupport: document.getElementById('needSupport').checked, status: 'pending', date: new Date().toLocaleString() });
+                
+                await apiPost("/api/orders", db);
+                
+                showToast(lang === 'vi' ? "Thành công!" : "Success!", "success"); cancelCheckout(); document.getElementById('orderForm').reset();
+                document.getElementById('loginInput').value = currentOrderId; login(true);
+                
                 btn.disabled = false;
             }
         }
 
         async function login(silent = false, isRefresh = false) {
             const input = document.getElementById('loginInput').value.trim().toUpperCase(); if(!input) return;
-            if(isRefresh) showToast(lang==='vi'?'Đang tải...':'Loading...', "info");
+            if(isRefresh) showToast(lang==='vi'?'Đang làm mới...':'Refreshing...', "info");
 
-            try {
-                let dbRes = await fetch(API_URL + "/api/orders"); let db = await dbRes.json();
-                let o = db.find(x => x.id.toUpperCase() === input || (x.email && x.email.toUpperCase() === input));
-                if(!o) { showToast(lang==='vi'?'Không tìm thấy!':'Not found!', 'error'); return; }
+            let db = await apiGet("/api/orders");
+            let o = db.find(x => x.id.toUpperCase() === input || (x.email && x.email.toUpperCase() === input));
+            if(!o) { 
+                if(!isRefresh) showToast(lang==='vi'?'Không tìm thấy Đơn hàng/Email này!':(lang==='en'?'Order not found!':'未找到订单'), 'error'); 
+                return; 
+            }
 
-                localStorage.setItem(SESSION_KEY, JSON.stringify({ id: o.id, time: new Date().getTime() }));
-                if(!silent && !isRefresh) showToast(lang==='vi'?'Vào cổng thành công!':'Login success!', "success");
+            localStorage.setItem(SESSION_KEY, JSON.stringify({ id: o.id, time: new Date().getTime() }));
+            if(!silent && !isRefresh) showToast(lang==='vi'?'Vào cổng thành công!':(lang==='en'?'Login success!':'登录成功'), "info");
 
-                document.getElementById('view-store').classList.remove('active'); document.getElementById('view-portal').classList.add('active');
-                document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('checkoutSection').classList.add('hidden');
-                
-                // ĐIỀN THÔNG TIN CHI TIẾT GÓI
-                document.getElementById('portalOrderId').innerText = o.id;
-                document.getElementById('portalPackageName').innerText = o.pkg.split('-')[0].trim();
-                const pkgData = o.pkg.match(/\((.*?)\)/); document.getElementById('portalPackageData').innerText = pkgData ? pkgData[1] : '---';
-                document.getElementById('portalPackageTime').innerText = o.pkg.includes('Tháng') ? '1 Tháng' : (o.pkg.includes('Năm') ? '1 Năm' : 'Vĩnh Viễn');
+            document.getElementById('view-store').classList.remove('active'); document.getElementById('view-portal').classList.add('active');
+            document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('checkoutSection').classList.add('hidden');
+            
+            // ĐIỀN THÔNG TIN CHI TIẾT GÓI
+            document.getElementById('portalOrderId').innerText = o.id;
+            document.getElementById('portalPackageName').innerText = o.pkg.split('-')[0].trim();
+            const pkgData = o.pkg.match(/\((.*?)\)/); document.getElementById('portalPackageData').innerText = pkgData ? pkgData[1] : '---';
+            document.getElementById('portalPackageTime').innerText = o.pkg.includes('Tháng') ? '1 Tháng' : (o.pkg.includes('Năm') ? '1 Năm' : 'Vĩnh Viễn');
 
-                const st = document.getElementById('portalStatus');
-                document.getElementById('portalContentPending').classList.toggle('hidden', o.status !== 'pending');
-                document.getElementById('portalContentSuccess').classList.toggle('hidden', o.status !== 'success');
-                
-                if(o.status === 'pending') st.innerHTML = `<span class="text-yellow-700 bg-yellow-100 px-3 py-1.5 rounded-lg text-xs font-bold uppercase"><i class="fas fa-circle-notch fa-spin mr-1"></i>${lang==='vi'?'Chờ duyệt':(lang==='en'?'Pending':'待处理')}</span>`;
-                else if (o.status === 'success') {
-                    st.innerHTML = `<span class="text-green-700 bg-green-100 px-3 py-1.5 rounded-lg text-xs font-bold uppercase"><i class="fas fa-check-circle mr-1"></i>${lang==='vi'?'Thành công':(lang==='en'?'Active':'已激活')}</span>`;
-                    document.getElementById('subLink').value = o.info || '';
-                    let cmsRes = await fetch(API_URL + "/api/cms"); cmsCache = await cmsRes.json();
-                    showGuide('android');
-                } else st.innerHTML = `<span class="text-red-700 bg-red-100 px-3 py-1.5 rounded-lg text-xs font-bold uppercase">${lang==='vi'?'Từ chối':'Rejected'}</span>`;
-                
-                renderPackages('all'); if(!isRefresh) window.scrollTo({ top: 0, behavior: 'smooth' });
-            } catch(e) {}
+            const st = document.getElementById('portalStatus');
+            document.getElementById('portalContentPending').classList.toggle('hidden', o.status !== 'pending');
+            document.getElementById('portalContentSuccess').classList.toggle('hidden', o.status !== 'success');
+            
+            if(o.status === 'pending') st.innerHTML = `<span class="text-yellow-700 bg-yellow-100 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase"><i class="fas fa-circle-notch fa-spin mr-1"></i>${lang==='vi'?'Chờ duyệt':(lang==='en'?'Pending':'待处理')}</span>`;
+            else if (o.status === 'success') {
+                st.innerHTML = `<span class="text-green-700 bg-green-100 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase"><i class="fas fa-check-circle mr-1"></i>${lang==='vi'?'Thành công':(lang==='en'?'Active':'已激活')}</span>`;
+                document.getElementById('subLink').value = o.info || '';
+                cmsCache = await apiGet("/api/cms");
+                showGuide('android');
+            } else st.innerHTML = `<span class="text-red-700 bg-red-100 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase">${lang==='vi'?'Từ chối':'Rejected'}</span>`;
+            
+            renderPackages('all'); if(!isRefresh) window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function logout() { localStorage.removeItem(SESSION_KEY); document.getElementById('view-portal').classList.remove('active'); document.getElementById('view-store').classList.add('active'); document.getElementById('userMenu').classList.add('hidden'); document.getElementById('loginInput').value = ''; }
+        function logout() {
+            localStorage.removeItem(SESSION_KEY); document.getElementById('view-portal').classList.remove('active'); document.getElementById('view-store').classList.add('active');
+            document.getElementById('userMenu').classList.add('hidden'); document.getElementById('loginInput').value = '';
+        }
 
         function showGuide(dev) {
             document.querySelectorAll('.dev-btn').forEach(b => { b.classList.remove('active', 'border-indigo-500'); });
             document.getElementById('btn-dev-' + dev).classList.add('active', 'border-indigo-500');
             document.getElementById('guideContent').classList.remove('hidden');
-            document.getElementById('guideText').innerHTML = cmsCache[dev] || '<p class="text-center py-6 text-slate-500 font-bold text-xs">Admin is updating guide...</p>';
+            document.getElementById('guideText').innerHTML = cmsCache[dev] || '<p class="text-center py-6 md:py-10 text-slate-500 font-bold text-xs md:text-sm">Guide is updating...</p>';
         }
 
         window.onload = function() {
-            changeLanguage('vi'); 
+            changeLanguage('vi');
             const session = localStorage.getItem(SESSION_KEY);
             if(session) { const data = JSON.parse(session); if(new Date().getTime() - data.time < 24*3600*1000) { document.getElementById('loginInput').value = data.id; login(true); } else localStorage.removeItem(SESSION_KEY); }
             
-            // QUÉT REAL-TIME NGẦM MỖI 5 GIÂY NẾU ĐANG Ở CỔNG KHÁCH HÀNG & CHỜ DUYỆT
+            // POLLING 5S NẾU ĐANG CHỜ DUYỆT ĐỂ REAL-TIME
             autoPollInterval = setInterval(async () => {
                 if(document.getElementById('view-portal').classList.contains('active') && !document.getElementById('portalContentPending').classList.contains('hidden')) {
-                    login(true); // Quét ngầm cập nhật trạng thái
+                    login(true, true); 
                 }
             }, 5000);
         }
