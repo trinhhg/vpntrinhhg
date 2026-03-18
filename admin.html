@@ -19,7 +19,7 @@
     <div id="loginScreen" class="fixed inset-0 bg-slate-50 z-50 flex items-center justify-center p-4">
         <div class="glass-card p-8 md:p-10 w-full max-w-sm text-center">
             <h2 class="text-2xl font-extrabold mb-8 text-slate-800">Admin Panel</h2>
-            <input type="password" id="adminPass" class="w-full bg-slate-100 rounded-xl p-4 text-center mb-4 outline-none font-bold" placeholder="Mật khẩu...">
+            <input type="password" id="adminPass" class="w-full bg-slate-100 rounded-xl p-4 text-center mb-4 outline-none font-bold tracking-widest" placeholder="Mật khẩu...">
             <button onclick="checkAdmin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition">ĐĂNG NHẬP</button>
         </div>
     </div>
@@ -28,7 +28,7 @@
         <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-100 gap-4">
             <h1 class="text-xl md:text-2xl font-extrabold text-indigo-600">Trinh Hg VPN Admin</h1>
             <div class="flex gap-2 w-full md:w-auto">
-                <button onclick="fetchOrdersSilently()" class="flex-1 md:flex-none bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-4 py-2.5 rounded-xl font-bold text-sm transition"><i class="fas fa-sync-alt mr-2"></i>Làm mới</button>
+                <button onclick="fetchOrders()" class="flex-1 md:flex-none bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-4 py-2.5 rounded-xl font-bold text-sm transition"><i class="fas fa-sync-alt mr-2"></i>Làm mới</button>
                 <button onclick="location.reload()" class="flex-1 md:flex-none bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2.5 rounded-xl font-bold text-sm transition">Đăng xuất</button>
             </div>
         </div>
@@ -71,45 +71,45 @@
 
     <div id="modalEdit" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="glass-card p-5 md:p-8 w-full max-w-2xl max-h-[95vh] overflow-y-auto">
-            <h3 class="text-xl md:text-2xl font-bold mb-4" id="modalTitle">Chỉnh sửa Đơn Hàng</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-4 md:mb-6" id="modalTitle">Chỉnh sửa Đơn Hàng</h3>
             
-            <div class="grid md:grid-cols-2 gap-3 mb-3">
-                <div><label class="block font-bold text-xs md:text-sm mb-1">Mã Đơn</label><input type="text" id="editId" class="w-full p-2.5 text-sm border rounded-lg bg-slate-100 font-mono font-bold" readonly></div>
-                <div><label class="block font-bold text-xs md:text-sm mb-1">Email</label><input type="text" id="editEmail" class="w-full p-2.5 text-sm border rounded-lg outline-none focus:border-indigo-500"></div>
+            <div class="grid md:grid-cols-2 gap-3 md:gap-4 mb-3 md:mb-4">
+                <div><label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Mã Đơn</label><input type="text" id="editId" class="w-full p-2.5 md:p-3 text-sm border rounded-lg bg-slate-100 font-mono font-bold" readonly></div>
+                <div><label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Email Khách</label><input type="text" id="editEmail" class="w-full p-2.5 md:p-3 text-sm border rounded-lg outline-none focus:border-indigo-500"></div>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 md:mb-4">
                 <label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Gói VPN Khách Chọn</label>
-                <select id="editPkg" class="w-full p-2.5 text-sm border rounded-lg font-bold text-indigo-700 bg-indigo-50 outline-none"></select>
+                <select id="editPkg" class="w-full p-2.5 md:p-3 text-sm border rounded-lg font-bold text-indigo-700 bg-indigo-50 outline-none"></select>
             </div>
 
-            <div class="mb-4">
-                <label class="block font-bold text-xs md:text-sm mb-1">Trạng Thái Đơn</label>
-                <select id="editStatus" class="w-full p-2.5 text-sm border rounded-lg font-bold outline-none" onchange="toggleStatusFields()">
+            <div class="mb-4 md:mb-6">
+                <label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Trạng Thái Đơn</label>
+                <select id="editStatus" class="w-full p-2.5 md:p-3 text-sm border rounded-lg font-bold outline-none" onchange="toggleStatusFields()">
                     <option value="pending">⏳ Đang chờ duyệt (Pending)</option>
                     <option value="success">✅ Kích hoạt Thành công (Cấp Link)</option>
                     <option value="failed">❌ Bị Từ chối / Lỗi</option>
                 </select>
             </div>
 
-            <div id="fieldSuccess" class="hidden mb-4 p-3 border-l-4 border-green-500 bg-green-50 rounded-r-lg">
-                <label class="block font-bold text-xs md:text-sm mb-1 text-green-700">Link Subscription URL</label>
-                <input type="text" id="editLink" class="w-full p-2.5 text-sm border border-green-200 rounded-lg font-mono outline-none" placeholder="Dán link VPN vào đây...">
+            <div id="fieldSuccess" class="hidden mb-4 md:mb-6 p-3 md:p-4 border-l-4 border-green-500 bg-green-50 rounded-r-lg">
+                <label class="block font-bold text-xs md:text-sm mb-1 text-green-700">Link Đăng Ký (Subscription URL)</label>
+                <input type="text" id="editLink" class="w-full p-2.5 md:p-3 text-sm border border-green-200 rounded-lg font-mono outline-none" placeholder="Dán link VPN vào đây...">
             </div>
 
-            <div id="fieldFailed" class="hidden mb-4 p-3 border-l-4 border-red-500 bg-red-50 rounded-r-lg">
-                <label class="block font-bold text-xs md:text-sm mb-1 text-red-700">Lý do từ chối</label>
-                <input type="text" id="editReason" class="w-full p-2.5 text-sm border border-red-200 rounded-lg outline-none" placeholder="Ví dụ: Chưa nhận được tiền...">
+            <div id="fieldFailed" class="hidden mb-4 md:mb-6 p-3 md:p-4 border-l-4 border-red-500 bg-red-50 rounded-r-lg">
+                <label class="block font-bold text-xs md:text-sm mb-1 text-red-700">Lý do từ chối (Gửi cho khách)</label>
+                <input type="text" id="editReason" class="w-full p-2.5 md:p-3 text-sm border border-red-200 rounded-lg outline-none" placeholder="Ví dụ: Chưa nhận được tiền...">
             </div>
 
-            <div class="flex items-center mb-5 bg-slate-50 border border-slate-200 p-3 rounded-lg">
+            <div class="flex items-center mb-5 md:mb-6 bg-slate-50 border border-slate-200 p-3 rounded-lg">
                 <input type="checkbox" id="sendMailCheck" class="w-4 h-4 md:w-5 md:h-5 mr-3 accent-indigo-600" checked>
-                <label for="sendMailCheck" class="font-bold text-xs md:text-sm text-slate-700 leading-tight">Gửi Email trạng thái cho khách</label>
+                <label for="sendMailCheck" class="font-bold text-xs md:text-sm text-slate-700 leading-tight">Gửi Email thông báo trạng thái cho khách</label>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-2">
-                <button onclick="saveOrderToCloud()" class="flex-1 bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 text-sm md:text-base transition">💾 LƯU LÊN MÁY CHỦ</button>
-                <button onclick="document.getElementById('modalEdit').classList.add('hidden')" class="bg-slate-200 text-slate-700 font-bold py-3 px-5 rounded-lg text-sm md:text-base">Hủy</button>
+            <div class="flex flex-col md:flex-row gap-2 md:gap-3">
+                <button onclick="saveOrderToCloud()" class="flex-1 bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition text-sm md:text-base">💾 LƯU ĐƠN HÀNG</button>
+                <button onclick="document.getElementById('modalEdit').classList.add('hidden')" class="bg-slate-200 text-slate-700 font-bold py-3 md:px-6 rounded-lg hover:bg-slate-300 text-sm md:text-base">Hủy</button>
             </div>
         </div>
     </div>
@@ -117,10 +117,9 @@
     <script>
         const API_URL = "https://vpn-api.doicucden.workers.dev"; 
         const GOOGLE_MAIL_API = "https://script.google.com/macros/s/AKfycbyQjEln9By0HuUPtboqJpb1INI6rRp52BxvHR8HaE5fs8qojfgau1R_27P4RyLLxXIp/exec";
-        
+        const DB_KEY = 'vpn_orders_db';
         let ordersDb = []; let cmsDb = {}; let currentCmsDevice = 'android'; let refreshInterval;
 
-        // DANH SÁCH GÓI CHUẨN ĐỂ ADMIN CHỌN
         const packageOptions = [
             "Gói 1 Tháng - 70.000đ / 3$ / 17.5¥ (1000GB)",
             "Gói Cao Cấp - 150.000đ / 6$ / 35¥ (3000GB)",
@@ -142,15 +141,33 @@
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
+        // HÀM FETCH THÔNG MINH CHỐNG LỖI MẠNG (Fallback LocalStorage)
+        async function apiGet(path) {
+            try {
+                let res = await fetch(API_URL + path);
+                if(!res.ok) throw new Error("HTTP error");
+                let data = await res.json();
+                localStorage.setItem(path === '/api/orders' ? DB_KEY : 'cms_backup', JSON.stringify(data));
+                return data;
+            } catch(e) {
+                console.warn("API Bị chặn, dùng bộ nhớ phụ", e);
+                return JSON.parse(localStorage.getItem(path === '/api/orders' ? DB_KEY : 'cms_backup')) || (path === '/api/orders' ? [] : {});
+            }
+        }
+        async function apiPost(path, data) {
+            localStorage.setItem(path === '/api/orders' ? DB_KEY : 'cms_backup', JSON.stringify(data)); // Luôn lưu dự phòng
+            try { await fetch(API_URL + path, { method: "POST", body: JSON.stringify(data) }); } 
+            catch(e) { console.warn("API Bị chặn, chỉ lưu cục bộ", e); }
+        }
+
         async function checkAdmin() {
             if(document.getElementById('adminPass').value === "admin2026") {
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('adminPanel').classList.remove('hidden');
                 document.getElementById('editPkg').innerHTML = packageOptions.map(p => `<option value="${p}">${p}</option>`).join('');
                 showToast("Đăng nhập thành công!", "info");
-                await fetchOrdersSilently(); await fetchCms();
+                await fetchOrders(); await fetchCms();
                 
-                // Realtime Admin 10s/lần
                 refreshInterval = setInterval(async () => {
                     if(document.getElementById('modalEdit').classList.contains('hidden')) { await fetchOrdersSilently(); }
                 }, 10000);
@@ -165,13 +182,16 @@
             document.getElementById('btn-'+t).className = "flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow-md";
         }
 
+        async function fetchOrders() {
+            ordersDb = await apiGet("/api/orders");
+            renderOrders(); showToast("Dữ liệu đã cập nhật!", "success");
+        }
+
         async function fetchOrdersSilently() {
-            try {
-                const res = await fetch(API_URL + "/api/orders"); const newData = await res.json();
-                if(JSON.stringify(newData) !== JSON.stringify(ordersDb)) {
-                    ordersDb = newData; renderOrders(); showToast("Đã cập nhật dữ liệu mới!", "info");
-                }
-            } catch(e) {}
+            const newData = await apiGet("/api/orders");
+            if(JSON.stringify(newData) !== JSON.stringify(ordersDb)) {
+                ordersDb = newData; renderOrders(); showToast("Đã cập nhật dữ liệu mới!", "info");
+            }
         }
 
         function renderOrders() {
@@ -186,7 +206,7 @@
                 tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition">
                     <td class="p-4 md:p-5 font-mono font-bold text-indigo-600">${o.id}</td>
                     <td class="p-4 md:p-5"><p class="font-bold text-slate-800">${o.email} ${supportTag}</p><p class="text-xs text-slate-500 mt-1"><i class="fas fa-credit-card mr-1"></i>${o.method || 'Bank'} | Zalo: ${o.zalo || 'Không'}</p></td>
-                    <td class="p-4 md:p-5 font-bold text-slate-600 text-xs truncate max-w-[250px]">${o.pkg}</td><td class="p-4 md:p-5">${badge}</td>
+                    <td class="p-4 md:p-5 font-bold text-slate-600 text-xs truncate max-w-[200px]">${o.pkg}</td><td class="p-4 md:p-5">${badge}</td>
                     <td class="p-4 md:p-5 text-right whitespace-nowrap">
                         <button onclick="openEditModal('${o.id}')" class="text-indigo-600 font-bold hover:underline px-3 py-1.5 bg-indigo-50 rounded-lg mr-2 text-xs md:text-sm"><i class="fas fa-edit mr-1"></i>Sửa</button>
                         <button onclick="deleteOrder('${o.id}')" class="text-red-500 font-bold hover:underline px-3 py-1.5 bg-red-50 rounded-lg text-xs md:text-sm"><i class="fas fa-trash-alt mr-1"></i>Xóa</button>
@@ -221,7 +241,8 @@
         }
 
         async function saveOrderToCloud() {
-            const id = document.getElementById('editId').value; let o = ordersDb.find(x => x.id === id);
+            const id = document.getElementById('editId').value;
+            let o = ordersDb.find(x => x.id === id);
             if(!o) { o = { id: id, needSupport: false, date: new Date().toLocaleString() }; ordersDb.unshift(o); }
 
             o.email = document.getElementById('editEmail').value; o.pkg = document.getElementById('editPkg').value;
@@ -229,52 +250,46 @@
 
             const btn = event.target; const oldTxt = btn.innerText; btn.innerText = "ĐANG LƯU..."; btn.disabled = true;
 
-            try {
-                await fetch(API_URL + "/api/orders", { method: "POST", body: JSON.stringify(ordersDb) });
-                showToast("Đã đồng bộ lên hệ thống Cloud!", "success");
+            await apiPost("/api/orders", ordersDb);
+            showToast("Đã đồng bộ đơn hàng!", "success");
 
-                if(document.getElementById('sendMailCheck').checked && o.email) {
-                    btn.innerText = "ĐANG BẮN EMAIL...";
-                    let subject = "Trinh Hg VPN - Cập nhật đơn hàng"; let msg = "";
-                    let contactBlock = `<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:15px; margin-top:20px; text-align:center;">
-                        <p style="margin:0 0 10px 0; color:#475569; font-size:13px;">${o.needSupport ? '<span style="color:#ef4444; font-weight:bold;">Bạn đã yêu cầu Hỗ trợ cài đặt!</span> Liên hệ Admin:' : 'Cần hỗ trợ? Đội ngũ của chúng tôi sẵn sàng 24/7'}</p>
-                        <a href="https://zalo.me/0917678211" style="display:inline-block; background:#0ea5e9; color:white; padding:8px 15px; text-decoration:none; border-radius:6px; font-weight:bold; margin-right:5px; font-size:13px;">Chat Zalo</a>
-                        <a href="https://www.facebook.com/trinh.hg.57" style="display:inline-block; background:#3b82f6; color:white; padding:8px 15px; text-decoration:none; border-radius:6px; font-weight:bold; font-size:13px;">Messenger</a>
-                    </div>`;
+            if(document.getElementById('sendMailCheck').checked && o.email) {
+                btn.innerText = "ĐANG BẮN EMAIL...";
+                let subject = "Trinh Hg VPN - Cập nhật đơn hàng"; let msg = "";
+                let contactBlock = `<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:15px; margin-top:20px; text-align:center;">
+                    <p style="margin:0 0 10px 0; color:#475569; font-size:13px; line-height:1.5;">${o.needSupport ? '<span style="color:#ef4444; font-weight:bold;">Bạn đã yêu cầu Admin hỗ trợ cài đặt!</span> Vui lòng liên hệ:' : 'Cần hỗ trợ? Đội ngũ của chúng tôi sẵn sàng 24/7'}</p>
+                    <a href="https://zalo.me/0917678211" style="display:inline-block; background:#0ea5e9; color:white; padding:10px 16px; text-decoration:none; border-radius:6px; font-weight:bold; margin-bottom:5px; font-size:13px;">Chat Zalo</a>
+                    <a href="https://www.facebook.com/trinh.hg.57" style="display:inline-block; background:#3b82f6; color:white; padding:10px 16px; text-decoration:none; border-radius:6px; font-weight:bold; font-size:13px;">Messenger</a>
+                </div>`;
 
-                    // ĐÃ FIX CSS BẢNG HTML EMAIL CHO MOBILE KHÔNG BỊ TRÀN CHỮ
-                    if(o.status === 'success') {
-                        subject = "Trinh Hg VPN - Kích hoạt thành công";
-                        msg = `
-                        <div style="font-family:sans-serif; width:100%; max-width:500px; margin:auto; background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; box-sizing:border-box;">
-                            <div style="background:linear-gradient(135deg, #4f46e5, #9333ea); padding:20px; text-align:center;"><h2 style="color:white; margin:0; font-size:18px;">KÍCH HOẠT THÀNH CÔNG</h2></div>
-                            <div style="padding:20px; box-sizing:border-box;">
-                                <p style="font-size:14px; line-height:1.5;">Xin chào, Gói VPN <b>${o.pkg.split('-')[0].trim()}</b> của bạn đã sẵn sàng.</p>
-                                <div style="background:#f1f5f9; border-left:4px solid #4f46e5; padding:15px; border-radius:8px; margin:20px 0; text-align:center; word-break:break-all;">
-                                    <p style="margin:0; font-size:11px; color:#64748b; font-weight:bold;">MÃ ĐƠN HÀNG</p>
-                                    <p style="margin:5px 0 0 0; font-size:22px; font-weight:900; color:#4f46e5; letter-spacing:1px;">${o.id}</p>
-                                </div>
-                                <div style="text-align:center; margin:20px 0;">
-                                    <a href="https://vpntrinhhg.pages.dev" style="background:#1e293b; color:white; padding:12px 20px; border-radius:8px; text-decoration:none; font-weight:bold; display:inline-block; max-width:100%; box-sizing:border-box; font-size:13px;">VÀO CỔNG KHÁCH HÀNG</a>
-                                    <p style="font-size:12px; color:#64748b; margin-top:12px;">👉 <i>Tra cứu bằng Mã Đơn Hàng trên web để nhận Link.</i></p>
-                                </div>
-                                ${contactBlock}
+                if(o.status === 'success') {
+                    subject = "Trinh Hg VPN - Kích hoạt thành công";
+                    msg = `<div style="font-family:sans-serif; width:100%; max-width:500px; margin:auto; background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; box-sizing:border-box;">
+                        <div style="background:linear-gradient(135deg, #4f46e5, #9333ea); padding:20px; text-align:center;"><h2 style="color:white; margin:0; font-size:20px;">KÍCH HOẠT THÀNH CÔNG</h2></div>
+                        <div style="padding:20px; box-sizing:border-box;">
+                            <p style="font-size:14px; line-height:1.5;">Xin chào, Gói VPN <b>${o.pkg.split('-')[0].trim()}</b> của bạn đã sẵn sàng.</p>
+                            <div style="background:#f1f5f9; border-left:4px solid #4f46e5; padding:15px; border-radius:8px; margin:20px 0; text-align:center; word-break:break-all;">
+                                <p style="margin:0; font-size:11px; color:#64748b; font-weight:bold;">MÃ ĐƠN HÀNG</p>
+                                <p style="margin:5px 0 0 0; font-size:22px; font-weight:900; color:#4f46e5; letter-spacing:1px;">${o.id}</p>
                             </div>
-                        </div>`;
-                    } else if(o.status === 'failed') {
-                        subject = "Trinh Hg VPN - Đơn hàng bị từ chối";
-                        msg = `<div style="font-family:sans-serif; width:100%; max-width:500px; margin:auto; border:1px solid #fecaca; border-radius:12px; overflow:hidden; box-sizing:border-box;">
-                            <div style="background:#ef4444; padding:20px; text-align:center;"><h2 style="color:white; margin:0; font-size:18px;">Giao dịch thất bại</h2></div>
-                            <div style="padding:20px; box-sizing:border-box;">
-                                <p style="font-size:14px;">Xin chào, Đơn hàng <b>${o.id}</b> của bạn không thể kích hoạt.</p>
-                                <div style="background:#fef2f2; border:1px solid #fca5a5; padding:15px; border-radius:8px; color:#b91c1c; font-weight:bold; margin:20px 0; font-size:13px; word-wrap:break-word;">Lý do: ${o.reason}</div>
-                                ${contactBlock}
-                            </div></div>`;
-                    }
-
-                    await fetch(GOOGLE_MAIL_API, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({to: o.email, subject: subject, html: msg}) });
+                            <div style="text-align:center; margin:20px 0;">
+                                <a href="https://vpntrinhhg.pages.dev" style="background:#1e293b; color:white; padding:12px 20px; border-radius:8px; text-decoration:none; font-weight:bold; display:inline-block; max-width:100%; box-sizing:border-box; font-size:14px;">TRUY CẬP CỔNG KHÁCH HÀNG</a>
+                                <p style="font-size:12px; color:#64748b; margin-top:12px; line-height:1.5;">👉 <i>Tra cứu bằng <b>Mã Đơn Hàng</b> hoặc <b>Email</b> để lấy Link VPN.</i></p>
+                            </div>
+                            ${contactBlock}
+                        </div></div>`;
+                } else if(o.status === 'failed') {
+                    subject = "Trinh Hg VPN - Đơn hàng bị từ chối";
+                    msg = `<div style="font-family:sans-serif; width:100%; max-width:500px; margin:auto; border:1px solid #fecaca; border-radius:12px; overflow:hidden; box-sizing:border-box;">
+                        <div style="background:#ef4444; padding:20px; text-align:center;"><h2 style="color:white; margin:0; font-size:20px;">Giao dịch thất bại</h2></div>
+                        <div style="padding:20px; box-sizing:border-box;">
+                            <p style="font-size:14px; line-height:1.5;">Xin chào, Đơn hàng <b>${o.id}</b> của bạn không thể kích hoạt.</p>
+                            <div style="background:#fef2f2; border:1px solid #fca5a5; padding:15px; border-radius:8px; color:#b91c1c; font-weight:bold; margin:20px 0; font-size:14px; word-wrap:break-word;">Lý do: ${o.reason}</div>
+                            ${contactBlock}
+                        </div></div>`;
                 }
-            } catch(e) { showToast("Lỗi khi kết nối hệ thống!", "error"); }
+                try { await fetch(GOOGLE_MAIL_API, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({to: o.email, subject: subject, html: msg}) }); } catch(e){}
+            }
 
             btn.innerText = oldTxt; btn.disabled = false; renderOrders(); document.getElementById('modalEdit').classList.add('hidden');
         }
@@ -282,17 +297,13 @@
         async function deleteOrder(id) {
             if(confirm('Xóa vĩnh viễn đơn ' + id + '?')) {
                 ordersDb = ordersDb.filter(x => x.id !== id);
-                try {
-                    await fetch(API_URL + "/api/orders", { method: "POST", body: JSON.stringify(ordersDb) });
-                    renderOrders(); showToast("Đã xóa vĩnh viễn!", "info");
-                } catch(e) {}
+                await apiPost("/api/orders", ordersDb);
+                renderOrders(); showToast("Đã xóa vĩnh viễn!", "info");
             }
         }
 
         // --- CMS ---
-        async function fetchCms() {
-            try { const res = await fetch(API_URL + "/api/cms"); cmsDb = await res.json(); document.getElementById('cmsGuide').value = cmsDb[currentCmsDevice] || ''; } catch(e) {}
-        }
+        async function fetchCms() { cmsDb = await apiGet("/api/cms"); document.getElementById('cmsGuide').value = cmsDb[currentCmsDevice] || ''; }
 
         function changeCmsDevice(dev) {
             document.querySelectorAll('.dev-btn').forEach(b => { b.classList.remove('active', 'border-indigo-500', 'bg-indigo-50', 'text-indigo-700'); b.classList.add('border-slate-200', 'text-slate-600'); });
@@ -312,10 +323,8 @@
         async function saveCmsToCloud() {
             cmsDb[currentCmsDevice] = document.getElementById('cmsGuide').value;
             const btn = event.target; const oldTxt = btn.innerText; btn.innerText = "ĐANG LƯU..."; btn.disabled = true;
-            try {
-                await fetch(API_URL + "/api/cms", { method: "POST", body: JSON.stringify(cmsDb) });
-                showToast('Đã lưu bài viết lên hệ thống Cloud!', "success");
-            } catch(e) { showToast("Lỗi khi lưu CMS!", "error"); }
+            await apiPost("/api/cms", cmsDb);
+            showToast('Đã lưu bài viết lên hệ thống Cloud!', "success");
             btn.innerText = oldTxt; btn.disabled = false;
         }
     </script>
