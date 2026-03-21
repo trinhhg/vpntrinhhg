@@ -302,14 +302,10 @@
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // Bổ sung header cực mạnh tránh cache trả về data cũ (kể cả với Cloudflare)
+        // Bỏ các custom header gây lỗi CORS, chỉ dùng ?_t để bẻ cache
         async function apiGet(path) {
             try {
-                let res = await fetch(API_URL + path + "?_t=" + Date.now(), { 
-                    method: 'GET',
-                    cache: 'no-store',
-                    headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
-                });
+                let res = await fetch(API_URL + path + "?_t=" + Date.now());
                 if(!res.ok) throw new Error("HTTP error");
                 let data = await res.json();
                 localStorage.setItem(path === '/api/orders' ? DB_KEY : 'cms_backup', JSON.stringify(data));
@@ -329,10 +325,7 @@
             lang = val; document.getElementById('langSelectMobile').value = val; document.getElementById('langSelectDesktop').value = val;
             document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = i18n[lang][el.getAttribute('data-i18n')]; });
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = i18n[lang][el.getAttribute('data-i18n-placeholder')]; });
-            
-            // Update tất cả các chỗ có text custom package notice
             document.querySelectorAll('.customPkgNotice').forEach(el => el.innerHTML = i18n[lang].custom_pkg_notice);
-
             renderPackages('all'); 
             if(currentPackage && !document.getElementById('checkoutSection').classList.contains('hidden')) { openCheckout(currentPackage.id); }
         }
@@ -377,7 +370,8 @@
         }
 
         function toggleZalo() { const z = document.getElementById('cusZalo'); z.classList.toggle('hidden'); z.required = !z.classList.contains('hidden'); }
-        function changePayMethod() { if(document.getElementById('payMethod').value !== 'bank') { document.getElementById('needSupport').checked = true; toggleZalo(); } renderPaymentBox(); }
+        // KHÔNG auto-tick phần hỗ trợ nữa, để khách tự chọn
+        function changePayMethod() { renderPaymentBox(); }
 
         function renderPaymentBox() {
             const col = document.getElementById('checkoutRightCol'); const m = document.getElementById('payMethod').value; const btn = document.getElementById('btnConfirm');
@@ -397,7 +391,6 @@
                     </div>
                     <div class="bg-yellow-50 py-3 px-2 rounded-xl text-center w-full"><span class="block text-slate-600 text-[10px] font-bold mb-1 uppercase">${i18n[lang].copy_memo}</span><strong class="block w-full bg-white text-slate-800 font-mono text-lg md:text-xl py-2 rounded-lg cursor-pointer shadow-sm" onclick="copyText('${currentOrderId}')">${currentOrderId} <i class="far fa-copy"></i></strong></div></div>`;
             } else if (m === 'alipay') {
-                // ĐÃ FIX CSS QR CĂN GIỮA (flex items-center justify-center + object-contain)
                 col.innerHTML = `<div class="text-center w-full"><h4 class="font-extrabold text-slate-800 text-base md:text-lg mb-4 text-blue-600"><i class="fas fa-qrcode mr-2"></i>Alipay</h4>
                     <div class="flex justify-center mb-6">
                         <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-100 flex items-center justify-center"><img src="https://scontent-nrt6-1.xx.fbcdn.net/v/t1.15752-9/653857590_1758745008618735_4375237426148577611_n.jpg?stp=dst-jpg_s720x720_tt6&_nc_cat=110&ccb=1-7&_nc_sid=0024fc&_nc_ohc=_SgoipZLgUkQ7kNvwGTIzYm&_nc_oc=AdrO2lWMUl61E44q7BVfIH40A2fqKLTNdcUAdoWhzfwuF4McoyFJ70VzU_UPmIDtXtGyHkyqvgbynydVWSE5yl7r&_nc_zt=23&_nc_ht=scontent-nrt6-1.xx&_nc_ss=7a30f&oh=03_Q7cD4wE32bYIr4NC7uRoxNa04HxQqRSAhpXXhdbM7YBist-IxQ&oe=69E5BE9F" class="w-40 h-40 md:w-56 md:h-56 rounded-lg object-contain"></div>
@@ -426,6 +419,7 @@
                 btn.innerText = "LOADING..."; btn.disabled = true;
                 
                 let db = await apiGet("/api/orders");
+                if(!Array.isArray(db)) db = [];
                 db.unshift({ id: currentOrderId, email: document.getElementById('cusEmail').value, zalo: document.getElementById('cusZalo').value, method: document.getElementById('payMethod').options[document.getElementById('payMethod').selectedIndex].text, pkg: `${currentPackage.vi.name} - ${currentPackage.vi.price} / ${currentPackage.usd}$ / ${currentPackage.cny}¥ (${currentPackage.data})`, needSupport: document.getElementById('needSupport').checked, status: 'pending', date: new Date().toLocaleString() });
                 
                 await apiPost("/api/orders", db);
@@ -446,12 +440,12 @@
             }
         }
 
-        // isManualRefresh: Dùng khi bấm nút "Làm mới", isAutoPoll: Dùng khi chạy ngầm polling
         async function login(isManualRefresh = false, isAutoPoll = false) {
             const input = document.getElementById('loginInput').value.trim().toUpperCase(); if(!input) return;
             if(isManualRefresh && !isAutoPoll) showToast(lang==='vi'?'Đang làm mới...':'Refreshing...', "info");
 
             let db = await apiGet("/api/orders");
+            if(!Array.isArray(db)) db = [];
             let o = db.find(x => x.id.toUpperCase() === input || (x.email && x.email.toUpperCase() === input));
             if(!o) { 
                 if(!isAutoPoll) showToast(lang==='vi'?'Không tìm thấy Đơn hàng/Email này!':(lang==='en'?'Order not found!':'未找到订单'), 'error'); 
@@ -501,10 +495,8 @@
             const session = localStorage.getItem(SESSION_KEY);
             if(session) { const data = JSON.parse(session); if(new Date().getTime() - data.time < 24*3600*1000) { document.getElementById('loginInput').value = data.id; login(true); } else localStorage.removeItem(SESSION_KEY); }
             
-            // Giảm độ dày Polling xuống 10s để đỡ rác kết nối mạng
             autoPollInterval = setInterval(async () => {
                 if(document.getElementById('view-portal').classList.contains('active') && !document.getElementById('portalContentPending').classList.contains('hidden')) {
-                    // Tham số: login(isManualRefresh = false, isAutoPoll = true) -> Chặn toast 
                     login(false, true); 
                 }
             }, 10000);
