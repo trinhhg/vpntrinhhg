@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +14,6 @@
         .view-section.active { display: block; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .tab-btn.active { background-color: #4f46e5 !important; color: white !important; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3); }
-        /* Tùy chỉnh FAQ details */
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
     </style>
@@ -38,7 +37,7 @@
         
         <div class="hidden md:flex items-center gap-3">
             <select id="langSelectDesktop" onchange="changeLanguage(this.value)" class="bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-xl px-3 py-2 text-sm font-bold outline-none cursor-pointer">
-                <option value="vi">VN - Tiếng Việt (VND)</option><option value="en">EN - English (USD)</option><option value="zh">CN - 中文 (CNY)</option>
+                <option value="vi">VN - Tiếng Việt</option><option value="en">EN - English</option><option value="zh">CN - 中文</option>
             </select>
             <div id="userMenu" class="hidden flex items-center gap-2">
                 <span class="text-sm text-indigo-700 font-bold bg-indigo-50 px-4 py-2 rounded-full border border-indigo-100" data-i18n="portal_btn">Cổng Khách Hàng</span>
@@ -119,6 +118,12 @@
                 <button onclick="renderPackages('usage')" id="htab-usage" class="tab-btn text-slate-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm" data-i18n="tab_usage">Dung lượng</button>
             </div>
             
+            <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 mb-6 text-center shadow-sm max-w-3xl mx-auto">
+                <p class="text-sm md:text-base text-indigo-900 font-bold" id="customPkgNotice">
+                    Ngoài ra, Trịnh Hg VPN còn có gói từ <span class="text-red-600">100GB – 100,000GB / 1 tháng</span>. Vui lòng <a href="#footerArea" class="text-indigo-600 underline hover:text-indigo-800 transition">liên hệ Admin</a> nếu bạn có nhu cầu!
+                </p>
+            </div>
+
             <div class="grid md:grid-cols-3 gap-4 md:gap-6 mb-10" id="packagesContainerHome"></div>
 
             <div id="checkoutSection" class="hidden glass-ui p-5 md:p-10 rounded-2xl md:rounded-3xl border border-indigo-100 mt-6">
@@ -135,7 +140,9 @@
                             <input type="email" id="cusEmail" class="w-full border border-slate-200 rounded-xl p-3.5 md:p-4 mb-3 outline-none text-sm md:text-base focus:border-indigo-500" data-i18n-placeholder="email_placeholder" placeholder="Email nhận thông tin" required>
                             
                             <select id="payMethod" class="w-full border border-slate-200 rounded-xl p-3.5 md:p-4 mb-3 font-bold outline-none bg-slate-50 text-sm md:text-base focus:border-indigo-500" onchange="changePayMethod()">
-                                <option value="bank" data-i18n="pay_vn">Bank VN (VietQR)</option><option value="alipay" data-i18n="pay_alipay">Alipay / WeChat</option><option value="other" data-i18n="pay_other">Crypto / Khác</option>
+                                <option value="bank" data-i18n="pay_vn">Ngân hàng Việt Nam (VietQR)</option>
+                                <option value="alipay" data-i18n="pay_alipay">Alipay</option>
+                                <option value="wechat" data-i18n="pay_wechat">WeChat Pay</option>
                             </select>
 
                             <div class="bg-slate-50 p-3 md:p-4 rounded-xl border border-slate-200 mb-4 md:mb-6">
@@ -177,7 +184,7 @@
                         <span data-i18n="faq_2_q">Có những phương thức thanh toán nào?</span>
                         <span class="transition group-open:rotate-180 text-slate-400"><i class="fas fa-chevron-down"></i></span>
                     </summary>
-                    <p class="text-slate-600 text-xs md:text-sm mt-3 leading-relaxed" data-i18n="faq_2_a">Chúng tôi hỗ trợ Chuyển khoản Ngân hàng VN, Alipay, WeChat Pay và Crypto (USDT). Vui lòng chọn ở màn hình Đặt đơn.</p>
+                    <p class="text-slate-600 text-xs md:text-sm mt-3 leading-relaxed" data-i18n="faq_2_a">Chúng tôi hỗ trợ Ngân hàng Việt Nam, Alipay, WeChat Pay. Vui lòng chọn ở màn hình Đặt đơn.</p>
                 </details>
                 <details class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 group cursor-pointer">
                     <summary class="font-bold text-indigo-700 text-sm md:text-base flex justify-between items-center outline-none">
@@ -191,7 +198,7 @@
 
     </main>
 
-    <footer class="bg-white border-t border-slate-200 mt-auto py-6">
+    <footer id="footerArea" class="bg-white border-t border-slate-200 mt-auto py-6">
         <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <p class="text-sm font-bold text-slate-500">© 2026 Trinh Hg VPN. All rights reserved.</p>
             <div class="flex gap-3">
@@ -207,7 +214,7 @@
         const SESSION_KEY = 'vpn_portal_session_24h';
         const DB_KEY = 'vpn_orders_db';
 
-        // TỪ ĐIỂN
+        // TỪ ĐIỂN MỚI NHẤT
         const i18n = {
             vi: {
                 brand: "Trinh Hg VPN", search_placeholder: "Nhập Mã Đơn hoặc Email...", portal_btn: "Cổng Khách",
@@ -218,13 +225,15 @@
                 feat_1: "Mở khóa mọi nền tảng", feat_2: "Ping thấp, Game mượt", feat_3: "Bảo mật No-log", feat_4: "Đa nền tảng",
                 tab_all: "Tất cả", tab_cycle: "Theo Chu kỳ", tab_usage: "Dung lượng", checkout_title: "Thanh toán",
                 email_placeholder: "Email nhận thông tin (Bắt buộc)", btn_create_order: "TẠO ĐƠN & LẤY MÃ", btn_paid: "ĐÃ CHUYỂN KHOẢN",
-                pay_vn: "Bank VN (VietQR)", pay_alipay: "Alipay / WeChat Pay", pay_other: "Crypto / Khác",
+                pay_vn: "Ngân hàng Việt Nam (VietQR)", pay_alipay: "Alipay", pay_wechat: "WeChat Pay",
                 guide_title: "Hướng dẫn Thanh toán", guide_desc: "Điền Email, chọn phương thức và bấm Tạo Đơn để lấy thông tin.",
+                guide_empty: "<p class='text-center py-6 md:py-10 text-slate-500 font-bold text-xs md:text-sm'>Đang cập nhật hướng dẫn...</p>",
+                custom_pkg_notice: "Ngoài ra, Trịnh Hg VPN còn có gói từ <span class='text-red-600'>100GB – 100,000GB / 1 tháng</span>. Vui lòng <a href='#footerArea' class='text-indigo-600 underline hover:text-indigo-800 transition'>liên hệ Admin</a> nếu bạn có nhu cầu!",
                 data_label: "Dung lượng:", dev_label: "Không giới hạn thiết bị", speed_label: "Băng thông > 100Gbps", btn_buy: "Đăng ký Gói Này",
                 copy_memo: "Nội dung chuyển khoản:", copy_amount: "Số tiền:", need_support: "Cần Hỗ trợ Cài đặt (Zalo/Tele)",
                 faq_title: "Câu hỏi thường gặp (FAQ)", faq_1_q: "Làm sao lấy Hướng dẫn?", faq_1_a: "Nhập Mã Đơn hoặc Email vào thanh tìm kiếm trên cùng để vào Cổng Khách Hàng.", 
                 faq_4_q: "VPN hỗ trợ truy cập những ứng dụng nào?", faq_4_a: "Hỗ trợ lướt siêu mượt các app như: <b>TikTok, Facebook, Messenger, Threads, Instagram, Locket, Telegram, Zalo, YouTube...</b> Cần test truy cập app nào thì nhắn tin với Admin nhé.",
-                faq_2_q: "Có những phương thức thanh toán nào?", faq_2_a: "Chuyển khoản Bank VN, Alipay, WeChat Pay và Crypto.", faq_3_q: "Đổi máy tính/điện thoại có dùng được không?", faq_3_a: "Có. Tra cứu lại mã đơn trên web để lấy cấu hình."
+                faq_2_q: "Có những phương thức thanh toán nào?", faq_2_a: "Chúng tôi hỗ trợ Ngân hàng Việt Nam, Alipay, WeChat Pay.", faq_3_q: "Đổi máy tính/điện thoại có dùng được không?", faq_3_a: "Có. Tra cứu lại mã đơn trên web để lấy cấu hình."
             },
             en: {
                 brand: "Trinh Hg VPN", search_placeholder: "Order ID or Email...", portal_btn: "Portal",
@@ -235,13 +244,15 @@
                 feat_1: "Unblock everything", feat_2: "Low Ping Gaming", feat_3: "Strict No-log", feat_4: "Multi-platform",
                 tab_all: "All", tab_cycle: "By Cycle", tab_usage: "By Data", checkout_title: "Checkout",
                 email_placeholder: "Email (Required)", btn_create_order: "CREATE ORDER & PAY", btn_paid: "I HAVE PAID",
-                pay_vn: "Vietnam Bank", pay_alipay: "Alipay / WeChat", pay_other: "Crypto / Other",
+                pay_vn: "Vietnam Bank", pay_alipay: "Alipay", pay_wechat: "WeChat Pay",
                 guide_title: "Payment Instructions", guide_desc: "Enter Email, select payment method and Create Order.",
+                guide_empty: "<p class='text-center py-6 md:py-10 text-slate-500 font-bold text-xs md:text-sm'>Guide is updating...</p>",
+                custom_pkg_notice: "Trịnh Hg VPN also has packages from <span class='text-red-600'>100GB to 100,000GB / month</span>. Please <a href='#footerArea' class='text-indigo-600 underline hover:text-indigo-800 transition'>contact Admin</a> if needed!",
                 data_label: "Data:", dev_label: "Unlimited devices", speed_label: "Speed > 100Gbps", btn_buy: "Subscribe Now",
                 copy_memo: "Transfer Memo:", copy_amount: "Amount:", need_support: "Need Setup Support",
                 faq_title: "Frequently Asked Questions", faq_1_q: "Where is the guide?", faq_1_a: "Enter your Order ID in the top search bar to access the Portal.", 
                 faq_4_q: "What apps does the VPN support?", faq_4_a: "Supports smooth browsing for: <b>TikTok, Facebook, Messenger, Threads, Instagram, Telegram, Zalo, YouTube...</b> Message Admin to test any app.",
-                faq_2_q: "Payment methods?", faq_2_a: "Vietnam Bank, Alipay, WeChat, Crypto.", faq_3_q: "Can I change my device?", faq_3_a: "Yes. Just re-enter your Order ID to get the setup link."
+                faq_2_q: "Payment methods?", faq_2_a: "Vietnam Bank, Alipay, WeChat.", faq_3_q: "Can I change my device?", faq_3_a: "Yes. Just re-enter your Order ID to get the setup link."
             },
             zh: {
                 brand: "Trinh Hg VPN", search_placeholder: "输入订单号或邮箱...", portal_btn: "客户门户",
@@ -252,13 +263,15 @@
                 feat_1: "解锁所有平台", feat_2: "低延迟游戏", feat_3: "无日志记录", feat_4: "多平台支持",
                 tab_all: "全部", tab_cycle: "按周期", tab_usage: "按流量", checkout_title: "结账",
                 email_placeholder: "您的电子邮件 (必填)", btn_create_order: "创建订单", btn_paid: "我已付款",
-                pay_vn: "越南银行", pay_alipay: "支付宝 / 微信", pay_other: "加密货币 / 其他",
+                pay_vn: "越南银行", pay_alipay: "支付宝", pay_wechat: "微信支付",
                 guide_title: "付款说明", guide_desc: "输入邮箱，选择付款方式并创建订单。",
+                guide_empty: "<p class='text-center py-6 md:py-10 text-slate-500 font-bold text-xs md:text-sm'>教程正在更新...</p>",
+                custom_pkg_notice: "Trịnh Hg VPN 也有从 <span class='text-red-600'>100GB 到 100,000GB / 月</span>的套餐。如果需要，请<a href='#footerArea' class='text-indigo-600 underline hover:text-indigo-800 transition'>联系管理员</a>！",
                 data_label: "流量:", dev_label: "无限制设备", speed_label: "带宽 > 100Gbps", btn_buy: "立即订阅",
                 copy_memo: "转账备注:", copy_amount: "金额:", need_support: "需要人工设置支持",
                 faq_title: "常见问题", faq_1_q: "如何获取教程？", faq_1_a: "在顶部搜索栏输入您的订单号即可进入客户门户。", 
                 faq_4_q: "VPN支持哪些应用程序？", faq_4_a: "支持流畅浏览：<b>TikTok、Facebook、Messenger、Threads、Instagram、Telegram、YouTube...</b> 联系管理员测试任何应用。",
-                faq_2_q: "有哪些付款方式？", faq_2_a: "我们支持支付宝，微信和加密货币。", faq_3_q: "可以更换设备吗？", faq_3_a: "可以，重新查询订单号即可获取配置链接。"
+                faq_2_q: "有哪些付款方式？", faq_2_a: "我们支持越南银行，支付宝和微信。", faq_3_q: "可以更换设备吗？", faq_3_a: "可以，重新查询订单号即可获取配置链接。"
             }
         };
 
@@ -283,10 +296,10 @@
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // HÀM FETCH THÔNG MINH CHỐNG LỖI MẠNG (Fallback LocalStorage)
+        // Fix bộ nhớ đệm (Cache) để cập nhật dữ liệu mới nhất
         async function apiGet(path) {
             try {
-                let res = await fetch(API_URL + path);
+                let res = await fetch(API_URL + path + "?t=" + new Date().getTime(), { cache: "no-store" });
                 if(!res.ok) throw new Error("HTTP error");
                 let data = await res.json();
                 localStorage.setItem(path === '/api/orders' ? DB_KEY : 'cms_backup', JSON.stringify(data));
@@ -297,7 +310,7 @@
             }
         }
         async function apiPost(path, data) {
-            localStorage.setItem(path === '/api/orders' ? DB_KEY : 'cms_backup', JSON.stringify(data)); // Luôn lưu dự phòng
+            localStorage.setItem(path === '/api/orders' ? DB_KEY : 'cms_backup', JSON.stringify(data)); 
             try { await fetch(API_URL + path, { method: "POST", body: JSON.stringify(data) }); } 
             catch(e) { console.warn("API Bị chặn, chỉ lưu cục bộ", e); }
         }
@@ -306,6 +319,7 @@
             lang = val; document.getElementById('langSelectMobile').value = val; document.getElementById('langSelectDesktop').value = val;
             document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = i18n[lang][el.getAttribute('data-i18n')]; });
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = i18n[lang][el.getAttribute('data-i18n-placeholder')]; });
+            document.getElementById('customPkgNotice').innerHTML = i18n[lang].custom_pkg_notice;
             renderPackages('all'); 
             if(currentPackage && !document.getElementById('checkoutSection').classList.contains('hidden')) { openCheckout(currentPackage.id); }
         }
@@ -351,7 +365,6 @@
 
         function toggleZalo() { const z = document.getElementById('cusZalo'); z.classList.toggle('hidden'); z.required = !z.classList.contains('hidden'); }
         function changePayMethod() { if(document.getElementById('payMethod').value !== 'bank') { document.getElementById('needSupport').checked = true; toggleZalo(); } renderPaymentBox(); }
-        function cancelCheckout() { document.getElementById('checkoutSection').classList.add('hidden'); }
 
         function renderPaymentBox() {
             const col = document.getElementById('checkoutRightCol'); const m = document.getElementById('payMethod').value; const btn = document.getElementById('btnConfirm');
@@ -365,20 +378,25 @@
                 col.innerHTML = `<div class="text-center w-full"><div class="bg-indigo-50 p-2 rounded-xl inline-block mb-4"><img src="https://img.vietqr.io/image/mbbank-0917678211-compact.png?amount=${currentPackage.vnd}&addInfo=${currentOrderId}&accountName=TRINH THI XUAN HUONG" class="w-40 h-40 md:w-56 md:h-56 mx-auto rounded-xl mix-blend-multiply"></div>
                     <div class="w-full text-left text-xs md:text-sm space-y-2 mb-4">
                         <div class="flex justify-between items-center bg-white p-2.5 md:p-3 rounded-xl border border-slate-100"><span class="text-slate-500">Chủ TK:</span><strong class="text-slate-800">TRINH THI XUAN HUONG</strong></div>
+                        <div class="flex justify-between items-center bg-white p-2.5 md:p-3 rounded-xl border border-slate-100"><span class="text-slate-500">Ngân hàng:</span><strong class="text-slate-800">MB BANK</strong></div>
                         <div class="flex justify-between items-center bg-white p-2.5 md:p-3 rounded-xl border border-slate-100"><span class="text-slate-500">Số TK:</span><strong class="text-indigo-600 font-bold bg-indigo-50 px-2 py-1 rounded cursor-pointer" onclick="copyText('0917678211')">0917678211 <i class="far fa-copy ml-1"></i></strong></div>
                         <div class="flex justify-between items-center bg-white p-2.5 md:p-3 rounded-xl border border-slate-100"><span class="text-slate-500">${i18n[lang].copy_amount}</span><strong class="text-red-500 font-black text-base md:text-lg">${currentPackage.vi.price}</strong></div>
                     </div>
                     <div class="bg-yellow-50 py-3 px-2 rounded-xl text-center w-full"><span class="block text-slate-600 text-[10px] font-bold mb-1 uppercase">${i18n[lang].copy_memo}</span><strong class="block w-full bg-white text-slate-800 font-mono text-lg md:text-xl py-2 rounded-lg cursor-pointer shadow-sm" onclick="copyText('${currentOrderId}')">${currentOrderId} <i class="far fa-copy"></i></strong></div></div>`;
             } else if (m === 'alipay') {
-                col.innerHTML = `<div class="text-center w-full"><h4 class="font-extrabold text-slate-800 text-base md:text-lg mb-4">Alipay / WeChat Pay</h4>
-                    <div class="flex justify-center gap-4 mb-6">
-                        <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-100"><img src="./alipay.jpg" class="w-24 h-24 md:w-32 md:h-32 rounded-lg object-cover"><p class="text-[10px] md:text-xs font-bold mt-2 text-blue-600">Alipay</p></div>
-                        <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-100"><img src="./wechat.jpg" class="w-24 h-24 md:w-32 md:h-32 rounded-lg object-cover"><p class="text-[10px] md:text-xs font-bold mt-2 text-green-600">WeChat</p></div>
+                col.innerHTML = `<div class="text-center w-full"><h4 class="font-extrabold text-slate-800 text-base md:text-lg mb-4 text-blue-600"><i class="fas fa-qrcode mr-2"></i>Alipay</h4>
+                    <div class="flex justify-center mb-6">
+                        <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-100"><img src="https://scontent-nrt6-1.xx.fbcdn.net/v/t1.15752-9/653857590_1758745008618735_4375237426148577611_n.jpg?stp=dst-jpg_s720x720_tt6&_nc_cat=110&ccb=1-7&_nc_sid=0024fc&_nc_ohc=_SgoipZLgUkQ7kNvwGTIzYm&_nc_oc=AdrO2lWMUl61E44q7BVfIH40A2fqKLTNdcUAdoWhzfwuF4McoyFJ70VzU_UPmIDtXtGyHkyqvgbynydVWSE5yl7r&_nc_zt=23&_nc_ht=scontent-nrt6-1.xx&_nc_ss=7a30f&oh=03_Q7cD4wE32bYIr4NC7uRoxNa04HxQqRSAhpXXhdbM7YBist-IxQ&oe=69E5BE9F" class="w-40 h-40 md:w-56 md:h-56 rounded-lg object-cover"></div>
                     </div>
                     <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100 mb-4"><span class="text-slate-500 text-xs md:text-sm">${i18n[lang].copy_amount}</span><strong class="text-red-500 font-black text-lg md:text-xl">${currentPackage.cny} CNY</strong></div>
                     <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-center w-full"><span class="block text-slate-600 text-[10px] font-bold mb-1 uppercase">${i18n[lang].copy_memo}</span><strong class="block w-full bg-white text-slate-800 font-mono text-lg md:text-xl py-2 rounded-lg cursor-pointer shadow-sm mb-2" onclick="copyText('${currentOrderId}')">${currentOrderId} <i class="far fa-copy ml-1"></i></strong><p class="text-[10px] md:text-xs text-red-500 font-bold">${lang==='zh'?'请手动输入金额和订单号！':(lang==='en'?'Please manually enter the amount and Memo!':'Vui lòng tự nhập số tiền và nội dung chuyển khoản!')}</p></div></div>`;
-            } else {
-                col.innerHTML = `<div class="text-center py-10"><i class="fas fa-headset text-4xl text-slate-400 mb-3"></i><h3 class="text-lg font-black text-slate-700 mb-2">Contact Admin</h3><p class="text-xs text-slate-500">Submit order and contact Admin via Zalo/Tele.</p></div>`;
+            } else if (m === 'wechat') {
+                col.innerHTML = `<div class="text-center w-full"><h4 class="font-extrabold text-slate-800 text-base md:text-lg mb-4 text-green-600"><i class="fas fa-qrcode mr-2"></i>WeChat Pay</h4>
+                    <div class="flex justify-center mb-6">
+                        <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-100"><img src="https://scontent-nrt1-2.xx.fbcdn.net/v/t1.15752-9/652721068_899535699618771_165366187059067125_n.png?_nc_cat=102&ccb=1-7&_nc_sid=9f807c&_nc_ohc=tqY_EL9rmrsQ7kNvwHryZQy&_nc_oc=AdrasTGaeXx7U24IMsuc9vhdQVwi_wXbxBYjA562u4NvuQobh3nrSC0oI33-DMuX-i04YqDuRxnThnfh0mJaRgJT&_nc_zt=23&_nc_ht=scontent-nrt1-2.xx&_nc_ss=7a30f&oh=03_Q7cD4wEuP3DCf5T9KwYNCILX_DPsbf1gpzV5RcYnlMjy_NoCyg&oe=69E59E0D" class="w-40 h-40 md:w-56 md:h-56 rounded-lg object-cover"></div>
+                    </div>
+                    <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100 mb-4"><span class="text-slate-500 text-xs md:text-sm">${i18n[lang].copy_amount}</span><strong class="text-red-500 font-black text-lg md:text-xl">${currentPackage.cny} CNY</strong></div>
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-center w-full"><span class="block text-slate-600 text-[10px] font-bold mb-1 uppercase">${i18n[lang].copy_memo}</span><strong class="block w-full bg-white text-slate-800 font-mono text-lg md:text-xl py-2 rounded-lg cursor-pointer shadow-sm mb-2" onclick="copyText('${currentOrderId}')">${currentOrderId} <i class="far fa-copy ml-1"></i></strong><p class="text-[10px] md:text-xs text-red-500 font-bold">${lang==='zh'?'请手动输入金额和订单号！':(lang==='en'?'Please manually enter the amount and Memo!':'Vui lòng tự nhập số tiền và nội dung chuyển khoản!')}</p></div></div>`;
             }
         }
 
@@ -388,25 +406,29 @@
         async function submitOrder(e) {
             e.preventDefault(); const btn = document.getElementById('btnConfirm');
             if(!currentOrderId) {
+                // Tạo ID
                 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; currentOrderId = 'DH-'; for(let i=0; i<10; i++) currentOrderId += chars.charAt(Math.floor(Math.random()*chars.length));
                 renderPaymentBox();
-                
-                // BẮN MAIL BÁO ĐỘNG NGẦM CHO ADMIN
-                try {
-                    await fetch(GOOGLE_MAIL_API, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
-                        to: "lucastanora@gmail.com", subject: `[BÁO ĐỘNG ĐƠN] ${currentOrderId} - Đang chờ Bank`, 
-                        html: `<h2 style="color:blue">Khách vừa TẠO MÃ thanh toán!</h2><p>Mã: <b>${currentOrderId}</b></p><p>Gói: ${currentPackage.vi.name} (${currentPackage.data})</p><p>Email khách: ${document.getElementById('cusEmail').value}</p><p>Vui lòng mở trang Admin để kiểm tra và duyệt nếu tiền về!</p>`
-                    }) });
-                } catch(e) {}
             } else {
+                // KHÁCH ĐÃ BẤM ĐÃ CHUYỂN KHOẢN
                 btn.innerText = "LOADING..."; btn.disabled = true;
                 
                 let db = await apiGet("/api/orders");
-                db.unshift({ id: currentOrderId, email: document.getElementById('cusEmail').value, zalo: document.getElementById('cusZalo').value, method: document.getElementById('payMethod').value, pkg: `${currentPackage.vi.name} - ${currentPackage.vi.price} / ${currentPackage.usd}$ / ${currentPackage.cny}¥ (${currentPackage.data})`, needSupport: document.getElementById('needSupport').checked, status: 'pending', date: new Date().toLocaleString() });
+                db.unshift({ id: currentOrderId, email: document.getElementById('cusEmail').value, zalo: document.getElementById('cusZalo').value, method: document.getElementById('payMethod').options[document.getElementById('payMethod').selectedIndex].text, pkg: `${currentPackage.vi.name} - ${currentPackage.vi.price} / ${currentPackage.usd}$ / ${currentPackage.cny}¥ (${currentPackage.data})`, needSupport: document.getElementById('needSupport').checked, status: 'pending', date: new Date().toLocaleString() });
                 
                 await apiPost("/api/orders", db);
+
+                // BẮN MAIL BÁO ĐỘNG NGẦM CHO ADMIN KHI KHÁCH ĐÃ TẠO ĐƠN & THANH TOÁN XONG
+                try {
+                    await fetch(GOOGLE_MAIL_API, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
+                        to: "lucastanora@gmail.com", subject: `[CÓ ĐƠN MỚI] ${currentOrderId} - Khách báo Đã CK`, 
+                        html: `<h2 style="color:blue">Khách vừa xác nhận ĐÃ THANH TOÁN!</h2><p>Mã: <b>${currentOrderId}</b></p><p>Gói: ${currentPackage.vi.name} (${currentPackage.data})</p><p>Email khách: ${document.getElementById('cusEmail').value}</p><p>Vui lòng mở trang Admin để kiểm tra tiền và duyệt đơn!</p>`
+                    }) });
+                } catch(err) {}
                 
-                showToast(lang === 'vi' ? "Thành công!" : "Success!", "success"); cancelCheckout(); document.getElementById('orderForm').reset();
+                showToast(lang === 'vi' ? "Thành công!" : "Success!", "success"); 
+                document.getElementById('checkoutSection').classList.add('hidden'); 
+                document.getElementById('orderForm').reset();
                 document.getElementById('loginInput').value = currentOrderId; login(true);
                 
                 btn.disabled = false;
@@ -430,7 +452,6 @@
             document.getElementById('view-store').classList.remove('active'); document.getElementById('view-portal').classList.add('active');
             document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('checkoutSection').classList.add('hidden');
             
-            // ĐIỀN THÔNG TIN CHI TIẾT GÓI
             document.getElementById('portalOrderId').innerText = o.id;
             document.getElementById('portalPackageName').innerText = o.pkg.split('-')[0].trim();
             const pkgData = o.pkg.match(/\((.*?)\)/); document.getElementById('portalPackageData').innerText = pkgData ? pkgData[1] : '---';
@@ -460,7 +481,8 @@
             document.querySelectorAll('.dev-btn').forEach(b => { b.classList.remove('active', 'border-indigo-500'); });
             document.getElementById('btn-dev-' + dev).classList.add('active', 'border-indigo-500');
             document.getElementById('guideContent').classList.remove('hidden');
-            document.getElementById('guideText').innerHTML = cmsCache[dev] || '<p class="text-center py-6 md:py-10 text-slate-500 font-bold text-xs md:text-sm">Guide is updating...</p>';
+            // FIX NGÔN NGỮ Ở CMS
+            document.getElementById('guideText').innerHTML = cmsCache[dev] || i18n[lang].guide_empty;
         }
 
         window.onload = function() {
@@ -468,7 +490,6 @@
             const session = localStorage.getItem(SESSION_KEY);
             if(session) { const data = JSON.parse(session); if(new Date().getTime() - data.time < 24*3600*1000) { document.getElementById('loginInput').value = data.id; login(true); } else localStorage.removeItem(SESSION_KEY); }
             
-            // POLLING 5S NẾU ĐANG CHỜ DUYỆT ĐỂ REAL-TIME
             autoPollInterval = setInterval(async () => {
                 if(document.getElementById('view-portal').classList.contains('active') && !document.getElementById('portalContentPending').classList.contains('hidden')) {
                     login(true, true); 
