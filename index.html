@@ -20,12 +20,12 @@
 </head>
 <body class="min-h-screen flex flex-col relative">
 
-    <div id="toastContainer" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3"></div>
+    <div id="toastContainer" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
     <nav id="mainNav" class="glass-ui sticky top-2 md:top-4 z-50 w-[95%] max-w-7xl mx-auto rounded-2xl px-4 md:px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-3 transition-transform duration-300">
         <div class="font-extrabold text-xl md:text-2xl tracking-tighter cursor-pointer flex items-center text-indigo-700 w-full md:w-auto justify-between md:justify-start" onclick="logout()">
             <div class="flex items-center"><i class="fas fa-shield-alt text-2xl md:text-3xl mr-2"></i> <span data-i18n="brand">Trinh Hg VPN</span></div>
-            <select id="langSelectMobile" onchange="changeLanguage(this.value)" class="md:hidden bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-lg px-2 py-1 text-base font-bold outline-none">
+            <select id="langSelectMobile" onchange="changeLanguage(this.value)" class="md:hidden bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-lg px-2 py-1 text-base font-bold outline-none pointer-events-auto">
                 <option value="vi">🇻🇳</option><option value="en">🇬🇧</option><option value="zh">🇨🇳</option>
             </select>
         </div>
@@ -54,7 +54,7 @@
                     <div><h2 class="text-xl md:text-3xl font-extrabold text-slate-800" data-i18n="portal_title">Cổng Khách Hàng</h2></div>
                     <div class="flex items-center gap-2">
                         <p id="portalStatus" class="mr-2"></p>
-                        <button onclick="login(true, true)" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-bold transition"><i class="fas fa-sync-alt mr-1"></i> <span data-i18n="btn_refresh">Làm mới</span></button>
+                        <button onclick="login(true, false)" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-bold transition"><i class="fas fa-sync-alt mr-1"></i> <span data-i18n="btn_refresh">Làm mới</span></button>
                     </div>
                 </div>
 
@@ -90,6 +90,13 @@
             </div>
 
             <div class="text-center mb-6 mt-10"><h3 class="text-xl md:text-2xl font-extrabold text-slate-800" data-i18n="renew_title">Gia hạn Dịch vụ</h3></div>
+            
+            <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 mb-6 text-center shadow-sm max-w-3xl mx-auto">
+                <p class="customPkgNotice text-sm md:text-base text-indigo-900 font-bold">
+                    Ngoài ra, Trịnh Hg VPN còn có gói từ <span class="text-red-600">100GB – 100,000GB / 1 tháng</span>. Vui lòng <a href="#footerArea" class="text-indigo-600 underline hover:text-indigo-800 transition">liên hệ Admin</a> nếu bạn có nhu cầu!
+                </p>
+            </div>
+
             <div class="flex justify-center gap-2 mb-6 bg-white p-1.5 rounded-xl w-fit mx-auto border border-slate-100 shadow-sm flex-wrap">
                 <button onclick="renderPackages('all')" id="ptab-all" class="tab-btn active text-slate-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm" data-i18n="tab_all">Tất cả</button>
                 <button onclick="renderPackages('cycle')" id="ptab-cycle" class="tab-btn text-slate-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm" data-i18n="tab_cycle">Theo Chu kỳ</button>
@@ -112,18 +119,18 @@
                 <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm text-center"><i class="fas fa-laptop-house text-2xl md:text-3xl text-indigo-500 mb-2"></i><h4 class="font-bold text-xs md:text-sm text-slate-800" data-i18n="feat_4">Hỗ trợ Đa nền tảng</h4></div>
             </div>
 
+            <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 mb-6 text-center shadow-sm max-w-3xl mx-auto">
+                <p class="customPkgNotice text-sm md:text-base text-indigo-900 font-bold">
+                    Ngoài ra, Trịnh Hg VPN còn có gói từ <span class="text-red-600">100GB – 100,000GB / 1 tháng</span>. Vui lòng <a href="#footerArea" class="text-indigo-600 underline hover:text-indigo-800 transition">liên hệ Admin</a> nếu bạn có nhu cầu!
+                </p>
+            </div>
+
             <div class="flex justify-center gap-2 mb-6 bg-white p-1.5 rounded-xl w-fit mx-auto border border-slate-100 shadow-sm flex-wrap">
                 <button onclick="renderPackages('all')" id="htab-all" class="tab-btn active text-slate-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm" data-i18n="tab_all">Tất cả</button>
                 <button onclick="renderPackages('cycle')" id="htab-cycle" class="tab-btn text-slate-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm" data-i18n="tab_cycle">Theo Chu kỳ</button>
                 <button onclick="renderPackages('usage')" id="htab-usage" class="tab-btn text-slate-600 px-4 py-2 rounded-lg font-bold text-xs md:text-sm" data-i18n="tab_usage">Dung lượng</button>
             </div>
             
-            <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 mb-6 text-center shadow-sm max-w-3xl mx-auto">
-                <p class="text-sm md:text-base text-indigo-900 font-bold" id="customPkgNotice">
-                    Ngoài ra, Trịnh Hg VPN còn có gói từ <span class="text-red-600">100GB – 100,000GB / 1 tháng</span>. Vui lòng <a href="#footerArea" class="text-indigo-600 underline hover:text-indigo-800 transition">liên hệ Admin</a> nếu bạn có nhu cầu!
-                </p>
-            </div>
-
             <div class="grid md:grid-cols-3 gap-4 md:gap-6 mb-10" id="packagesContainerHome"></div>
 
             <div id="checkoutSection" class="hidden glass-ui p-5 md:p-10 rounded-2xl md:rounded-3xl border border-indigo-100 mt-6">
@@ -214,7 +221,6 @@
         const SESSION_KEY = 'vpn_portal_session_24h';
         const DB_KEY = 'vpn_orders_db';
 
-        // TỪ ĐIỂN MỚI NHẤT
         const i18n = {
             vi: {
                 brand: "Trinh Hg VPN", search_placeholder: "Nhập Mã Đơn hoặc Email...", portal_btn: "Cổng Khách",
@@ -296,10 +302,14 @@
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // Fix bộ nhớ đệm (Cache) để cập nhật dữ liệu mới nhất
+        // Bổ sung header cực mạnh tránh cache trả về data cũ (kể cả với Cloudflare)
         async function apiGet(path) {
             try {
-                let res = await fetch(API_URL + path + "?t=" + new Date().getTime(), { cache: "no-store" });
+                let res = await fetch(API_URL + path + "?_t=" + Date.now(), { 
+                    method: 'GET',
+                    cache: 'no-store',
+                    headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+                });
                 if(!res.ok) throw new Error("HTTP error");
                 let data = await res.json();
                 localStorage.setItem(path === '/api/orders' ? DB_KEY : 'cms_backup', JSON.stringify(data));
@@ -319,7 +329,10 @@
             lang = val; document.getElementById('langSelectMobile').value = val; document.getElementById('langSelectDesktop').value = val;
             document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = i18n[lang][el.getAttribute('data-i18n')]; });
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = i18n[lang][el.getAttribute('data-i18n-placeholder')]; });
-            document.getElementById('customPkgNotice').innerHTML = i18n[lang].custom_pkg_notice;
+            
+            // Update tất cả các chỗ có text custom package notice
+            document.querySelectorAll('.customPkgNotice').forEach(el => el.innerHTML = i18n[lang].custom_pkg_notice);
+
             renderPackages('all'); 
             if(currentPackage && !document.getElementById('checkoutSection').classList.contains('hidden')) { openCheckout(currentPackage.id); }
         }
@@ -384,16 +397,17 @@
                     </div>
                     <div class="bg-yellow-50 py-3 px-2 rounded-xl text-center w-full"><span class="block text-slate-600 text-[10px] font-bold mb-1 uppercase">${i18n[lang].copy_memo}</span><strong class="block w-full bg-white text-slate-800 font-mono text-lg md:text-xl py-2 rounded-lg cursor-pointer shadow-sm" onclick="copyText('${currentOrderId}')">${currentOrderId} <i class="far fa-copy"></i></strong></div></div>`;
             } else if (m === 'alipay') {
+                // ĐÃ FIX CSS QR CĂN GIỮA (flex items-center justify-center + object-contain)
                 col.innerHTML = `<div class="text-center w-full"><h4 class="font-extrabold text-slate-800 text-base md:text-lg mb-4 text-blue-600"><i class="fas fa-qrcode mr-2"></i>Alipay</h4>
                     <div class="flex justify-center mb-6">
-                        <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-100"><img src="https://scontent-nrt6-1.xx.fbcdn.net/v/t1.15752-9/653857590_1758745008618735_4375237426148577611_n.jpg?stp=dst-jpg_s720x720_tt6&_nc_cat=110&ccb=1-7&_nc_sid=0024fc&_nc_ohc=_SgoipZLgUkQ7kNvwGTIzYm&_nc_oc=AdrO2lWMUl61E44q7BVfIH40A2fqKLTNdcUAdoWhzfwuF4McoyFJ70VzU_UPmIDtXtGyHkyqvgbynydVWSE5yl7r&_nc_zt=23&_nc_ht=scontent-nrt6-1.xx&_nc_ss=7a30f&oh=03_Q7cD4wE32bYIr4NC7uRoxNa04HxQqRSAhpXXhdbM7YBist-IxQ&oe=69E5BE9F" class="w-40 h-40 md:w-56 md:h-56 rounded-lg object-cover"></div>
+                        <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-100 flex items-center justify-center"><img src="https://scontent-nrt6-1.xx.fbcdn.net/v/t1.15752-9/653857590_1758745008618735_4375237426148577611_n.jpg?stp=dst-jpg_s720x720_tt6&_nc_cat=110&ccb=1-7&_nc_sid=0024fc&_nc_ohc=_SgoipZLgUkQ7kNvwGTIzYm&_nc_oc=AdrO2lWMUl61E44q7BVfIH40A2fqKLTNdcUAdoWhzfwuF4McoyFJ70VzU_UPmIDtXtGyHkyqvgbynydVWSE5yl7r&_nc_zt=23&_nc_ht=scontent-nrt6-1.xx&_nc_ss=7a30f&oh=03_Q7cD4wE32bYIr4NC7uRoxNa04HxQqRSAhpXXhdbM7YBist-IxQ&oe=69E5BE9F" class="w-40 h-40 md:w-56 md:h-56 rounded-lg object-contain"></div>
                     </div>
                     <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100 mb-4"><span class="text-slate-500 text-xs md:text-sm">${i18n[lang].copy_amount}</span><strong class="text-red-500 font-black text-lg md:text-xl">${currentPackage.cny} CNY</strong></div>
                     <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-center w-full"><span class="block text-slate-600 text-[10px] font-bold mb-1 uppercase">${i18n[lang].copy_memo}</span><strong class="block w-full bg-white text-slate-800 font-mono text-lg md:text-xl py-2 rounded-lg cursor-pointer shadow-sm mb-2" onclick="copyText('${currentOrderId}')">${currentOrderId} <i class="far fa-copy ml-1"></i></strong><p class="text-[10px] md:text-xs text-red-500 font-bold">${lang==='zh'?'请手动输入金额和订单号！':(lang==='en'?'Please manually enter the amount and Memo!':'Vui lòng tự nhập số tiền và nội dung chuyển khoản!')}</p></div></div>`;
             } else if (m === 'wechat') {
                 col.innerHTML = `<div class="text-center w-full"><h4 class="font-extrabold text-slate-800 text-base md:text-lg mb-4 text-green-600"><i class="fas fa-qrcode mr-2"></i>WeChat Pay</h4>
                     <div class="flex justify-center mb-6">
-                        <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-100"><img src="https://scontent-nrt1-2.xx.fbcdn.net/v/t1.15752-9/652721068_899535699618771_165366187059067125_n.png?_nc_cat=102&ccb=1-7&_nc_sid=9f807c&_nc_ohc=tqY_EL9rmrsQ7kNvwHryZQy&_nc_oc=AdrasTGaeXx7U24IMsuc9vhdQVwi_wXbxBYjA562u4NvuQobh3nrSC0oI33-DMuX-i04YqDuRxnThnfh0mJaRgJT&_nc_zt=23&_nc_ht=scontent-nrt1-2.xx&_nc_ss=7a30f&oh=03_Q7cD4wEuP3DCf5T9KwYNCILX_DPsbf1gpzV5RcYnlMjy_NoCyg&oe=69E59E0D" class="w-40 h-40 md:w-56 md:h-56 rounded-lg object-cover"></div>
+                        <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-100 flex items-center justify-center"><img src="https://scontent-nrt1-2.xx.fbcdn.net/v/t1.15752-9/652721068_899535699618771_165366187059067125_n.png?_nc_cat=102&ccb=1-7&_nc_sid=9f807c&_nc_ohc=tqY_EL9rmrsQ7kNvwHryZQy&_nc_oc=AdrasTGaeXx7U24IMsuc9vhdQVwi_wXbxBYjA562u4NvuQobh3nrSC0oI33-DMuX-i04YqDuRxnThnfh0mJaRgJT&_nc_zt=23&_nc_ht=scontent-nrt1-2.xx&_nc_ss=7a30f&oh=03_Q7cD4wEuP3DCf5T9KwYNCILX_DPsbf1gpzV5RcYnlMjy_NoCyg&oe=69E59E0D" class="w-40 h-40 md:w-56 md:h-56 rounded-lg object-contain"></div>
                     </div>
                     <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100 mb-4"><span class="text-slate-500 text-xs md:text-sm">${i18n[lang].copy_amount}</span><strong class="text-red-500 font-black text-lg md:text-xl">${currentPackage.cny} CNY</strong></div>
                     <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-center w-full"><span class="block text-slate-600 text-[10px] font-bold mb-1 uppercase">${i18n[lang].copy_memo}</span><strong class="block w-full bg-white text-slate-800 font-mono text-lg md:text-xl py-2 rounded-lg cursor-pointer shadow-sm mb-2" onclick="copyText('${currentOrderId}')">${currentOrderId} <i class="far fa-copy ml-1"></i></strong><p class="text-[10px] md:text-xs text-red-500 font-bold">${lang==='zh'?'请手动输入金额和订单号！':(lang==='en'?'Please manually enter the amount and Memo!':'Vui lòng tự nhập số tiền và nội dung chuyển khoản!')}</p></div></div>`;
@@ -406,11 +420,9 @@
         async function submitOrder(e) {
             e.preventDefault(); const btn = document.getElementById('btnConfirm');
             if(!currentOrderId) {
-                // Tạo ID
                 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; currentOrderId = 'DH-'; for(let i=0; i<10; i++) currentOrderId += chars.charAt(Math.floor(Math.random()*chars.length));
                 renderPaymentBox();
             } else {
-                // KHÁCH ĐÃ BẤM ĐÃ CHUYỂN KHOẢN
                 btn.innerText = "LOADING..."; btn.disabled = true;
                 
                 let db = await apiGet("/api/orders");
@@ -418,7 +430,6 @@
                 
                 await apiPost("/api/orders", db);
 
-                // BẮN MAIL BÁO ĐỘNG NGẦM CHO ADMIN KHI KHÁCH ĐÃ TẠO ĐƠN & THANH TOÁN XONG
                 try {
                     await fetch(GOOGLE_MAIL_API, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
                         to: "lucastanora@gmail.com", subject: `[CÓ ĐƠN MỚI] ${currentOrderId} - Khách báo Đã CK`, 
@@ -435,19 +446,20 @@
             }
         }
 
-        async function login(silent = false, isRefresh = false) {
+        // isManualRefresh: Dùng khi bấm nút "Làm mới", isAutoPoll: Dùng khi chạy ngầm polling
+        async function login(isManualRefresh = false, isAutoPoll = false) {
             const input = document.getElementById('loginInput').value.trim().toUpperCase(); if(!input) return;
-            if(isRefresh) showToast(lang==='vi'?'Đang làm mới...':'Refreshing...', "info");
+            if(isManualRefresh && !isAutoPoll) showToast(lang==='vi'?'Đang làm mới...':'Refreshing...', "info");
 
             let db = await apiGet("/api/orders");
             let o = db.find(x => x.id.toUpperCase() === input || (x.email && x.email.toUpperCase() === input));
             if(!o) { 
-                if(!isRefresh) showToast(lang==='vi'?'Không tìm thấy Đơn hàng/Email này!':(lang==='en'?'Order not found!':'未找到订单'), 'error'); 
+                if(!isAutoPoll) showToast(lang==='vi'?'Không tìm thấy Đơn hàng/Email này!':(lang==='en'?'Order not found!':'未找到订单'), 'error'); 
                 return; 
             }
 
             localStorage.setItem(SESSION_KEY, JSON.stringify({ id: o.id, time: new Date().getTime() }));
-            if(!silent && !isRefresh) showToast(lang==='vi'?'Vào cổng thành công!':(lang==='en'?'Login success!':'登录成功'), "info");
+            if(!isManualRefresh && !isAutoPoll) showToast(lang==='vi'?'Vào cổng thành công!':(lang==='en'?'Login success!':'登录成功'), "info");
 
             document.getElementById('view-store').classList.remove('active'); document.getElementById('view-portal').classList.add('active');
             document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('checkoutSection').classList.add('hidden');
@@ -469,7 +481,7 @@
                 showGuide('android');
             } else st.innerHTML = `<span class="text-red-700 bg-red-100 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase">${lang==='vi'?'Từ chối':'Rejected'}</span>`;
             
-            renderPackages('all'); if(!isRefresh) window.scrollTo({ top: 0, behavior: 'smooth' });
+            renderPackages('all'); if(!isManualRefresh && !isAutoPoll) window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function logout() {
@@ -481,7 +493,6 @@
             document.querySelectorAll('.dev-btn').forEach(b => { b.classList.remove('active', 'border-indigo-500'); });
             document.getElementById('btn-dev-' + dev).classList.add('active', 'border-indigo-500');
             document.getElementById('guideContent').classList.remove('hidden');
-            // FIX NGÔN NGỮ Ở CMS
             document.getElementById('guideText').innerHTML = cmsCache[dev] || i18n[lang].guide_empty;
         }
 
@@ -490,11 +501,13 @@
             const session = localStorage.getItem(SESSION_KEY);
             if(session) { const data = JSON.parse(session); if(new Date().getTime() - data.time < 24*3600*1000) { document.getElementById('loginInput').value = data.id; login(true); } else localStorage.removeItem(SESSION_KEY); }
             
+            // Giảm độ dày Polling xuống 10s để đỡ rác kết nối mạng
             autoPollInterval = setInterval(async () => {
                 if(document.getElementById('view-portal').classList.contains('active') && !document.getElementById('portalContentPending').classList.contains('hidden')) {
-                    login(true, true); 
+                    // Tham số: login(isManualRefresh = false, isAutoPoll = true) -> Chặn toast 
+                    login(false, true); 
                 }
-            }, 5000);
+            }, 10000);
         }
     </script>
 </body>
