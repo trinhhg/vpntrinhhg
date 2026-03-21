@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trinh Hg VPN - Trinh Hg</title>
+    <title>Trinh Hg VPN - Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -14,7 +14,7 @@
     </style>
 </head>
 <body class="min-h-screen pb-20">
-    <div id="toastContainer" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3"></div>
+    <div id="toastContainer" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
     <div id="loginScreen" class="fixed inset-0 bg-slate-50 z-50 flex items-center justify-center p-4">
         <div class="glass-card p-8 md:p-10 w-full max-w-sm text-center">
@@ -28,7 +28,7 @@
         <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-100 gap-4">
             <h1 class="text-xl md:text-2xl font-extrabold text-indigo-600">Trinh Hg VPN Admin</h1>
             <div class="flex gap-2 w-full md:w-auto">
-                <button onclick="fetchOrders()" class="flex-1 md:flex-none bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-4 py-2.5 rounded-xl font-bold text-sm transition"><i class="fas fa-sync-alt mr-2"></i>Làm mới</button>
+                <button onclick="fetchOrders(true)" class="flex-1 md:flex-none bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-4 py-2.5 rounded-xl font-bold text-sm transition"><i class="fas fa-sync-alt mr-2"></i>Làm mới</button>
                 <button onclick="logoutAdmin()" class="flex-1 md:flex-none bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2.5 rounded-xl font-bold text-sm transition">Đăng xuất</button>
             </div>
         </div>
@@ -163,10 +163,14 @@
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // FIX LỖI CACHE CHO ADMIN CHẮC CHẮN UPDATE ĐƯỢC
+        // Bổ sung header ép không cache giống file index.html
         async function apiGet(path) {
             try {
-                let res = await fetch(API_URL + path + "?t=" + new Date().getTime(), { cache: "no-store" });
+                let res = await fetch(API_URL + path + "?_t=" + Date.now(), { 
+                    method: 'GET',
+                    cache: 'no-store',
+                    headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+                });
                 if(!res.ok) throw new Error("HTTP error");
                 let data = await res.json();
                 localStorage.setItem(path === '/api/orders' ? DB_KEY : 'cms_backup', JSON.stringify(data));
@@ -182,7 +186,6 @@
             catch(e) { console.warn("API Bị chặn, chỉ lưu cục bộ", e); }
         }
 
-        // AUTO LOGIN / DEVICE MANAGEMENT
         window.onload = async function() {
             myDeviceId = localStorage.getItem("admin_device_id");
             if(!myDeviceId) {
@@ -190,18 +193,13 @@
                 localStorage.setItem("admin_device_id", myDeviceId);
             }
             
-            // Check list devices
             adminDevices = await apiGet("/api/devices");
             let allowed = adminDevices.find(x => x.id === myDeviceId);
-            
-            if(allowed) {
-                doLoginSuccess();
-            }
+            if(allowed) { doLoginSuccess(); }
         }
 
         async function checkAdminPassword() {
             if(document.getElementById('adminPass').value === "admin2026") {
-                // Register Device
                 adminDevices = await apiGet("/api/devices");
                 if(!adminDevices.find(x => x.id === myDeviceId)) {
                     adminDevices.push({
@@ -229,7 +227,6 @@
         }
 
         function logoutAdmin() {
-            // Chỉ xóa thông tin local để lần sau đòi pass lại, không xóa trên Cloud
             localStorage.removeItem("admin_device_id");
             location.reload();
         }
@@ -246,7 +243,6 @@
             document.getElementById('btn-'+t).className = "flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow-md";
         }
 
-        // DEVICES MANAGEMENT
         function renderDevices() {
             const tbody = document.getElementById('devicesTable'); tbody.innerHTML = '';
             adminDevices.forEach((d) => {
@@ -269,15 +265,16 @@
             }
         }
 
-        async function fetchOrders() {
+        async function fetchOrders(showManualToast = false) {
             ordersDb = await apiGet("/api/orders");
-            renderOrders(); showToast("Dữ liệu đã cập nhật!", "success");
+            renderOrders(); 
+            if(showManualToast) showToast("Dữ liệu đã cập nhật!", "success");
         }
 
         async function fetchOrdersSilently() {
             const newData = await apiGet("/api/orders");
             if(JSON.stringify(newData) !== JSON.stringify(ordersDb)) {
-                ordersDb = newData; renderOrders(); showToast("Đã cập nhật đơn mới!", "info");
+                ordersDb = newData; renderOrders(); showToast("Đã có Đơn hàng mới!", "info");
             }
         }
 
@@ -350,7 +347,7 @@
                 ordersDb.unshift(o); 
             }
 
-            o.id = originalId; // in case manual edit
+            o.id = originalId;
             o.email = document.getElementById('editEmail').value; 
             o.pkg = document.getElementById('editPkg').value;
             o.status = document.getElementById('editStatus').value; 
