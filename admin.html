@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trinh Hg VPN - Admin Panel</title>
+    <title>Trinh Hg VPN - Trinh Hg</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -20,7 +20,7 @@
         <div class="glass-card p-8 md:p-10 w-full max-w-sm text-center">
             <h2 class="text-2xl font-extrabold mb-8 text-slate-800">Admin Panel</h2>
             <input type="password" id="adminPass" class="w-full bg-slate-100 rounded-xl p-4 text-center mb-4 outline-none font-bold tracking-widest" placeholder="Mật khẩu...">
-            <button onclick="checkAdmin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition">ĐĂNG NHẬP</button>
+            <button onclick="checkAdminPassword()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition">ĐĂNG NHẬP</button>
         </div>
     </div>
 
@@ -29,13 +29,14 @@
             <h1 class="text-xl md:text-2xl font-extrabold text-indigo-600">Trinh Hg VPN Admin</h1>
             <div class="flex gap-2 w-full md:w-auto">
                 <button onclick="fetchOrders()" class="flex-1 md:flex-none bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-4 py-2.5 rounded-xl font-bold text-sm transition"><i class="fas fa-sync-alt mr-2"></i>Làm mới</button>
-                <button onclick="location.reload()" class="flex-1 md:flex-none bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2.5 rounded-xl font-bold text-sm transition">Đăng xuất</button>
+                <button onclick="logoutAdmin()" class="flex-1 md:flex-none bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2.5 rounded-xl font-bold text-sm transition">Đăng xuất</button>
             </div>
         </div>
 
         <div class="flex flex-wrap gap-2 mb-6">
             <button onclick="switchTab('tab-orders')" id="btn-tab-orders" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow-md">📦 Đơn hàng</button>
             <button onclick="switchTab('tab-cms')" id="btn-tab-cms" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200">🛠️ Hướng dẫn</button>
+            <button onclick="switchTab('tab-devices')" id="btn-tab-devices" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200">💻 Thiết bị</button>
         </div>
 
         <div id="tab-orders">
@@ -67,6 +68,19 @@
             <textarea id="cmsGuide" rows="12" class="w-full p-4 border border-slate-200 rounded-b-xl focus:outline-none text-slate-800 bg-white shadow-inner font-mono text-sm leading-relaxed" placeholder="Soạn nội dung HTML..."></textarea>
             <button onclick="saveCmsToCloud()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3.5 rounded-xl shadow-md w-full md:w-auto transition">💾 LƯU LÊN MÁY CHỦ</button>
         </div>
+
+        <div id="tab-devices" class="hidden glass-card p-5 md:p-8">
+            <h2 class="text-xl font-bold mb-4">Các thiết bị được phép vào Admin</h2>
+            <p class="text-xs text-slate-500 mb-4">Các thiết bị này sẽ được tự động đăng nhập không cần mật khẩu. Xóa thiết bị nếu bạn muốn bắt buộc đăng nhập lại.</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm whitespace-nowrap min-w-[600px]">
+                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
+                        <tr><th class="p-4">ID Thiết bị</th><th class="p-4">Trình duyệt / Thiết bị</th><th class="p-4">Ngày cấp</th><th class="p-4 text-right">Xóa</th></tr>
+                    </thead>
+                    <tbody id="devicesTable" class="divide-y divide-slate-100"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <div id="modalEdit" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -74,7 +88,13 @@
             <h3 class="text-xl md:text-2xl font-bold mb-4 md:mb-6" id="modalTitle">Chỉnh sửa Đơn Hàng</h3>
             
             <div class="grid md:grid-cols-2 gap-3 md:gap-4 mb-3 md:mb-4">
-                <div><label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Mã Đơn</label><input type="text" id="editId" class="w-full p-2.5 md:p-3 text-sm border rounded-lg bg-slate-100 font-mono font-bold" readonly></div>
+                <div>
+                    <label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Mã Đơn</label>
+                    <div class="flex">
+                        <input type="text" id="editId" class="w-full p-2.5 md:p-3 text-sm border rounded-l-lg bg-white font-mono font-bold outline-none focus:border-indigo-500">
+                        <button onclick="document.getElementById('editId').value = generateRandomId()" class="bg-slate-200 px-3 text-xs font-bold rounded-r-lg border border-l-0 border-slate-300 hover:bg-slate-300">Tạo mã</button>
+                    </div>
+                </div>
                 <div><label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Email Khách</label><input type="text" id="editEmail" class="w-full p-2.5 md:p-3 text-sm border rounded-lg outline-none focus:border-indigo-500"></div>
             </div>
 
@@ -118,7 +138,9 @@
         const API_URL = "https://vpn-api.doicucden.workers.dev"; 
         const GOOGLE_MAIL_API = "https://script.google.com/macros/s/AKfycbyQjEln9By0HuUPtboqJpb1INI6rRp52BxvHR8HaE5fs8qojfgau1R_27P4RyLLxXIp/exec";
         const DB_KEY = 'vpn_orders_db';
-        let ordersDb = []; let cmsDb = {}; let currentCmsDevice = 'android'; let refreshInterval;
+        
+        let ordersDb = []; let cmsDb = {}; let adminDevices = [];
+        let currentCmsDevice = 'android'; let refreshInterval; let myDeviceId = '';
 
         const packageOptions = [
             "Gói 1 Tháng - 70.000đ / 3$ / 17.5¥ (1000GB)",
@@ -141,10 +163,10 @@
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // HÀM FETCH THÔNG MINH CHỐNG LỖI MẠNG (Fallback LocalStorage)
+        // FIX LỖI CACHE CHO ADMIN CHẮC CHẮN UPDATE ĐƯỢC
         async function apiGet(path) {
             try {
-                let res = await fetch(API_URL + path);
+                let res = await fetch(API_URL + path + "?t=" + new Date().getTime(), { cache: "no-store" });
                 if(!res.ok) throw new Error("HTTP error");
                 let data = await res.json();
                 localStorage.setItem(path === '/api/orders' ? DB_KEY : 'cms_backup', JSON.stringify(data));
@@ -155,31 +177,96 @@
             }
         }
         async function apiPost(path, data) {
-            localStorage.setItem(path === '/api/orders' ? DB_KEY : 'cms_backup', JSON.stringify(data)); // Luôn lưu dự phòng
+            localStorage.setItem(path === '/api/orders' ? DB_KEY : 'cms_backup', JSON.stringify(data)); 
             try { await fetch(API_URL + path, { method: "POST", body: JSON.stringify(data) }); } 
             catch(e) { console.warn("API Bị chặn, chỉ lưu cục bộ", e); }
         }
 
-        async function checkAdmin() {
+        // AUTO LOGIN / DEVICE MANAGEMENT
+        window.onload = async function() {
+            myDeviceId = localStorage.getItem("admin_device_id");
+            if(!myDeviceId) {
+                myDeviceId = 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                localStorage.setItem("admin_device_id", myDeviceId);
+            }
+            
+            // Check list devices
+            adminDevices = await apiGet("/api/devices");
+            let allowed = adminDevices.find(x => x.id === myDeviceId);
+            
+            if(allowed) {
+                doLoginSuccess();
+            }
+        }
+
+        async function checkAdminPassword() {
             if(document.getElementById('adminPass').value === "admin2026") {
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('adminPanel').classList.remove('hidden');
-                document.getElementById('editPkg').innerHTML = packageOptions.map(p => `<option value="${p}">${p}</option>`).join('');
-                showToast("Đăng nhập thành công!", "info");
-                await fetchOrders(); await fetchCms();
-                
-                refreshInterval = setInterval(async () => {
-                    if(document.getElementById('modalEdit').classList.contains('hidden')) { await fetchOrdersSilently(); }
-                }, 10000);
+                // Register Device
+                adminDevices = await apiGet("/api/devices");
+                if(!adminDevices.find(x => x.id === myDeviceId)) {
+                    adminDevices.push({
+                        id: myDeviceId,
+                        userAgent: navigator.userAgent.substring(0, 50) + "...",
+                        date: new Date().toLocaleString()
+                    });
+                    await apiPost("/api/devices", adminDevices);
+                }
+                doLoginSuccess();
             } else showToast("Sai mật khẩu!", "error");
         }
 
+        async function doLoginSuccess() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+            document.getElementById('editPkg').innerHTML = packageOptions.map(p => `<option value="${p}">${p}</option>`).join('');
+            showToast("Đăng nhập thành công!", "info");
+            
+            await fetchOrders(); await fetchCms(); renderDevices();
+            
+            refreshInterval = setInterval(async () => {
+                if(document.getElementById('modalEdit').classList.contains('hidden')) { await fetchOrdersSilently(); }
+            }, 10000);
+        }
+
+        function logoutAdmin() {
+            // Chỉ xóa thông tin local để lần sau đòi pass lại, không xóa trên Cloud
+            localStorage.removeItem("admin_device_id");
+            location.reload();
+        }
+
         function switchTab(t) {
-            document.getElementById('tab-orders').classList.add('hidden'); document.getElementById('tab-cms').classList.add('hidden');
+            document.getElementById('tab-orders').classList.add('hidden'); 
+            document.getElementById('tab-cms').classList.add('hidden');
+            document.getElementById('tab-devices').classList.add('hidden');
             document.getElementById(t).classList.remove('hidden');
+            
             document.getElementById('btn-tab-orders').className = "flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200";
             document.getElementById('btn-tab-cms').className = "flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200";
+            document.getElementById('btn-tab-devices').className = "flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200";
             document.getElementById('btn-'+t).className = "flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow-md";
+        }
+
+        // DEVICES MANAGEMENT
+        function renderDevices() {
+            const tbody = document.getElementById('devicesTable'); tbody.innerHTML = '';
+            adminDevices.forEach((d) => {
+                let isMe = d.id === myDeviceId ? '<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold ml-2">Bạn</span>' : '';
+                tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition">
+                    <td class="p-4 font-mono font-bold text-indigo-600 text-xs">${d.id} ${isMe}</td>
+                    <td class="p-4 text-xs text-slate-600 max-w-xs truncate">${d.userAgent}</td>
+                    <td class="p-4 text-xs text-slate-500">${d.date}</td>
+                    <td class="p-4 text-right whitespace-nowrap">
+                        <button onclick="removeDevice('${d.id}')" class="text-red-500 font-bold px-3 py-1.5 bg-red-50 rounded-lg text-xs hover:bg-red-100">Xóa</button>
+                    </td></tr>`;
+            });
+        }
+        async function removeDevice(id) {
+            if(confirm("Xóa thiết bị này khỏi danh sách cho phép?")) {
+                adminDevices = adminDevices.filter(x => x.id !== id);
+                await apiPost("/api/devices", adminDevices);
+                renderDevices(); showToast("Đã xóa thiết bị", "info");
+                if(id === myDeviceId) { logoutAdmin(); }
+            }
         }
 
         async function fetchOrders() {
@@ -190,7 +277,7 @@
         async function fetchOrdersSilently() {
             const newData = await apiGet("/api/orders");
             if(JSON.stringify(newData) !== JSON.stringify(ordersDb)) {
-                ordersDb = newData; renderOrders(); showToast("Đã cập nhật dữ liệu mới!", "info");
+                ordersDb = newData; renderOrders(); showToast("Đã cập nhật đơn mới!", "info");
             }
         }
 
@@ -214,15 +301,24 @@
             });
         }
 
+        function generateRandomId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; let newId = 'DH-'; 
+            for(let i=0; i<10; i++) newId += chars.charAt(Math.floor(Math.random()*chars.length));
+            return newId;
+        }
+
         function openEditModal(id) {
             let o;
             if(id) {
-                o = ordersDb.find(x => x.id === id); document.getElementById('modalTitle').innerText = `Chỉnh sửa Đơn Hàng`; document.getElementById('editId').value = o.id;
+                o = ordersDb.find(x => x.id === id); 
+                document.getElementById('modalTitle').innerText = `Chỉnh sửa Đơn Hàng`; 
+                document.getElementById('editId').value = o.id;
             } else {
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; let newId = 'DH-'; for(let i=0; i<10; i++) newId += chars.charAt(Math.floor(Math.random()*chars.length));
-                o = { id: newId, email: '', pkg: packageOptions[0], status: 'pending', info: '', reason: '' };
-                document.getElementById('modalTitle').innerText = `Tạo Đơn Thủ Công`; document.getElementById('editId').value = o.id;
+                o = { id: generateRandomId(), email: '', pkg: packageOptions[0], status: 'pending', info: '', reason: '' };
+                document.getElementById('modalTitle').innerText = `Tạo Đơn Thủ Công`; 
+                document.getElementById('editId').value = o.id;
             }
+            
             document.getElementById('editEmail').value = o.email || '';
             let foundPkg = false;
             for(let i=0; i<document.getElementById('editPkg').options.length; i++) {
@@ -230,8 +326,12 @@
             }
             if(!foundPkg) document.getElementById('editPkg').selectedIndex = 0;
 
-            document.getElementById('editStatus').value = o.status; document.getElementById('editLink').value = o.info || ''; document.getElementById('editReason').value = o.reason || '';
-            toggleStatusFields(); document.getElementById('modalEdit').classList.remove('hidden');
+            document.getElementById('editStatus').value = o.status; 
+            document.getElementById('editLink').value = o.info || ''; 
+            document.getElementById('editReason').value = o.reason || '';
+            
+            toggleStatusFields(); 
+            document.getElementById('modalEdit').classList.remove('hidden');
         }
 
         function toggleStatusFields() {
@@ -241,12 +341,21 @@
         }
 
         async function saveOrderToCloud() {
-            const id = document.getElementById('editId').value;
-            let o = ordersDb.find(x => x.id === id);
-            if(!o) { o = { id: id, needSupport: false, date: new Date().toLocaleString() }; ordersDb.unshift(o); }
+            const originalId = document.getElementById('editId').value.trim();
+            if(!originalId) return showToast("Mã đơn không được rỗng!", "error");
+            
+            let o = ordersDb.find(x => x.id === originalId);
+            if(!o) { 
+                o = { id: originalId, needSupport: false, method: "Manual", date: new Date().toLocaleString() }; 
+                ordersDb.unshift(o); 
+            }
 
-            o.email = document.getElementById('editEmail').value; o.pkg = document.getElementById('editPkg').value;
-            o.status = document.getElementById('editStatus').value; o.info = document.getElementById('editLink').value; o.reason = document.getElementById('editReason').value;
+            o.id = originalId; // in case manual edit
+            o.email = document.getElementById('editEmail').value; 
+            o.pkg = document.getElementById('editPkg').value;
+            o.status = document.getElementById('editStatus').value; 
+            o.info = document.getElementById('editLink').value; 
+            o.reason = document.getElementById('editReason').value;
 
             const btn = event.target; const oldTxt = btn.innerText; btn.innerText = "ĐANG LƯU..."; btn.disabled = true;
 
