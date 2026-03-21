@@ -163,14 +163,10 @@
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // Bổ sung header ép không cache giống file index.html
+        // Bỏ Header CORS lạ, chỉ chèn timestamp ?_t để bẻ cache
         async function apiGet(path) {
             try {
-                let res = await fetch(API_URL + path + "?_t=" + Date.now(), { 
-                    method: 'GET',
-                    cache: 'no-store',
-                    headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
-                });
+                let res = await fetch(API_URL + path + "?_t=" + Date.now());
                 if(!res.ok) throw new Error("HTTP error");
                 let data = await res.json();
                 localStorage.setItem(path === '/api/orders' ? DB_KEY : 'cms_backup', JSON.stringify(data));
@@ -194,13 +190,18 @@
             }
             
             adminDevices = await apiGet("/api/devices");
+            // Đảm bảo không bao giờ bị crash lỗi Array
+            if(!Array.isArray(adminDevices)) adminDevices = [];
+            
             let allowed = adminDevices.find(x => x.id === myDeviceId);
             if(allowed) { doLoginSuccess(); }
         }
 
         async function checkAdminPassword() {
-            if(document.getElementById('adminPass').value === "admin2026") {
+            if(document.getElementById('adminPass').value === "572007") { // ĐÃ ĐỔI PASS
                 adminDevices = await apiGet("/api/devices");
+                if(!Array.isArray(adminDevices)) adminDevices = [];
+
                 if(!adminDevices.find(x => x.id === myDeviceId)) {
                     adminDevices.push({
                         id: myDeviceId,
@@ -267,12 +268,14 @@
 
         async function fetchOrders(showManualToast = false) {
             ordersDb = await apiGet("/api/orders");
+            if(!Array.isArray(ordersDb)) ordersDb = [];
             renderOrders(); 
             if(showManualToast) showToast("Dữ liệu đã cập nhật!", "success");
         }
 
         async function fetchOrdersSilently() {
-            const newData = await apiGet("/api/orders");
+            let newData = await apiGet("/api/orders");
+            if(!Array.isArray(newData)) newData = [];
             if(JSON.stringify(newData) !== JSON.stringify(ordersDb)) {
                 ordersDb = newData; renderOrders(); showToast("Đã có Đơn hàng mới!", "info");
             }
@@ -409,7 +412,11 @@
         }
 
         // --- CMS ---
-        async function fetchCms() { cmsDb = await apiGet("/api/cms"); document.getElementById('cmsGuide').value = cmsDb[currentCmsDevice] || ''; }
+        async function fetchCms() { 
+            cmsDb = await apiGet("/api/cms"); 
+            if(typeof cmsDb !== 'object' || Array.isArray(cmsDb)) cmsDb = {};
+            document.getElementById('cmsGuide').value = cmsDb[currentCmsDevice] || ''; 
+        }
 
         function changeCmsDevice(dev) {
             document.querySelectorAll('.dev-btn').forEach(b => { b.classList.remove('active', 'border-indigo-500', 'bg-indigo-50', 'text-indigo-700'); b.classList.add('border-slate-200', 'text-slate-600'); });
