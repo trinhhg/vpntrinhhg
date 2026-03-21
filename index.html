@@ -85,7 +85,9 @@
                         <button onclick="showGuide('macos')" id="btn-dev-macos" class="dev-btn bg-white border border-slate-200 px-4 py-2 rounded-xl font-bold flex items-center text-xs md:text-sm shadow-sm"><i class="fab fa-apple text-slate-800 text-base mr-1.5"></i> MacOS</button>
                         <button onclick="showGuide('ios')" id="btn-dev-ios" class="dev-btn bg-white border border-slate-200 px-4 py-2 rounded-xl font-bold flex items-center text-xs md:text-sm shadow-sm"><i class="fab fa-app-store-ios text-blue-400 text-base mr-1.5"></i> iOS</button>
                     </div>
-                    <div id="guideContent" class="hidden bg-white border border-slate-200 p-4 md:p-6 rounded-xl overflow-x-auto"><div id="guideText" class="text-xs md:text-sm leading-relaxed text-slate-700"></div></div>
+                    <div id="guideContent" class="hidden bg-white border border-slate-200 p-4 md:p-6 rounded-xl overflow-x-auto">
+                        <div id="guideText" class="text-xs md:text-sm leading-relaxed text-slate-700 whitespace-pre-wrap"></div>
+                    </div>
                 </div>
             </div>
 
@@ -302,7 +304,6 @@
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // Bỏ các custom header gây lỗi CORS, chỉ dùng ?_t để bẻ cache
         async function apiGet(path) {
             try {
                 let res = await fetch(API_URL + path + "?_t=" + Date.now());
@@ -370,7 +371,6 @@
         }
 
         function toggleZalo() { const z = document.getElementById('cusZalo'); z.classList.toggle('hidden'); z.required = !z.classList.contains('hidden'); }
-        // KHÔNG auto-tick phần hỗ trợ nữa, để khách tự chọn
         function changePayMethod() { renderPaymentBox(); }
 
         function renderPaymentBox() {
