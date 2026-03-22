@@ -187,9 +187,6 @@
     </div>
 
     <script>
-        // =======================================================================
-        // ĐÃ ĐỔI TẤT CẢ THÀNH TÊN MIỀN PAGES NHỜ FILE CẦU NỐI _WORKER.JS
-        // =======================================================================
         const API_URL = "https://vpntrinhhg.pages.dev"; 
         const MY_PAGES_DOMAIN = "https://vpntrinhhg.pages.dev"; 
 
@@ -361,10 +358,11 @@
                 let masked = "";
                 const profileName = "#VPNTrinhHg";
                 
+                // Nối tên vào thẳng đường dẫn /v1/VPNTrinhHg
                 if (orig.includes("liangxin.xyz")) {
-                    masked = MY_PAGES_DOMAIN + "/v1" + urlObj.search + profileName;
+                    masked = MY_PAGES_DOMAIN + "/v1/VPNTrinhHg" + urlObj.search + profileName;
                 } else if (orig.includes("djjc.cfd")) {
-                    masked = MY_PAGES_DOMAIN + "/v2" + urlObj.search + profileName;
+                    masked = MY_PAGES_DOMAIN + "/v2/VPNTrinhHg" + urlObj.search + profileName;
                 } else {
                     return showToast("Tên miền này chưa được hỗ trợ Proxy!", "error");
                 }
@@ -401,8 +399,8 @@
                 const urlObj = new URL(orig);
                 const profileName = "#VPNTrinhHg";
 
-                if (orig.includes("liangxin.xyz")) masked = MY_PAGES_DOMAIN + "/v1" + urlObj.search + profileName;
-                else if (orig.includes("djjc.cfd")) masked = MY_PAGES_DOMAIN + "/v2" + urlObj.search + profileName;
+                if (orig.includes("liangxin.xyz")) masked = MY_PAGES_DOMAIN + "/v1/VPNTrinhHg" + urlObj.search + profileName;
+                else if (orig.includes("djjc.cfd")) masked = MY_PAGES_DOMAIN + "/v2/VPNTrinhHg" + urlObj.search + profileName;
                 else return showToast("Tên miền chưa được hỗ trợ!", "error");
             } catch(e) { return showToast("Đường dẫn không hợp lệ!", "error"); }
 
