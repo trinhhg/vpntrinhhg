@@ -53,10 +53,10 @@
            </div>
        </div>
 
-       <!-- TAB QUẢN LÝ LINK (ĐÃ SỬA) -->
+       <!-- TAB QUẢN LÝ LINK (ĐÃ THÊM GIST BASE64) -->
        <div id="tab-links" class="hidden glass-card p-5 md:p-8">
            <h2 class="text-xl font-bold mb-2">Quản lý Link Sub Ẩn (Masked Link)</h2>
-           <p class="text-xs text-slate-500 mb-6">Tạo link ẩn. Gồm: Link Gốc (Để lấy mã OwO) -> Link Gist (Chứa data thật) -> Link Đã Ẩn (Giao khách).</p>
+           <p class="text-xs text-slate-500 mb-6">Tạo link ẩn. Gồm: Link Gốc (Để lấy mã OwO) -> Link Gist YAML (Cho Clash) -> Link Gist Base64 (Cho V2ray) -> Link Đã Ẩn (Giao khách).</p>
            
            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6">
                <div class="grid md:grid-cols-2 gap-4 mb-4">
@@ -68,22 +68,27 @@
                        <label class="block font-bold text-xs text-slate-700 mb-1">Email Khách Hàng (Tùy chọn)</label>
                        <input type="text" id="linkEmailInput" class="w-full p-3 border border-slate-300 rounded-xl outline-none focus:border-indigo-500 text-sm" placeholder="Ví dụ: khachhang@gmail.com">
                    </div>
-                   <div class="md:col-span-2">
-                       <label class="block font-bold text-xs text-slate-700 mb-1">Link Sub-Store Gist (Chứa YAML đã rename & có rules)</label>
-                       <input type="text" id="linkSubStoreInput" class="w-full p-3 border border-slate-300 rounded-xl outline-none focus:border-indigo-500 font-mono text-sm text-green-700" placeholder="https://gist.githubusercontent.com/trinhhg/...../raw/VPNTrinhHg">
+                   <div>
+                       <label class="block font-bold text-xs text-slate-700 mb-1">Link Gist YAML (Dành cho Clash, NekoBox)</label>
+                       <input type="text" id="linkSubStoreInput" class="w-full p-3 border border-slate-300 rounded-xl outline-none focus:border-indigo-500 font-mono text-sm text-green-700" placeholder="https://gist.githubusercontent.com/trinhhg/...../raw/YAML">
+                   </div>
+                   <div>
+                       <label class="block font-bold text-xs text-slate-700 mb-1">Link Gist Base64 (Dành cho V2rayNG, Shadowrocket)</label>
+                       <input type="text" id="linkBase64Input" class="w-full p-3 border border-slate-300 rounded-xl outline-none focus:border-indigo-500 font-mono text-sm text-purple-700" placeholder="https://gist.githubusercontent.com/trinhhg/...../raw/BASE64">
                    </div>
                </div>
                <button onclick="createAndSaveLink()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl shadow-md transition">🪄 TẠO & LƯU LINK ẨN</button>
            </div>
 
            <div class="overflow-x-auto border border-slate-200 rounded-xl">
-               <table class="w-full text-left text-sm whitespace-nowrap min-w-[1200px]">
+               <table class="w-full text-left text-sm whitespace-nowrap min-w-[1400px]">
                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
                        <tr>
                            <th class="p-4 w-40">Email Khách</th>
-                           <th class="p-4 w-1/4">Link Gốc</th>
-                           <th class="p-4 w-1/4">Link Gist (Data thật)</th>
-                           <th class="p-4 w-1/4">Link Đã Ẩn (Gửi Khách)</th>
+                           <th class="p-4 w-1/5">Link Gốc</th>
+                           <th class="p-4 w-1/5">Gist YAML</th>
+                           <th class="p-4 w-1/5">Gist Base64</th>
+                           <th class="p-4 w-1/5">Link Đã Ẩn (Gửi Khách)</th>
                            <th class="p-4 text-right">Hành động</th>
                        </tr>
                    </thead>
@@ -176,7 +181,7 @@
        </div>
    </div>
 
-   <!-- MODAL SỬA LINK ẨN (ĐÃ SỬA) -->
+   <!-- MODAL SỬA LINK ẨN (ĐÃ SỬA THÊM BASE64) -->
    <div id="modalEditLink" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
        <div class="glass-card p-6 w-full max-w-lg">
            <h3 class="text-xl font-bold mb-4">Chỉnh sửa Link Sub</h3>
@@ -190,8 +195,12 @@
                <input type="text" id="editLinkOrig" class="w-full p-3 text-sm font-mono border rounded-lg outline-none focus:border-indigo-500">
            </div>
            <div class="mb-4">
-               <label class="block font-bold text-xs text-green-700 mb-1">Link Sub-Store (Data Thật)</label>
+               <label class="block font-bold text-xs text-green-700 mb-1">Link Gist YAML (Cho Clash)</label>
                <input type="text" id="editLinkSubStore" class="w-full p-3 text-sm font-mono border border-green-300 rounded-lg outline-none focus:border-green-500">
+           </div>
+           <div class="mb-4">
+               <label class="block font-bold text-xs text-purple-700 mb-1">Link Gist Base64 (Cho V2ray)</label>
+               <input type="text" id="editLinkBase64" class="w-full p-3 text-sm font-mono border border-purple-300 rounded-lg outline-none focus:border-purple-500">
            </div>
            <div class="flex gap-2">
                <button onclick="saveLinkEdit()" class="flex-1 bg-indigo-600 text-white font-bold py-3 rounded-lg">LƯU THAY ĐỔI</button>
@@ -333,7 +342,7 @@
         }
 
        // ==========================================
-       // HÀM QUẢN LÝ LINK SUB (ĐÃ NÂNG CẤP GIST)
+       // HÀM QUẢN LÝ LINK SUB (ĐÃ THÊM GIST BASE64)
        // ==========================================
        function renderLinks() {
            const tbody = document.getElementById('linksTable'); tbody.innerHTML = '';
@@ -342,19 +351,25 @@
                    <td class="p-4 font-bold text-slate-800">${l.email || '<span class="text-slate-400 italic">Trống</span>'}</td>
                    <td class="p-4">
                        <div class="flex items-center w-full">
-                           <input type="text" value="${l.orig}" readonly class="bg-transparent border-none outline-none font-mono text-[11px] text-slate-500 w-full min-w-[200px] cursor-text" onclick="this.select()">
-                           <button onclick="copyText('${l.orig}')" class="text-indigo-600 hover:text-indigo-800 p-1 shrink-0"><i class="far fa-copy"></i></button>
+                           <input type="text" value="${l.orig}" readonly class="bg-transparent border-none outline-none font-mono text-[11px] text-slate-500 w-full min-w-[150px] cursor-text" onclick="this.select()">
+                           <button onclick="copyText('${l.orig}')" class="text-slate-600 hover:text-slate-800 p-1 shrink-0"><i class="far fa-copy"></i></button>
                        </div>
                    </td>
                    <td class="p-4">
                        <div class="flex items-center w-full">
-                           <input type="text" value="${l.subStoreUrl || 'Trống'}" readonly class="bg-transparent border-none outline-none font-mono text-[11px] text-green-700 w-full min-w-[200px] cursor-text" onclick="this.select()">
+                           <input type="text" value="${l.subStoreUrl || 'Trống'}" readonly class="bg-transparent border-none outline-none font-mono text-[11px] text-green-700 w-full min-w-[150px] cursor-text" onclick="this.select()">
                            <button onclick="copyText('${l.subStoreUrl || ''}')" class="text-green-600 hover:text-green-800 p-1 shrink-0"><i class="far fa-copy"></i></button>
                        </div>
                    </td>
                    <td class="p-4">
                        <div class="flex items-center w-full">
-                           <input type="text" value="${l.masked}" readonly class="bg-transparent border-none outline-none font-mono text-[11px] text-blue-600 font-bold w-full min-w-[200px] cursor-text" onclick="this.select()">
+                           <input type="text" value="${l.base64Url || 'Trống'}" readonly class="bg-transparent border-none outline-none font-mono text-[11px] text-purple-700 w-full min-w-[150px] cursor-text" onclick="this.select()">
+                           <button onclick="copyText('${l.base64Url || ''}')" class="text-purple-600 hover:text-purple-800 p-1 shrink-0"><i class="far fa-copy"></i></button>
+                       </div>
+                   </td>
+                   <td class="p-4">
+                       <div class="flex items-center w-full">
+                           <input type="text" value="${l.masked}" readonly class="bg-transparent border-none outline-none font-mono text-[11px] text-blue-600 font-bold w-full min-w-[150px] cursor-text" onclick="this.select()">
                            <button onclick="copyText('${l.masked}')" class="text-blue-600 hover:text-blue-800 p-1 shrink-0"><i class="far fa-copy"></i></button>
                        </div>
                    </td>
@@ -375,16 +390,17 @@
            const orig = document.getElementById('linkOrigInput').value.trim();
            const email = document.getElementById('linkEmailInput').value.trim();
            const subStoreUrl = document.getElementById('linkSubStoreInput').value.trim();
+           const base64Url = document.getElementById('linkBase64Input').value.trim();
 
            if (!orig) return showToast("Vui lòng dán link gốc!", "error");
-           if (!subStoreUrl) return showToast("Vui lòng dán Link Gist!", "error");
+           if (!subStoreUrl) return showToast("Vui lòng dán Link Gist YAML!", "error");
+           if (!base64Url) return showToast("Vui lòng dán Link Gist Base64!", "error");
 
            try {
                const urlObj = new URL(orig);
                let masked = "";
                const profileName = "#VPNTrinhHg";
                
-               // Nối tên vào thẳng đường dẫn /v1/VPNTrinhHg
                if (orig.includes("liangxin.xyz")) {
                    masked = MY_PAGES_DOMAIN + "/v1/VPNTrinhHg" + urlObj.search + profileName;
                } else if (orig.includes("djjc.cfd")) {
@@ -393,7 +409,7 @@
                    return showToast("Tên miền link gốc chưa được hỗ trợ!", "error");
                }
 
-               const newLink = { id: 'LNK-' + Date.now(), orig, subStoreUrl, masked, email, date: new Date().toLocaleString() };
+               const newLink = { id: 'LNK-' + Date.now(), orig, subStoreUrl, base64Url, masked, email, date: new Date().toLocaleString() };
                linksDb.unshift(newLink);
                await apiPost("/api/links", linksDb);
                
@@ -401,6 +417,7 @@
                document.getElementById('linkOrigInput').value = '';
                document.getElementById('linkEmailInput').value = '';
                document.getElementById('linkSubStoreInput').value = '';
+               document.getElementById('linkBase64Input').value = '';
                showToast("Đã tạo và lưu Link Ẩn!", "success");
 
            } catch (error) {
@@ -414,6 +431,7 @@
            document.getElementById('editLinkEmail').value = l.email || '';
            document.getElementById('editLinkOrig').value = l.orig;
            document.getElementById('editLinkSubStore').value = l.subStoreUrl || '';
+           document.getElementById('editLinkBase64').value = l.base64Url || '';
            document.getElementById('modalEditLink').classList.remove('hidden');
         }
 
@@ -422,6 +440,7 @@
            const orig = document.getElementById('editLinkOrig').value.trim();
            const email = document.getElementById('editLinkEmail').value.trim();
            const subStoreUrl = document.getElementById('editLinkSubStore').value.trim();
+           const base64Url = document.getElementById('editLinkBase64').value.trim();
            
            let masked = "";
            try {
@@ -436,6 +455,7 @@
            const l = linksDb.find(x => x.id === id);
            l.orig = orig;
            l.subStoreUrl = subStoreUrl;
+           l.base64Url = base64Url;
            l.masked = masked;
            l.email = email;
            
