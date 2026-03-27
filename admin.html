@@ -53,10 +53,10 @@
            </div>
        </div>
 
-       <!-- TAB QUẢN LÝ LINK (ĐÃ TỐI GIẢN) -->
+       <!-- TAB QUẢN LÝ LINK (BẢN BẤT TỬ) -->
        <div id="tab-links" class="hidden glass-card p-5 md:p-8">
            <h2 class="text-xl font-bold mb-2">Quản lý Link Sub Ẩn (Masked Link)</h2>
-           <p class="text-xs text-slate-500 mb-6">Chỉ cần nhập Link gốc Liangxin. Hệ thống sẽ tự động bẻ lái và tạo Config (có tính năng Rename) cho mọi App.</p>
+           <p class="text-xs text-slate-500 mb-6">Chỉ cần dán Link gốc (Liangxin). Hệ thống sẽ bẻ lái (Redirect 302) để đảm bảo độ ổn định tuyệt đối.</p>
            
            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6">
                <div class="grid md:grid-cols-2 gap-4 mb-4">
@@ -72,9 +72,8 @@
                <button onclick="createAndSaveLink()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl shadow-md transition">🪄 TẠO & LƯU LINK ẨN</button>
            </div>
 
-           <!-- Bảng đã được co gọn -->
            <div class="overflow-x-auto border border-slate-200 rounded-xl">
-               <table class="w-full text-left text-sm whitespace-nowrap min-w-[600px]">
+               <table class="w-full text-left text-sm whitespace-nowrap min-w-[700px]">
                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
                        <tr>
                            <th class="p-4 w-1/4">Email Khách</th>
@@ -120,11 +119,10 @@
        </div>
    </div>
 
-   <!-- MODAL ĐƠN HÀNG (Giữ nguyên) -->
+   <!-- MODAL ĐƠN HÀNG -->
    <div id="modalEdit" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
        <div class="glass-card p-5 md:p-8 w-full max-w-2xl max-h-[95vh] overflow-y-auto">
            <h3 class="text-xl md:text-2xl font-bold mb-4 md:mb-6" id="modalTitle">Chỉnh sửa Đơn Hàng</h3>
-           
            <div class="grid md:grid-cols-2 gap-3 md:gap-4 mb-3 md:mb-4">
                <div>
                    <label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Mã Đơn</label>
@@ -172,7 +170,7 @@
        </div>
    </div>
 
-   <!-- MODAL SỬA LINK ẨN (TỐI GIẢN) -->
+   <!-- MODAL SỬA LINK ẨN -->
    <div id="modalEditLink" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
        <div class="glass-card p-6 w-full max-w-lg">
            <h3 class="text-xl font-bold mb-4">Chỉnh sửa Link Sub</h3>
@@ -304,13 +302,13 @@
                    <td class="p-4 font-bold text-slate-800">${l.email || '<span class="text-slate-400 italic">Trống</span>'}</td>
                    <td class="p-4">
                        <div class="flex items-center w-full">
-                           <input type="text" value="${l.orig}" readonly class="bg-transparent border-none outline-none font-mono text-[11px] text-slate-500 w-full min-w-[150px] cursor-text" onclick="this.select()">
+                           <input type="text" value="${l.orig}" readonly class="bg-transparent border-none outline-none font-mono text-[11px] text-slate-500 w-full min-w-[200px] cursor-text" onclick="this.select()">
                            <button onclick="copyText('${l.orig}')" class="text-slate-600 hover:text-slate-800 p-1 shrink-0"><i class="far fa-copy"></i></button>
                        </div>
                    </td>
                    <td class="p-4">
                        <div class="flex items-center w-full">
-                           <input type="text" value="${l.masked}" readonly class="bg-transparent border-none outline-none font-mono text-[11px] text-blue-600 font-bold w-full min-w-[150px] cursor-text" onclick="this.select()">
+                           <input type="text" value="${l.masked}" readonly class="bg-transparent border-none outline-none font-mono text-[11px] text-blue-600 font-bold w-full min-w-[200px] cursor-text" onclick="this.select()">
                            <button onclick="copyText('${l.masked}')" class="text-blue-600 hover:text-blue-800 p-1 shrink-0"><i class="far fa-copy"></i></button>
                        </div>
                    </td>
@@ -384,7 +382,6 @@
            }
         }
 
-       // Các hàm dưới này (Đơn hàng, CMS, Devices) tôi giữ y nguyên như cũ của ông
        function renderOrders() {
            const tbody = document.getElementById('orderTable'); tbody.innerHTML = '';
            ordersDb.forEach((o) => {
