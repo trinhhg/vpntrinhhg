@@ -409,7 +409,7 @@
                         <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-100 flex items-center justify-center"><img src="https://scontent-nrt1-2.xx.fbcdn.net/v/t1.15752-9/652721068_899535699618771_165366187059067125_n.png?_nc_cat=102&ccb=1-7&_nc_sid=9f807c&_nc_ohc=tqY_EL9rmrsQ7kNvwHryZQy&_nc_oc=AdrasTGaeXx7U24IMsuc9vhdQVwi_wXbxBYjA562u4NvuQobh3nrSC0oI33-DMuX-i04YqDuRxnThnfh0mJaRgJT&_nc_zt=23&_nc_ht=scontent-nrt1-2.xx&_nc_ss=7a30f&oh=03_Q7cD4wEuP3DCf5T9KwYNCILX_DPsbf1gpzV5RcYnlMjy_NoCyg&oe=69E59E0D" class="w-40 h-40 md:w-56 md:h-56 rounded-lg object-contain"></div>
                     </div>
                     <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100 mb-4"><span class="text-slate-500 text-xs md:text-sm">${i18n[lang].copy_amount}</span><strong class="text-red-500 font-black text-lg md:text-xl">${currentPackage.cny} CNY</strong></div>
-                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-center w-full"><span class="block text-slate-600 text-[10px] font-bold mb-1 uppercase">${i18n[lang].copy_memo}</span><strong class="block w-full bg-white text-slate-800 font-mono text-lg md:text-xl py-2 rounded-lg cursor-pointer shadow-sm mb-2" onclick="copyText('${currentOrderId}')">${currentOrderId} <i class="far fa-copy ml-1"></i></strong><p class="text-[10px] md:text-xs text-red-500 font-bold">${lang==='zh'?'请手动输入金额和订单号！':(lang==='en'?'Please manually enter the amount and Memo!':'Vui lòng tự nhập số tiền và nội dung chuyển khoản!')}</p></div></div>`;
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-center w-full"><span class="block text-slate-600 text-[10px] font-bold mb-1 uppercase">${i18n[lang].copy_memo}</span><strong class="block w-full bg-white text-slate-800 font-mono text-lg md:text-xl py-2 rounded-lg cursor-pointer shadow-sm mb-2" onclick="copyText('${currentOrderId}')">${currentOrderId} <i class="far fa-copy ml-1"></i></strong><p class="text-[10px] md:text-xs text-red-500 font-bold">${lang==='zh'?'请手动输入金额和订单号！':(lang==='en'?'Please manually enter the amount and Memo!':'Vui lòng tự nhập số tiền和 nội dung chuyển khoản!')}</p></div></div>`;
             }
         }
 
@@ -451,13 +451,12 @@
         // ==========================================
         function formatBytes(bytes) {
             if (bytes === 0) return '0.00 GB';
-            const k = 1073741824; // Tính theo GB chuẩn
+            const k = 1073741824; 
             return (bytes / k).toFixed(2) + ' GB';
         }
 
         async function fetchAndRenderUsage(link) {
             const container = document.getElementById('usageContainer');
-            // Bật hiệu ứng đang tải
             container.innerHTML = `<div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 md:p-6 text-center shadow-sm"><p class="text-sm font-bold text-indigo-600 animate-pulse"><i class="fas fa-spinner fa-spin mr-2"></i>Đang đồng bộ dữ liệu từ Máy chủ...</p></div>`;
 
             try {
@@ -467,20 +466,18 @@
                 });
                 const data = await res.json();
 
+                // NẾU CÓ LỖI, HIỆN ĐỎ CHÓT LÊN CHO DỄ BẮT BỆNH
                 if (data.error) {
-                    container.innerHTML = ``; // Nếu lỗi (chưa có data) thì ẩn đi cho sạch
+                    console.log("LỖI CHECK USAGE: ", data.error);
+                    container.innerHTML = `<div class="bg-red-50 border border-red-200 rounded-xl p-4 text-center"><p class="text-xs font-bold text-red-600">Không thể tải thanh dung lượng: ${data.error}</p></div>`;
                     return;
                 }
 
-                // Tính toán đúng 100% theo gói Liangxin trả về
                 const usedBytes = data.up + data.down;
                 const totalBytes = data.total;
                 const remainingBytes = totalBytes > usedBytes ? totalBytes - usedBytes : 0;
-                
-                // Tính % để chạy thanh ngang
                 const percent = totalBytes > 0 ? Math.min((usedBytes / totalBytes) * 100, 100) : 0;
 
-                // Tính số ngày còn lại
                 let daysLeft = "∞";
                 if (data.expire > 0) {
                     const expDate = new Date(data.expire * 1000);
@@ -488,14 +485,12 @@
                     daysLeft = diffTime > 0 ? Math.ceil(diffTime / (1000 * 60 * 60 * 24)) : 0;
                 }
 
-                // Chuyển đổi ngôn ngữ trên thanh dung lượng
                 const txtUsed = lang === 'vi' ? 'Đã sử dụng' : (lang === 'en' ? 'Used Data' : '已用流量');
                 const txtRemain = lang === 'vi' ? 'Còn lại' : (lang === 'en' ? 'Remaining' : '剩余流量');
                 const txtReset = lang === 'vi' ? 'Reset sau:' : (lang === 'en' ? 'Reset in:' : '重置时间:');
                 const txtDays = lang === 'vi' ? 'ngày' : (lang === 'en' ? 'days' : '天');
                 const txtTotal = lang === 'vi' ? 'TỔNG DUNG LƯỢNG MÁY CHỦ CẤP' : (lang === 'en' ? 'TOTAL DATA ALLOCATED' : '总分配流量');
 
-                // Vẽ Giao diện
                 container.innerHTML = `
                     <div class="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 shadow-sm">
                         <div class="flex justify-between items-end mb-3">
@@ -503,31 +498,26 @@
                                 <p class="text-[10px] md:text-xs text-slate-500 font-bold uppercase mb-1">${txtUsed}</p>
                                 <p class="text-indigo-600 font-black text-lg md:text-xl leading-none">${formatBytes(usedBytes)}</p>
                             </div>
-                            
                             <div class="text-center px-2 pb-1">
                                 <span class="bg-slate-100 text-slate-600 text-[10px] md:text-xs font-bold px-3 py-1.5 rounded-full border border-slate-200 shadow-inner">
                                     <i class="fas fa-history mr-1 text-slate-400"></i> ${txtReset} <span class="text-slate-800">${daysLeft} ${txtDays}</span>
                                 </span>
                             </div>
-
                             <div class="text-right">
                                 <p class="text-[10px] md:text-xs text-slate-500 font-bold uppercase mb-1">${txtRemain}</p>
                                 <p class="text-emerald-500 font-black text-lg md:text-xl leading-none">${formatBytes(remainingBytes)}</p>
                             </div>
                         </div>
-
-                        <!-- Thanh Progress chạy theo % thực tế -->
                         <div class="w-full bg-slate-100 rounded-full h-3.5 relative overflow-hidden border border-slate-200 shadow-inner mt-4">
                             <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: ${percent}%"></div>
                         </div>
-                        
                         <div class="text-center mt-3">
                              <span class="text-[10px] md:text-xs text-slate-400 font-bold tracking-wide">${txtTotal}: ${formatBytes(totalBytes)}</span>
                         </div>
                     </div>
                 `;
             } catch (e) {
-                container.innerHTML = ``;
+                container.innerHTML = `<div class="bg-red-50 border border-red-200 rounded-xl p-4 text-center"><p class="text-xs font-bold text-red-600">Lỗi kết nối máy chủ check dung lượng!</p></div>`;
             }
         }
         // ==========================================
@@ -559,8 +549,9 @@
             document.getElementById('portalContentPending').classList.toggle('hidden', o.status !== 'pending');
             document.getElementById('portalContentSuccess').classList.toggle('hidden', o.status !== 'success');
             
-            if(o.status === 'pending') st.innerHTML = `<span class="text-yellow-700 bg-yellow-100 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase"><i class="fas fa-circle-notch fa-spin mr-1"></i>${lang==='vi'?'Chờ duyệt':(lang==='en'?'Pending':'待处理')}</span>`;
-            else if (o.status === 'success') {
+            if(o.status === 'pending') {
+                st.innerHTML = `<span class="text-yellow-700 bg-yellow-100 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase"><i class="fas fa-circle-notch fa-spin mr-1"></i>${lang==='vi'?'Chờ duyệt':(lang==='en'?'Pending':'待处理')}</span>`;
+            } else if (o.status === 'success') {
                 st.innerHTML = `<span class="text-green-700 bg-green-100 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase"><i class="fas fa-check-circle mr-1"></i>${lang==='vi'?'Thành công':(lang==='en'?'Active':'已激活')}</span>`;
                 document.getElementById('subLink').value = o.info || '';
                 
@@ -575,7 +566,9 @@
 
                 cmsCache = await apiGet("/api/cms");
                 showGuide('android');
-            } else st.innerHTML = `<span class="text-red-700 bg-red-100 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase">${lang==='vi'?'Từ chối':'Rejected'}</span>`;
+            } else {
+                st.innerHTML = `<span class="text-red-700 bg-red-100 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase">${lang==='vi'?'Từ chối':'Rejected'}</span>`;
+            }
             
             renderPackages('all'); if(!isManualRefresh && !isAutoPoll) window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -583,7 +576,6 @@
         function logout() {
             localStorage.removeItem(SESSION_KEY); document.getElementById('view-portal').classList.remove('active'); document.getElementById('view-store').classList.add('active');
             document.getElementById('userMenu').classList.add('hidden'); document.getElementById('loginInput').value = '';
-            // Xóa đếm ngược khi đăng xuất
             clearInterval(usageInterval);
         }
 
