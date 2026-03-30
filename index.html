@@ -17,17 +17,14 @@
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
         
-        /* Copy & Alert Animations */
         @keyframes borderPulse { 0% { border-color: #fde047; box-shadow: 0 0 0 0 rgba(253, 224, 71, 0.7); } 70% { border-color: #eab308; box-shadow: 0 0 0 10px rgba(253, 224, 71, 0); } 100% { border-color: #fde047; box-shadow: 0 0 0 0 rgba(253, 224, 71, 0); } }
         .highlight-copy { animation: borderPulse 2s infinite; background-color: #fef08a; color: #713f12; }
         @keyframes alertText { 0% { color: #ef4444; transform: scale(1); } 50% { color: #991b1b; transform: scale(1.08); } 100% { color: #ef4444; transform: scale(1); } }
         .animate-alert { animation: alertText 1s infinite; display: inline-block; }
 
-        /* Chống cuộn thanh lọc gói trên mobile */
         .pkg-filters::-webkit-scrollbar { height: 0px; }
         .pkg-filters { scrollbar-width: none; }
         
-        /* Header & Nav Controls */
         #mainNav { transition: transform 0.3s ease-in-out; box-shadow: 0 4px 20px -10px rgba(0,0,0,0.1); }
         .nav-hidden { transform: translateY(-100%); }
         .portal-nav-btn { position: relative; transition: all 0.3s; }
@@ -42,62 +39,61 @@
 
     <div id="toastContainer" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
-    <!-- Nút Nổi Zalo / Messenger -->
     <div id="floatingSocials" class="fixed bottom-20 md:bottom-6 right-4 md:right-6 flex flex-col gap-3 z-40 transition-all duration-300">
         <a href="https://www.facebook.com/trinh.hg.57" target="_blank" class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl shadow-lg hover:scale-110 transition hover:animate-none animate-bounce" style="animation-delay: 0.1s;"><i class="fab fa-facebook-messenger"></i></a>
         <a href="https://zalo.me/0917678211" target="_blank" class="w-12 h-12 bg-[#0068ff] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition hover:animate-none animate-bounce"><span class="font-bold text-[14px]" style="font-family: Arial, sans-serif;">Zalo</span></a>
     </div>
 
-    <!-- Thanh Header Dán Đầu Màn Hình -->
-    <nav id="mainNav" class="glass-ui fixed top-0 w-full z-[70] px-4 md:px-8 py-3 flex flex-col md:flex-row justify-between items-center gap-3 border-b border-slate-200 bg-white/95 max-w-[100vw]">
-        <div class="font-extrabold text-xl md:text-2xl tracking-tighter cursor-pointer flex items-center text-indigo-700 w-full md:w-auto justify-between md:justify-start" onclick="logout()">
+    <!-- Thanh Header -->
+    <nav id="mainNav" class="glass-ui fixed top-0 w-full z-[70] px-4 md:px-6 py-3 flex flex-col md:flex-row items-center justify-between gap-3 border-b border-slate-200 bg-white/95 max-w-[100vw]">
+        <div class="font-extrabold text-xl md:text-2xl tracking-tighter cursor-pointer flex items-center text-indigo-700 w-full md:w-auto shrink-0 justify-between md:justify-start" onclick="logout()">
             <div class="flex items-center"><i class="fas fa-shield-alt text-2xl md:text-3xl mr-2"></i> <span data-i18n="brand">Trinh Hg VPN</span></div>
             <select id="langSelectMobile" onchange="changeLanguage(this.value)" class="md:hidden bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-lg px-2 py-1 text-sm font-bold outline-none pointer-events-auto">
                 <option value="vi">🇻🇳 VN</option><option value="en">🇬🇧 EN</option><option value="zh">🇨🇳 CN</option>
             </select>
         </div>
         
-        <div id="searchBar" class="relative w-full md:w-[400px] max-w-full">
-            <input type="text" id="loginInput" onkeyup="if(event.key==='Enter') login()" class="w-full bg-slate-100 border border-slate-200 rounded-full pl-5 pr-12 py-2.5 text-xs md:text-sm outline-none font-medium focus:border-indigo-400 focus:bg-white transition" data-i18n-placeholder="search_placeholder" placeholder="Nhập Mã Đơn hoặc Email...">
-            <button onclick="login()" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-indigo-600 rounded-full text-white hover:bg-indigo-700 flex items-center justify-center transition"><i class="fas fa-search text-xs"></i></button>
+        <!-- Tab Điều Hướng cho Desktop (Nằm giữa) -->
+        <div id="desktopPortalNav" class="hidden transition-all flex-1 md:flex justify-center items-center gap-1 opacity-0 pointer-events-none">
+            <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition flex items-center"><i class="fas fa-tv mr-2"></i><span data-i18n="tab_p_home">Trang chủ</span></button>
+            <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition flex items-center"><i class="fas fa-shopping-cart mr-2"></i><span data-i18n="tab_p_store">Cửa hàng</span> <span class="ml-2 bg-red-500 text-white text-[9px] px-2 py-0.5 rounded-full" data-i18n="badge_hot">Bán chạy</span></button>
+            <button onclick="switchPortalTab('p-ref')" class="btn-nav-p-ref px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition flex items-center"><i class="fas fa-user-plus mr-2"></i><span data-i18n="tab_p_ref">Mời bạn</span> <span class="ml-2 bg-green-500 text-white text-[9px] px-2 py-0.5 rounded-full" data-i18n="badge_com">Hoa hồng</span></button>
+            <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition flex items-center"><i class="fas fa-book mr-2"></i><span data-i18n="tab_p_guide">Hướng dẫn</span></button>
         </div>
-        
-        <div class="hidden md:flex items-center gap-3">
-            <select id="langSelectDesktop" onchange="changeLanguage(this.value)" class="bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-xl px-3 py-2 text-sm font-bold outline-none cursor-pointer">
-                <option value="vi">VN - Tiếng Việt</option><option value="en">EN - English</option><option value="zh">CN - 中文</option>
-            </select>
-            <div id="userMenu" class="hidden flex items-center gap-2">
-                <button onclick="logout()" class="text-sm bg-red-50 text-red-600 font-bold px-4 py-2 rounded-full hover:bg-red-100 transition"><i class="fas fa-sign-out-alt mr-1"></i> <span data-i18n="btn_logout">Thoát</span></button>
+
+        <div class="flex items-center gap-3 w-full md:w-auto shrink-0 justify-end">
+            <div id="searchBar" class="relative w-full md:w-[250px] lg:w-[300px] max-w-full">
+                <input type="text" id="loginInput" onkeyup="if(event.key==='Enter') login()" class="w-full bg-slate-100 border border-slate-200 rounded-full pl-5 pr-12 py-2.5 text-xs md:text-sm outline-none font-medium focus:border-indigo-400 focus:bg-white transition" data-i18n-placeholder="search_placeholder" placeholder="Nhập Mã Đơn hoặc Email...">
+                <button onclick="login()" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-indigo-600 rounded-full text-white hover:bg-indigo-700 flex items-center justify-center transition"><i class="fas fa-search text-xs"></i></button>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-3">
+                <select id="langSelectDesktop" onchange="changeLanguage(this.value)" class="bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-xl px-3 py-2 text-sm font-bold outline-none cursor-pointer">
+                    <option value="vi">VN - Tiếng Việt</option><option value="en">EN - English</option><option value="zh">CN - 中文</option>
+                </select>
+                <div id="userMenu" class="hidden flex items-center gap-2">
+                    <button onclick="logout()" class="text-sm bg-red-50 text-red-600 font-bold px-4 py-2 rounded-full hover:bg-red-100 transition shadow-sm"><i class="fas fa-sign-out-alt mr-1"></i> <span data-i18n="btn_logout">Thoát</span></button>
+                </div>
             </div>
         </div>
     </nav>
     <div class="h-[110px] md:h-[70px]"></div>
 
-    <!-- FLOATING PORTAL NAVIGATION -->
-    <div id="portalNav" class="hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[60] bg-white/95 backdrop-blur-md shadow-[0_10px_40px_rgba(0,0,0,0.15)] rounded-full px-2 py-2 flex gap-1 md:gap-2 whitespace-nowrap overflow-x-auto max-w-[95vw] pkg-filters border border-slate-200">
-        <button onclick="switchPortalTab('p-home')" id="nav-p-home" class="portal-nav-btn active flex items-center text-slate-600 font-bold px-4 py-2.5 rounded-full text-xs md:text-sm"><i class="fas fa-tv md:mr-2"></i> <span class="hidden md:inline" data-i18n="tab_p_home">Trang chủ</span></button>
-        <button onclick="switchPortalTab('p-store')" id="nav-p-store" class="portal-nav-btn flex items-center text-slate-600 font-bold px-4 py-2.5 rounded-full text-xs md:text-sm"><i class="fas fa-shopping-cart md:mr-2"></i> <span class="hidden md:inline" data-i18n="tab_p_store">Cửa hàng</span> <span class="badge bg-red-500 hidden md:block" data-i18n="badge_hot">Bán chạy</span></button>
-        <button onclick="switchPortalTab('p-ref')" id="nav-p-ref" class="portal-nav-btn flex items-center text-slate-600 font-bold px-4 py-2.5 rounded-full text-xs md:text-sm"><i class="fas fa-user-plus md:mr-2"></i> <span class="hidden md:inline" data-i18n="tab_p_ref">Mời bạn</span> <span class="badge bg-green-500 hidden md:block" data-i18n="badge_com">Hoa hồng</span></button>
-        <button onclick="switchPortalTab('p-guide')" id="nav-p-guide" class="portal-nav-btn flex items-center text-slate-600 font-bold px-4 py-2.5 rounded-full text-xs md:text-sm"><i class="fas fa-book md:mr-2"></i> <span class="hidden md:inline" data-i18n="tab_p_guide">Hướng dẫn</span></button>
+    <!-- Tab Điều Hướng cho Mobile (Nằm Dưới Cùng) -->
+    <div id="portalNav" class="hidden md:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[60] bg-white/95 backdrop-blur-md shadow-[0_10px_40px_rgba(0,0,0,0.15)] rounded-full px-2 py-2 flex gap-1 whitespace-nowrap overflow-x-auto max-w-[95vw] pkg-filters border border-slate-200">
+        <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home portal-nav-btn active flex items-center text-slate-600 font-bold px-4 py-2.5 rounded-full text-xs"><i class="fas fa-tv mr-2 hidden sm:block"></i> <span data-i18n="tab_p_home">Trang chủ</span></button>
+        <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store portal-nav-btn flex items-center text-slate-600 font-bold px-4 py-2.5 rounded-full text-xs"><i class="fas fa-shopping-cart mr-2 hidden sm:block"></i> <span data-i18n="tab_p_store">Cửa hàng</span> <span class="badge bg-red-500" data-i18n="badge_hot">Bán chạy</span></button>
+        <button onclick="switchPortalTab('p-ref')" class="btn-nav-p-ref portal-nav-btn flex items-center text-slate-600 font-bold px-4 py-2.5 rounded-full text-xs"><i class="fas fa-user-plus mr-2 hidden sm:block"></i> <span data-i18n="tab_p_ref">Mời bạn</span> <span class="badge bg-green-500" data-i18n="badge_com">Hoa hồng</span></button>
+        <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide portal-nav-btn flex items-center text-slate-600 font-bold px-4 py-2.5 rounded-full text-xs"><i class="fas fa-book mr-2 hidden sm:block"></i> <span data-i18n="tab_p_guide">Hướng dẫn</span></button>
     </div>
 
     <main class="flex-grow z-10 relative px-3 md:px-4 py-4 md:py-6 max-w-7xl mx-auto w-full overflow-x-hidden">
         
-        <!-- GIAO DIỆN CỔNG KHÁCH HÀNG (SAU KHI ĐĂNG NHẬP) -->
         <div id="view-portal" class="view-section mb-20">
             
             <!-- TAB 1: TRANG CHỦ THÔNG TIN -->
             <div id="p-home" class="portal-tab-content active">
                 <div class="bg-white p-4 md:p-8 rounded-2xl md:rounded-3xl mb-8 shadow-sm border border-slate-200">
-                    
-                    <!-- Promo Block Đã Sao Chép -->
-                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-6 md:p-8 mb-8 text-white shadow-lg text-center md:text-left flex flex-col md:flex-row items-center gap-6">
-                        <div class="flex-1">
-                            <h3 class="text-xl md:text-3xl font-black mb-3 leading-tight" data-i18n="promo_title">🚀 Chơi Game & Lướt Mạng Không Giới Hạn!</h3>
-                            <p class="text-sm md:text-base font-medium leading-relaxed opacity-90" data-i18n="promo_desc">Hỗ trợ mượt mà: <b class="text-yellow-300">TikTok, Facebook, Messenger, Threads, Instagram, Zalo, YouTube...</b><br>Tối ưu ping cực thấp cho: <b class="text-green-300">Liên Quân Mobile (VN), Genshin Impact...</b></p>
-                        </div>
-                        <i class="fas fa-rocket text-6xl opacity-80 hidden md:block"></i>
-                    </div>
 
                     <div id="portalContentPending" class="hidden bg-yellow-50 border border-yellow-200 p-5 rounded-xl flex flex-col items-center text-center mb-6">
                         <i class="fas fa-hourglass-half text-3xl text-yellow-500 mb-3"></i>
@@ -106,29 +102,13 @@
                     </div>
 
                     <div id="portalContentSuccess" class="hidden">
-                        
                         <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-6 shadow-sm flex flex-col xl:flex-row justify-between items-start xl:items-center gap-5">
                             <div class="grid grid-cols-2 sm:grid-cols-5 gap-y-4 gap-x-2 w-full text-left items-center">
-                                <div>
-                                    <p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="order_id_label">Mã Đơn</p>
-                                    <p id="portalOrderId" class="text-indigo-600 font-mono font-black text-sm md:text-base uppercase flex items-center gap-1"></p>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="status_label">Trạng Thái</p>
-                                    <div id="portalStatus"></div>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="pkg_name_label">Gói</p>
-                                    <p id="portalPackageName" class="text-slate-800 font-bold text-sm md:text-base truncate pr-2"></p>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="exp_date_label">Ngày Hết Hạn</p>
-                                    <p id="portalExpDate" class="text-slate-800 font-bold text-sm md:text-base truncate pr-2"></p>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="time_left_label">Còn Lại</p>
-                                    <p id="portalDaysLeft" class="text-red-600 font-black text-sm md:text-base animate-alert"></p>
-                                </div>
+                                <div><p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="order_id_label">Mã Đơn</p><p id="portalOrderId" class="text-indigo-600 font-mono font-black text-sm md:text-base uppercase flex items-center gap-1"></p></div>
+                                <div><p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="status_label">Trạng Thái</p><div id="portalStatus"></div></div>
+                                <div><p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="pkg_name_label">Gói</p><p id="portalPackageName" class="text-slate-800 font-bold text-sm md:text-base truncate pr-2"></p></div>
+                                <div><p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="exp_date_label">Ngày Hết Hạn</p><p id="portalExpDate" class="text-slate-800 font-bold text-sm md:text-base truncate pr-2"></p></div>
+                                <div><p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="time_left_label">Còn Lại</p><p id="portalDaysLeft" class="text-red-600 font-black text-sm md:text-base animate-alert"></p></div>
                             </div>
                             <button onclick="switchPortalTab('p-store')" class="w-full xl:w-auto bg-indigo-100 text-indigo-700 hover:bg-indigo-600 hover:text-white font-bold py-2.5 px-6 rounded-xl transition text-sm flex items-center justify-center shrink-0 shadow-sm"><i class="fas fa-redo-alt mr-2"></i> <span data-i18n="btn_renew">Gia hạn</span></button>
                         </div>
@@ -143,9 +123,17 @@
                     </div>
                 </div>
 
-                <!-- Nút Xem Hướng Dẫn Nằm Cuối -->
-                <div class="flex justify-center mt-6">
+                <div class="flex justify-center mt-6 mb-8">
                     <button onclick="switchPortalTab('p-guide')" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-black py-3 px-6 rounded-full shadow-[0_4px_15px_rgba(79,70,229,0.4)] hover:scale-105 transition-transform flex items-center gap-2 text-xs md:text-sm"><i class="fas fa-question-circle text-lg"></i> <span data-i18n="btn_watch_guide">Chưa biết sử dụng? Xem hướng dẫn ngay thôi nào!</span></button>
+                </div>
+
+                <!-- Bảng QC Đã được dời xuống đây -->
+                <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-6 md:p-8 mb-8 text-white shadow-lg text-center md:text-left flex flex-col md:flex-row items-center gap-6">
+                    <div class="flex-1">
+                        <h3 class="text-xl md:text-3xl font-black mb-3 leading-tight" data-i18n="promo_title">🚀 Chơi Game & Lướt Mạng Không Giới Hạn!</h3>
+                        <p class="text-sm md:text-base font-medium leading-relaxed opacity-90" data-i18n="promo_desc">Hỗ trợ mượt mà: <b class="text-yellow-300">TikTok, Facebook, Messenger, Threads, Instagram, Zalo, YouTube...</b><br>Tối ưu ping cực thấp cho: <b class="text-green-300">Liên Quân Mobile (VN), Genshin Impact...</b></p>
+                    </div>
+                    <i class="fas fa-rocket text-6xl opacity-80 hidden md:block"></i>
                 </div>
 
                 <!-- FAQ Nằm Cuối -->
@@ -155,7 +143,7 @@
                 </div>
             </div>
 
-            <!-- TAB 2: CỬA HÀNG (TRONG CỔNG) -->
+            <!-- TAB 2: CỬA HÀNG -->
             <div id="p-store" class="portal-tab-content">
                 <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-6 md:p-8 mb-8 text-white shadow-lg text-center md:text-left flex flex-col md:flex-row items-center gap-6">
                     <div class="flex-1">
@@ -174,31 +162,44 @@
                 <div id="packagesContainerPortal" class="grid md:grid-cols-3 gap-4 md:gap-6 mb-10"></div>
             </div>
 
-            <!-- TAB 3: MỜI BẠN (REFERRAL) -->
+            <!-- TAB 3: MỜI BẠN (REFERRAL) - ĐÃ FIX THEO YÊU CẦU -->
             <div id="p-ref" class="portal-tab-content">
                 <div class="bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl p-6 md:p-8 text-white shadow-lg text-center mb-6">
                     <h2 class="text-2xl md:text-3xl font-black mb-3">🎁 Giới thiệu bạn bè - Nhận 8% hoa hồng!</h2>
-                    <p class="text-sm md:text-base font-medium opacity-90">Chia sẻ link giới thiệu tới bạn bè, hoa hồng nhận được có thể dùng để mua gói VPN hoặc rút tiền thật khi mời đủ 10 người!</p>
+                    <p class="text-sm md:text-base font-medium opacity-90">Chia sẻ link giới thiệu, bạn sẽ nhận được 8% tổng số tiền thanh toán của người được mời. Đủ 10 người có thể rút thành tiền mặt!</p>
                 </div>
 
                 <div class="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-sm text-center">
                     <p class="text-slate-500 font-extrabold text-sm mb-3 uppercase tracking-wider">Mã Giới Thiệu Của Bạn</p>
-                    <div class="flex flex-col md:flex-row justify-center items-center gap-3 mb-8">
+                    <div class="flex flex-row justify-center items-center gap-2 mb-6">
                         <code id="myRefCode" class="text-2xl md:text-3xl font-black text-indigo-600 bg-indigo-50 px-6 py-3 rounded-xl border border-indigo-100 min-w-[200px]">ĐANG TẢI...</code>
-                        <button onclick="copyToClipboard('myRefCode')" class="bg-slate-800 text-white font-bold px-6 py-3 rounded-xl hover:bg-slate-700 transition w-full md:w-auto shadow-md"><i class="fas fa-copy mr-2"></i>COPY MÃ</button>
+                        <button onclick="copyToClipboard('myRefCode')" class="bg-slate-800 text-white text-xl px-4 py-3 rounded-xl hover:bg-slate-700 transition shadow-md" title="Copy Mã"><i class="fas fa-copy"></i></button>
                     </div>
 
                     <p class="text-slate-500 font-extrabold text-sm mb-3 uppercase tracking-wider">Link Giới Thiệu Nhanh</p>
-                    <div class="flex flex-col md:flex-row justify-center items-center gap-3 mb-8 w-full max-w-2xl mx-auto">
+                    <div class="flex flex-row justify-center items-center gap-2 mb-8 w-full max-w-xl mx-auto">
                         <input id="myRefLink" class="w-full text-center md:text-left bg-slate-50 border border-slate-200 text-slate-600 p-3 md:p-4 font-mono font-bold text-xs md:text-sm outline-none rounded-xl" readonly value="...">
-                        <button onclick="copyToClipboard('myRefLink')" class="bg-indigo-600 text-white font-bold px-6 py-3.5 rounded-xl hover:bg-indigo-700 transition w-full md:w-auto shadow-md whitespace-nowrap"><i class="fas fa-link mr-2"></i>COPY LINK</button>
+                        <button onclick="copyToClipboard('myRefLink')" class="bg-indigo-600 text-white text-xl px-4 py-3 rounded-xl hover:bg-indigo-700 transition shadow-md whitespace-nowrap" title="Copy Link"><i class="fas fa-copy"></i></button>
                     </div>
 
-                    <div class="bg-green-50 border border-green-200 rounded-3xl p-6 max-w-sm mx-auto shadow-inner">
-                        <p class="text-green-800 font-bold mb-2 uppercase text-xs tracking-wider">Số bạn bè đã mời thành công</p>
-                        <p id="myRefCount" class="text-6xl font-black text-green-600 drop-shadow-sm">0</p>
-                        <p class="text-green-700 text-xs mt-2 italic font-medium">Hoa hồng sẽ được tính khi bạn bè thanh toán thành công!</p>
+                    <!-- THỐNG KÊ HOA HỒNG -->
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <div class="bg-green-50 border border-green-200 rounded-3xl p-4 md:p-6 text-center shadow-inner">
+                            <p class="text-green-800 font-bold mb-1 uppercase text-[10px] md:text-xs tracking-wider">Bạn bè đã mời</p>
+                            <p id="myRefCount" class="text-3xl md:text-5xl font-black text-green-600 drop-shadow-sm">0</p>
+                        </div>
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-3xl p-4 md:p-6 text-center shadow-inner">
+                            <p class="text-yellow-800 font-bold mb-1 uppercase text-[10px] md:text-xs tracking-wider">Hoa hồng (8%)</p>
+                            <p id="myRefCommission" class="text-xl md:text-3xl font-black text-yellow-600 drop-shadow-sm mt-2">0đ</p>
+                        </div>
                     </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="flex gap-3 justify-center mb-2">
+                        <button onclick="switchPortalTab('p-store')" class="bg-indigo-600 text-white font-bold px-4 py-3 rounded-xl hover:bg-indigo-700 transition flex items-center justify-center flex-1 max-w-[200px] text-xs md:text-sm shadow-md"><i class="fas fa-shopping-cart mr-2"></i> Mua VPN</button>
+                        <button id="btnWithdraw" onclick="withdrawCommission()" class="bg-slate-200 text-slate-500 font-bold px-4 py-3 rounded-xl transition flex items-center justify-center flex-1 max-w-[200px] text-xs md:text-sm cursor-not-allowed shadow-sm"><i class="fas fa-lock mr-2" id="iconWithdraw"></i> Rút tiền</button>
+                    </div>
+                    <p class="text-slate-400 text-[11px] italic font-medium mt-2">Mở khóa Rút Tiền khi mời đủ 10 người</p>
                 </div>
             </div>
 
@@ -320,7 +321,6 @@
 
     </main>
 
-    <!-- FOOTER -->
     <footer id="footerArea" class="bg-white border-t border-slate-200 py-4 z-10 w-full mt-auto">
         <div class="max-w-7xl mx-auto px-4 flex flex-col-reverse md:flex-row justify-between items-center gap-3">
             <p class="text-xs md:text-sm font-bold text-slate-500 whitespace-nowrap">© 2026 Trinh Hg VPN. All rights reserved.</p>
@@ -351,7 +351,6 @@
             return '';
         }
 
-        // Header Scrolling
         let lastScrollY = window.scrollY;
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('mainNav');
@@ -407,7 +406,7 @@
 
         document.getElementById('faqStoreContainer').innerHTML = faqHTML;
         document.getElementById('faqPortalContainer').innerHTML = faqHTML;
-        document.getElementById('faqPortalHomeContainer').innerHTML = faqHTML; // Thêm FAQ vào Home Portal
+        document.getElementById('faqPortalHomeContainer').innerHTML = faqHTML;
 
         const i18n = {
             vi: {
@@ -481,12 +480,11 @@
             { id: 'd1', category: ['usage'], vi: { name: 'Không Giới Hạn', price: '70.000đ', time: 'Vĩnh viễn' }, en: { name: 'Unlimited Data', price: '$4.00', time: 'Lifetime' }, zh: { name: '不限时流量', price: '17.5 CNY', time: '永久' }, usd: 4, vnd: 70000, cny: 17.5, data: '200GB', tag: null, tag2: null },
             { id: 'd2', category: ['usage'], vi: { name: 'Không Giới Hạn', price: '200.000đ', time: 'Vĩnh viễn' }, en: { name: 'Unlimited Data', price: '$8.00', time: 'Lifetime' }, zh: { name: '不限时流量', price: '50 CNY', time: '永久' }, usd: 8, vnd: 200000, cny: 50, data: '2000GB', tag: null, tag2: null },
             { id: 'd3', category: ['usage'], vi: { name: 'Không Giới Hạn', price: '710.000đ', time: 'Vĩnh viễn' }, en: { name: 'Unlimited Data', price: '$27.00', time: 'Lifetime' }, zh: { name: '不限时流量', price: '177.5 CNY', time: '永久' }, usd: 27, vnd: 710000, cny: 177.5, data: '6000GB', tag: null, tag2: null },
-            // CARD ĐẶC BIỆT NẰM Ở CUỐI CHO TAB TÙY CHỌN
             { id: 'custom', isCustom: true, category: ['travel', 'cycle', 'usage'], vi: { name: 'Gói Tùy Chọn', price: 'Liên hệ Admin', time: '1 Tháng' }, en: { name: 'Custom Plan', price: 'Contact Admin', time: '1 Month' }, zh: { name: '自定义套餐', price: '联系管理员', time: '1个月' }, usd: 0, vnd: 0, cny: 0, data: '100GB - 100,000GB', tag: null, tag2: null }
         ];
 
         let lang = 'vi'; let currentPackage = null; let currentOrderId = ''; let cmsCache = {}; let autoPollInterval;
-        let currentMultiplier = 1; let oCache = null;
+        let currentMultiplier = 1; let oCache = null; let myCurrentRefCount = 0;
         let currentTotalVnd = 0; let currentTotalCny = 0; let currentTotalUsd = 0;
 
         function showToast(msg, type = 'success') {
@@ -699,7 +697,7 @@
                 
                 let db = await apiGet("/api/orders");
                 if(!Array.isArray(db)) db = [];
-                db.unshift({ id: currentOrderId, email: document.getElementById('cusEmail').value, zalo: document.getElementById('cusZalo').value, method: document.getElementById('payMethod').options[document.getElementById('payMethod').selectedIndex].text, pkgName: currentPackage.vi.name, pkgData: currentPackage.data, pkg: `${currentPackage.vi.name} (${cycleText}) - ${finalPriceStr} (${currentPackage.data})`, needSupport: document.getElementById('needSupport').checked, status: 'pending', date: new Date().toLocaleString(), expDate: '', daysLeft: '', refCode: refCode });
+                db.unshift({ id: currentOrderId, email: document.getElementById('cusEmail').value, zalo: document.getElementById('cusZalo').value, method: document.getElementById('payMethod').options[document.getElementById('payMethod').selectedIndex].text, pkgName: currentPackage.vi.name, pkgData: currentPackage.data, pkg: `${currentPackage.vi.name} (${cycleText}) - ${finalPriceStr} (${currentPackage.data})`, totalVnd: currentTotalVnd, needSupport: document.getElementById('needSupport').checked, status: 'pending', date: new Date().toLocaleString(), expDate: '', daysLeft: '', refCode: refCode });
                 
                 await apiPost("/api/orders", db);
 
@@ -777,7 +775,9 @@
 
             document.getElementById('view-store').classList.remove('active'); document.getElementById('view-portal').classList.add('active');
             document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('checkoutSection').classList.add('hidden');
-            document.getElementById('portalNav').classList.remove('hidden');
+            
+            document.getElementById('portalNav').classList.remove('hidden'); // Mobile nav
+            document.getElementById('desktopPortalNav').classList.remove('opacity-0', 'pointer-events-none'); // Desktop nav
             
             if(!isAutoPoll && !isManualRefresh) switchPortalTab('p-home');
 
@@ -787,7 +787,6 @@
                 cmsCache = await apiGet("/api/cms");
                 showGuide('android');
 
-                // REFERRAL LOGIC CHO TÀI KHOẢN KÍCH HOẠT
                 let refsDb = await apiGet("/api/refs");
                 if(!Array.isArray(refsDb)) refsDb = [];
                 let myRef = refsDb.find(r => r.email === o.email);
@@ -795,7 +794,7 @@
                 if(!myRef && o.email) {
                     const d = new Date(o.date || new Date().toLocaleString());
                     const code = (o.id.slice(-4) + String(d.getDate()).padStart(2, '0') + String(d.getFullYear())).toUpperCase();
-                    myRef = { email: o.email, code: code, count: 0, date: new Date().toLocaleString() };
+                    myRef = { email: o.email, code: code, count: 0, commission: 0, date: new Date().toLocaleString() };
                     refsDb.unshift(myRef);
                     await apiPost("/api/refs", refsDb);
                 }
@@ -804,23 +803,52 @@
                     document.getElementById('myRefCode').innerText = myRef.code;
                     document.getElementById('myRefLink').value = `${window.location.origin}/?ref=${myRef.code}`;
                     document.getElementById('myRefCount').innerText = myRef.count || 0;
+                    document.getElementById('myRefCommission').innerText = (myRef.commission || 0).toLocaleString('vi-VN') + 'đ';
+                    myCurrentRefCount = myRef.count || 0;
+                    
+                    const btnW = document.getElementById('btnWithdraw');
+                    const iconW = document.getElementById('iconWithdraw');
+                    if (myCurrentRefCount >= 10) {
+                        btnW.className = "bg-green-600 text-white font-bold px-4 py-3 rounded-xl hover:bg-green-700 transition flex items-center justify-center flex-1 max-w-[200px] text-xs md:text-sm shadow-md cursor-pointer";
+                        iconW.className = "fas fa-unlock mr-2";
+                    } else {
+                        btnW.className = "bg-slate-200 text-slate-500 font-bold px-4 py-3 rounded-xl transition flex items-center justify-center flex-1 max-w-[200px] text-xs md:text-sm cursor-not-allowed shadow-sm";
+                        iconW.className = "fas fa-lock mr-2";
+                    }
                 }
             }
             
             renderPackages('all'); if(!isManualRefresh && !isAutoPoll) window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        function withdrawCommission() {
+            if (myCurrentRefCount >= 10) {
+                alert("Vui lòng liên hệ Admin qua Zalo/Messenger để được hỗ trợ rút tiền thủ công!");
+            } else {
+                showToast("Cần mời đủ 10 người để mở khóa rút tiền!", "error");
+            }
+        }
+
         function switchPortalTab(tabId) {
             document.querySelectorAll('.portal-tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.portal-nav-btn').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.btn-nav-p-home, .btn-nav-p-store, .btn-nav-p-ref, .btn-nav-p-guide').forEach(el => {
+                el.classList.remove('active', 'text-indigo-600', 'bg-indigo-50');
+                if (el.classList.contains('portal-nav-btn')) el.classList.remove('bg-[#e0e7ff]');
+            });
+            
             document.getElementById(tabId).classList.add('active');
-            document.getElementById('nav-' + tabId).classList.add('active');
+            document.querySelectorAll('.btn-nav-' + tabId).forEach(el => {
+                el.classList.add('active');
+                if (!el.classList.contains('portal-nav-btn')) el.classList.add('text-indigo-600', 'bg-indigo-50');
+            });
         }
 
         function logout() {
             localStorage.removeItem(SESSION_KEY); document.getElementById('view-portal').classList.remove('active'); document.getElementById('view-store').classList.add('active');
             document.getElementById('userMenu').classList.add('hidden'); document.getElementById('loginInput').value = '';
-            document.getElementById('portalNav').classList.add('hidden'); oCache = null;
+            document.getElementById('portalNav').classList.add('hidden');
+            document.getElementById('desktopPortalNav').classList.add('opacity-0', 'pointer-events-none');
+            oCache = null; myCurrentRefCount = 0;
         }
 
         function showGuide(dev) {
