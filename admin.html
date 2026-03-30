@@ -112,7 +112,7 @@
        <!-- TAB QUẢN LÝ REFERRAL -->
        <div id="tab-refs" class="hidden glass-card p-5 md:p-8">
            <h2 class="text-xl font-bold mb-4">Quản lý chương trình Mời Bạn (Referral)</h2>
-           <p class="text-xs text-slate-500 mb-6">Bạn có thể chỉnh sửa thủ công số lượt mời thành công của khách ở đây.</p>
+           <p class="text-xs text-slate-500 mb-6">Hệ thống tính tự động 8% tiền hoa hồng cho mã. Bạn có thể chỉnh sửa thủ công nếu cần.</p>
            <div class="overflow-x-auto border border-slate-200 rounded-xl">
                <table class="w-full text-left text-sm whitespace-nowrap min-w-[600px]">
                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
@@ -120,6 +120,7 @@
                            <th class="p-4">Email Khách</th>
                            <th class="p-4">Mã Giới Thiệu Của Khách</th>
                            <th class="p-4">Số lượng hoàn thành</th>
+                           <th class="p-4">Hoa Hồng (VNĐ)</th>
                            <th class="p-4 text-right">Hành động</th>
                        </tr>
                    </thead>
@@ -242,11 +243,15 @@
    <!-- MODAL SỬA REFERRAL -->
    <div id="modalEditRef" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
        <div class="glass-card p-6 w-full max-w-sm">
-           <h3 class="text-xl font-bold mb-4">Sửa Số Lượng Lượt Mời</h3>
+           <h3 class="text-xl font-bold mb-4">Sửa Thống Kê Giới Thiệu</h3>
            <input type="hidden" id="editRefEmail">
            <div class="mb-4">
                <label class="block font-bold text-xs text-slate-600 mb-1">Số lượt hoàn thành</label>
                <input type="number" id="editRefCount" class="w-full p-3 text-sm border rounded-lg outline-none focus:border-indigo-500 font-bold">
+           </div>
+           <div class="mb-4">
+               <label class="block font-bold text-xs text-slate-600 mb-1">Hoa hồng (VNĐ)</label>
+               <input type="number" id="editRefCommission" class="w-full p-3 text-sm border rounded-lg outline-none focus:border-indigo-500 font-bold">
            </div>
            <div class="flex gap-2">
                <button onclick="saveRefEdit()" class="flex-1 bg-indigo-600 text-white font-bold py-3 rounded-lg"><i class="fas fa-save mr-2"></i>LƯU</button>
@@ -469,6 +474,7 @@
                    <td class="p-4 font-bold text-slate-800">${r.email || 'Không rõ'}</td>
                    <td class="p-4 font-mono font-bold text-indigo-600 text-base">${r.code}</td>
                    <td class="p-4"><span class="bg-green-100 text-green-700 font-black px-3 py-1 rounded-lg">${r.count || 0}</span></td>
+                   <td class="p-4 font-black text-yellow-600">${(r.commission || 0).toLocaleString('vi-VN')}đ</td>
                    <td class="p-4 text-right whitespace-nowrap">
                        <button onclick="openEditRef('${r.email}')" class="text-indigo-600 font-bold px-3 py-1.5 bg-indigo-50 rounded-lg text-xs hover:bg-indigo-100"><i class="fas fa-pen mr-1"></i>Sửa Số Lượng</button>
                    </td>
@@ -542,15 +548,20 @@
            const r = refsDb.find(x => x.email === email);
            document.getElementById('editRefEmail').value = r.email;
            document.getElementById('editRefCount').value = r.count || 0;
+           document.getElementById('editRefCommission').value = r.commission || 0;
            document.getElementById('modalEditRef').classList.remove('hidden');
        }
 
        async function saveRefEdit() {
            const email = document.getElementById('editRefEmail').value;
            const count = parseInt(document.getElementById('editRefCount').value);
+           const commission = parseInt(document.getElementById('editRefCommission').value);
            
            const r = refsDb.find(x => x.email === email);
-           if(r) r.count = count;
+           if(r) {
+               r.count = count;
+               r.commission = commission;
+           }
 
            await apiPost("/api/refs", refsDb);
            renderRefs(); document.getElementById('modalEditRef').classList.add('hidden'); showToast("Đã cập nhật số lượng giới thiệu!", "success");
@@ -634,11 +645,13 @@
 
            const btn = event.target; const oldTxt = btn.innerText; btn.innerText = "ĐANG LƯU..."; btn.disabled = true;
 
-           // CHECK VÀ TĂNG LƯỢT REF NẾU ĐƠN LẦN ĐẦU THÀNH CÔNG
+           // CHECK VÀ TĂNG LƯỢT REF, TÍNH TIỀN HOA HỒNG TỰ ĐỘNG
            if (o.status === 'success' && oldStatus !== 'success' && o.refCode && !o.refCounted) {
                let r = refsDb.find(x => x.code === o.refCode.toUpperCase());
                if(r) {
                    r.count = (r.count || 0) + 1;
+                   let comm = (o.totalVnd || 0) * 0.08; // Tính 8%
+                   r.commission = (r.commission || 0) + comm;
                    await apiPost("/api/refs", refsDb);
                    renderRefs();
                }
@@ -708,7 +721,7 @@
            const box = document.getElementById('cmsGuide'); 
            let str = "";
            
-           if(type === 'btn') str = `\n<style>@keyframes pulseAppBtn { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }</style>\n<div style="display: flex; justify-content: center; margin: 15px 0; width: 100%;"><a href="LINK_TẢI_APP_VÀO_ĐÂY" target="_blank" style="display:inline-block; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color:white; padding:14px 28px; border-radius:12px; font-weight:bold; text-decoration:none; font-size:15px; text-align: center; animation: pulseAppBtn 2s infinite; box-shadow: 0 4px 15px rgba(109,40,217, 0.4);"><i class="fas fa-download" style="margin-right: 8px;"></i>TẢI_APP_NGAY</a></div>\n`;
+           if(type === 'btn') str = `\n<style>@keyframes pulseAppBtnStrong { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(109,40,217, 0.7); } 50% { transform: scale(1.08); box-shadow: 0 0 0 15px rgba(109,40,217, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(109,40,217, 0); } }</style>\n<div style="display: flex; justify-content: flex-start; margin: 15px 20px; width: 100%;"><a href="LINK_TẢI_APP_VÀO_ĐÂY" target="_blank" style="display:inline-block; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color:white; padding:14px 28px; border-radius:12px; font-weight:bold; text-decoration:none; font-size:15px; text-align: center; animation: pulseAppBtnStrong 1.5s infinite; box-shadow: 0 4px 15px rgba(109,40,217, 0.4);"><i class="fas fa-download" style="margin-right: 8px;"></i>TẢI_APP_NGAY</a></div>\n`;
            if(type === 'title') str = `\n<div style="background: #e0e7ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 4px; margin-top: 25px; margin-bottom: 15px;"><h3 style="font-size: 16px; font-weight: 800; color: #3730a3; margin: 0;">TIÊU_ĐỀ_HƯỚNG_DẪN</h3></div>\n`;
            if(type === 'step') str = `\n<div style="display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start;"><span style="background: #4f46e5; color: white; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 12px; font-weight: bold; flex-shrink: 0; margin-top: 0;">SỐ_BƯỚC</span><p style="margin: 0; font-size: 14px; color: #334155; line-height: 24px;">NỘI_DUNG_BƯỚC_CÀI</p></div>\n`;
            if(type === 'note') str = `\n<div style="background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 6px; margin: 15px 0;"><p style="margin: 0; font-size: 14px; color: #92400e; line-height: 1.5;"><b>LƯU Ý:</b> NHẬP_LƯU_Ý_CỦA_BẠN_VÀO_ĐÂY</p></div>\n`;
