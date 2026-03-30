@@ -36,7 +36,6 @@
        <div class="flex flex-wrap gap-2 mb-6">
            <button onclick="switchTab('tab-orders')" id="btn-tab-orders" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow-md"><i class="fas fa-box mr-2"></i>Đơn hàng</button>
            <button onclick="switchTab('tab-exp')" id="btn-tab-exp" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200"><i class="fas fa-clock mr-2"></i>Hết hạn</button>
-           <button onclick="switchTab('tab-refs')" id="btn-tab-refs" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200"><i class="fas fa-user-friends mr-2"></i>Mời bạn</button>
            <button onclick="switchTab('tab-links')" id="btn-tab-links" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200"><i class="fas fa-link mr-2"></i>Link Sub</button>
            <button onclick="switchTab('tab-cms')" id="btn-tab-cms" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200"><i class="fas fa-book mr-2"></i>Hướng dẫn</button>
            <button onclick="switchTab('tab-devices')" id="btn-tab-devices" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200"><i class="fas fa-laptop mr-2"></i>Thiết bị</button>
@@ -75,28 +74,12 @@
            </div>
        </div>
 
-       <!-- TAB MỜI BẠN (REFERRAL) -->
-       <div id="tab-refs" class="hidden glass-card p-5 md:p-8">
-           <h2 class="text-xl font-bold mb-4">Quản lý Giới thiệu bạn bè (Referral)</h2>
-           <div class="overflow-x-auto border border-slate-200 rounded-xl">
-               <table class="w-full text-left text-sm whitespace-nowrap min-w-[700px]">
-                   <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
-                       <tr>
-                           <th class="p-4">Mã Giới Thiệu</th>
-                           <th class="p-4">Email Chủ Mã</th>
-                           <th class="p-4 text-center">Số Lượt Mời</th>
-                           <th class="p-4 text-right">Hành động</th>
-                       </tr>
-                   </thead>
-                   <tbody id="refsTable" class="divide-y divide-slate-100 bg-white"></tbody>
-               </table>
-           </div>
-       </div>
-
        <!-- TAB QUẢN LÝ LINK -->
        <div id="tab-links" class="hidden glass-card p-5 md:p-8">
            <h2 class="text-xl font-bold mb-2">Quản lý Link Sub Ẩn (Masked Link)</h2>
-           <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6 mt-4">
+           <p class="text-xs text-slate-500 mb-6">Chỉ cần dán Link gốc (Liangxin). Hệ thống sẽ bẻ lái (Redirect 302) để đảm bảo độ ổn định tuyệt đối.</p>
+           
+           <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6">
                <div class="grid md:grid-cols-2 gap-4 mb-4">
                    <div>
                        <label class="block font-bold text-xs text-slate-700 mb-1">Link Gốc (Liangxin / Djjc)</label>
@@ -125,7 +108,7 @@
            </div>
        </div>
 
-       <!-- TAB CMS -->
+       <!-- TAB CMS & DEVICES -->
        <div id="tab-cms" class="hidden glass-card p-5 md:p-8">
            <h2 class="text-xl font-bold mb-4">Soạn thảo Hướng dẫn (CMS Editor)</h2>
            <div class="flex flex-wrap gap-2 mb-4">
@@ -146,7 +129,6 @@
            <button onclick="saveCmsToCloud()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3.5 rounded-xl shadow-md w-full md:w-auto transition"><i class="fas fa-save mr-2"></i> LƯU LÊN MÁY CHỦ</button>
        </div>
 
-       <!-- TAB THIẾT BỊ -->
        <div id="tab-devices" class="hidden glass-card p-5 md:p-8">
            <h2 class="text-xl font-bold mb-4">Các thiết bị được phép vào Admin</h2>
            <div class="overflow-x-auto">
@@ -243,7 +225,7 @@
        const MY_PAGES_DOMAIN = "https://vpntrinhhg.pages.dev"; 
        const GOOGLE_MAIL_API = "https://script.google.com/macros/s/AKfycbyQjEln9By0HuUPtboqJpb1INI6rRp52BxvHR8HaE5fs8qojfgau1R_27P4RyLLxXIp/exec";
         
-       let ordersDb = []; let cmsDb = {}; let adminDevices = []; let linksDb = []; let refsDb = [];
+       let ordersDb = []; let cmsDb = {}; let adminDevices = []; let linksDb = [];
        let currentCmsDevice = 'android'; let refreshInterval; let myDeviceId = '';
 
        const packageOptions = [
@@ -325,9 +307,9 @@
        function logoutAdmin() { localStorage.removeItem("admin_device_id"); location.reload(); }
 
        function switchTab(t) {
-           ['tab-orders', 'tab-exp', 'tab-refs', 'tab-links', 'tab-cms', 'tab-devices'].forEach(tab => document.getElementById(tab).classList.add('hidden'));
+           ['tab-orders', 'tab-exp', 'tab-links', 'tab-cms', 'tab-devices'].forEach(tab => document.getElementById(tab).classList.add('hidden'));
            document.getElementById(t).classList.remove('hidden');
-           ['btn-tab-orders', 'btn-tab-exp', 'btn-tab-refs', 'btn-tab-links', 'btn-tab-cms', 'btn-tab-devices'].forEach(btn => {
+           ['btn-tab-orders', 'btn-tab-exp', 'btn-tab-links', 'btn-tab-cms', 'btn-tab-devices'].forEach(btn => {
                document.getElementById(btn).className = "flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200";
            });
            document.getElementById('btn-'+t).className = "flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow-md";
@@ -337,7 +319,6 @@
        async function fetchAllData(showManualToast = false) {
            ordersDb = await apiGet("/api/orders"); if(!Array.isArray(ordersDb)) ordersDb = []; renderOrders(); 
            linksDb = await apiGet("/api/links"); if(!Array.isArray(linksDb)) linksDb = []; renderLinks();
-           refsDb = await apiGet("/api/refs"); if(!Array.isArray(refsDb)) refsDb = []; renderRefs();
            await fetchCms(); renderDevices();
            if(showManualToast) showToast("Dữ liệu đã cập nhật!", "success");
         }
@@ -350,7 +331,9 @@
        function parseDateString(dateString) {
            if (!dateString) return null;
            const parts = dateString.split('/');
-           if (parts.length === 3) { return new Date(`${parts[2]}-${parts[1]}-${parts[0]}T23:59:59`); }
+           if (parts.length === 3) {
+               return new Date(`${parts[2]}-${parts[1]}-${parts[0]}T23:59:59`);
+           }
            return null;
        }
 
@@ -375,7 +358,7 @@
                        <td class="p-4 font-bold text-slate-600">${o.expDate}</td>
                        <td class="p-4 ${textClass}">${displayDays}</td>
                        <td class="p-4 text-right whitespace-nowrap">
-                           ${isDanger ? `<button onclick="sendExpWarningMail('${o.id}')" class="text-white font-bold px-3 py-1.5 bg-red-500 rounded-lg text-xs hover:bg-red-600 shadow-md"><i class="fas fa-envelope mr-1"></i> Nhắc nạp tiền</button>` : `<span class="text-xs text-slate-400 italic">Chưa đến hạn</span>`}
+                           ${isDanger ? `<button onclick="sendExpWarningMail('${o.id}')" class="text-white font-bold px-3 py-1.5 bg-red-500 rounded-lg text-xs hover:bg-red-600 shadow-md"><i class="fas fa-envelope mr-1"></i>Nhắc nạp tiền</button>` : `<span class="text-xs text-slate-400 italic">Chưa đến hạn</span>`}
                        </td>
                    </tr>`;
                }
@@ -388,18 +371,26 @@
            
            if(confirm(`Gửi mail nhắc gia hạn cho ${o.email}?`)) {
                let subject = "Trinh Hg VPN - Thông báo Gói VPN sắp hết hạn";
+               let contactBlock = `<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:15px; margin-top:20px; text-align:center;">
+                   <p style="margin:0 0 10px 0; color:#475569; font-size:13px; line-height:1.5;">Cần hỗ trợ gia hạn? Đội ngũ của chúng tôi sẵn sàng 24/7</p>
+                   <a href="https://zalo.me/0917678211" style="display:inline-block; background:#0ea5e9; color:white; padding:10px 16px; text-decoration:none; border-radius:6px; font-weight:bold; margin-bottom:5px; font-size:13px;">Chat Zalo</a>
+                   <a href="https://www.facebook.com/trinh.hg.57" style="display:inline-block; background:#3b82f6; color:white; padding:10px 16px; text-decoration:none; border-radius:6px; font-weight:bold; font-size:13px;">Messenger</a>
+               </div>`;
+
                let msg = `<div style="font-family:sans-serif; width:100%; max-width:500px; margin:auto; background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; box-sizing:border-box;">
                    <div style="background:linear-gradient(135deg, #ef4444, #dc2626); padding:20px; text-align:center;"><h2 style="color:white; margin:0; font-size:20px;">GÓI VPN SẮP HẾT HẠN</h2></div>
                    <div style="padding:20px; box-sizing:border-box;">
                        <p style="font-size:14px; line-height:1.5;">Xin chào, Gói VPN <b>${o.pkgName}</b> của bạn sắp hết hạn.</p>
-                       <div style="background:#fef2f2; border-left:4px solid #ef4444; padding:15px; border-radius:8px; margin:20px 0; text-align:center;">
+                       <div style="background:#fef2f2; border-left:4px solid #ef4444; padding:15px; border-radius:8px; margin:20px 0; text-align:center; word-break:break-all;">
                            <p style="margin:0; font-size:11px; color:#991b1b; font-weight:bold;">MÃ ĐƠN HÀNG HIỆN TẠI</p>
                            <p style="margin:5px 0 0 0; font-size:22px; font-weight:900; color:#dc2626; letter-spacing:1px;">${o.id}</p>
                            <p style="margin:5px 0 0 0; font-size:12px; color:#991b1b;">Ngày hết hạn: <b>${o.expDate}</b></p>
                        </div>
                        <div style="text-align:center; margin:20px 0;">
-                           <a href="https://vpntrinhhg.pages.dev" style="background:#1e293b; color:white; padding:12px 20px; border-radius:8px; text-decoration:none; font-weight:bold; display:inline-block; font-size:14px;">GIA HẠN NGAY TẠI CỔNG KHÁCH HÀNG</a>
+                           <a href="https://vpntrinhhg.pages.dev" style="background:#1e293b; color:white; padding:12px 20px; border-radius:8px; text-decoration:none; font-weight:bold; display:inline-block; max-width:100%; box-sizing:border-box; font-size:14px;">GIA HẠN NGAY TẠI CỔNG KHÁCH HÀNG</a>
+                           <p style="font-size:12px; color:#64748b; margin-top:12px; line-height:1.5;">👉 <i>Đăng nhập bằng <b>Mã Đơn Hàng</b> để chọn gia hạn tránh gián đoạn dịch vụ.</i></p>
                        </div>
+                       ${contactBlock}
                    </div></div>`;
 
                showToast("Đang gửi mail...", "info");
@@ -407,39 +398,6 @@
                    await fetch(GOOGLE_MAIL_API, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({to: o.email, subject: subject, html: msg}) }); 
                    showToast("Đã gửi thông báo gia hạn!", "success");
                } catch(e){ showToast("Lỗi gửi mail!", "error"); }
-           }
-       }
-
-       function renderRefs() {
-           const tbody = document.getElementById('refsTable'); tbody.innerHTML = '';
-           refsDb.forEach((r) => {
-               tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition">
-                   <td class="p-4 font-mono font-bold text-indigo-600">${r.code} <i class="fas fa-copy text-slate-400 hover:text-indigo-600 cursor-pointer ml-1" onclick="copyText('${r.code}')"></i></td>
-                   <td class="p-4 text-slate-700 font-bold">${r.email}</td>
-                   <td class="p-4 text-center font-black text-lg text-emerald-600">${r.count}</td>
-                   <td class="p-4 text-right whitespace-nowrap">
-                       <button onclick="editRefCount('${r.code}')" class="text-indigo-600 font-bold px-3 py-1.5 bg-indigo-50 rounded-lg text-xs mr-1 hover:bg-indigo-100"><i class="fas fa-pen mr-1"></i>Sửa lượt</button>
-                       <button onclick="deleteRef('${r.code}')" class="text-red-500 font-bold px-3 py-1.5 bg-red-50 rounded-lg text-xs hover:bg-red-100"><i class="fas fa-trash mr-1"></i>Xóa</button>
-                   </td>
-               </tr>`;
-           });
-       }
-
-       async function editRefCount(code) {
-           let r = refsDb.find(x => x.code === code);
-           let newVal = prompt(`Nhập số lượt mời mới cho mã ${code}:`, r.count);
-           if(newVal !== null && !isNaN(newVal)) {
-               r.count = parseInt(newVal);
-               await apiPost("/api/refs", refsDb);
-               renderRefs(); showToast("Đã cập nhật lượt mời!", "success");
-           }
-       }
-
-       async function deleteRef(code) {
-           if(confirm(`Xóa vĩnh viễn dữ liệu mời bạn bè của mã ${code}?`)) {
-               refsDb = refsDb.filter(x => x.code !== code); 
-               await apiPost("/api/refs", refsDb);
-               renderRefs(); showToast("Đã xóa!", "info");
            }
        }
 
@@ -476,15 +434,21 @@
            if (!orig) return showToast("Vui lòng dán link gốc!", "error");
 
            try {
-               const urlObj = new URL(orig); let masked = ""; const profileName = "#VPNTrinhHg";
+               const urlObj = new URL(orig);
+               let masked = "";
+               const profileName = "#VPNTrinhHg";
+               
                if (orig.includes("liangxin.xyz")) masked = MY_PAGES_DOMAIN + "/v1/VPNTrinhHg" + urlObj.search + profileName;
                else if (orig.includes("djjc.cfd")) masked = MY_PAGES_DOMAIN + "/v2/VPNTrinhHg" + urlObj.search + profileName;
                else return showToast("Tên miền link gốc chưa được hỗ trợ!", "error");
 
-               linksDb.unshift({ id: 'LNK-' + Date.now(), orig, masked, email, date: new Date().toLocaleString() });
+               const newLink = { id: 'LNK-' + Date.now(), orig, masked, email, date: new Date().toLocaleString() };
+               linksDb.unshift(newLink);
                await apiPost("/api/links", linksDb);
                
-               renderLinks(); document.getElementById('linkOrigInput').value = ''; document.getElementById('linkEmailInput').value = '';
+               renderLinks();
+               document.getElementById('linkOrigInput').value = '';
+               document.getElementById('linkEmailInput').value = '';
                showToast("Đã tạo và lưu Link Ẩn!", "success");
            } catch (error) { showToast("Đường dẫn gốc không hợp lệ!", "error"); }
         }
@@ -504,13 +468,15 @@
            
            let masked = "";
            try {
-               const urlObj = new URL(orig); const profileName = "#VPNTrinhHg";
+               const urlObj = new URL(orig);
+               const profileName = "#VPNTrinhHg";
                if (orig.includes("liangxin.xyz")) masked = MY_PAGES_DOMAIN + "/v1/VPNTrinhHg" + urlObj.search + profileName;
                else if (orig.includes("djjc.cfd")) masked = MY_PAGES_DOMAIN + "/v2/VPNTrinhHg" + urlObj.search + profileName;
                else return showToast("Tên miền gốc chưa được hỗ trợ!", "error");
            } catch(e) { return showToast("Đường dẫn không hợp lệ!", "error"); }
 
-           const l = linksDb.find(x => x.id === id); l.orig = orig; l.masked = masked; l.email = email;
+           const l = linksDb.find(x => x.id === id);
+           l.orig = orig; l.masked = masked; l.email = email;
            await apiPost("/api/links", linksDb);
            renderLinks(); document.getElementById('modalEditLink').classList.add('hidden'); showToast("Đã cập nhật!", "success");
         }
@@ -603,19 +569,27 @@
            if(document.getElementById('sendMailCheck').checked && o.email) {
                btn.innerText = "ĐANG BẮN EMAIL...";
                let subject = "Trinh Hg VPN - Cập nhật đơn hàng"; let msg = "";
+               let contactBlock = `<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:15px; margin-top:20px; text-align:center;">
+                   <p style="margin:0 0 10px 0; color:#475569; font-size:13px; line-height:1.5;">${o.needSupport ? '<span style="color:#ef4444; font-weight:bold;">Bạn đã yêu cầu Admin hỗ trợ cài đặt!</span> Vui lòng liên hệ:' : 'Cần hỗ trợ? Đội ngũ của chúng tôi sẵn sàng 24/7'}</p>
+                   <a href="https://zalo.me/0917678211" style="display:inline-block; background:#0ea5e9; color:white; padding:10px 16px; text-decoration:none; border-radius:6px; font-weight:bold; margin-bottom:5px; font-size:13px;">Chat Zalo</a>
+                   <a href="https://www.facebook.com/trinh.hg.57" style="display:inline-block; background:#3b82f6; color:white; padding:10px 16px; text-decoration:none; border-radius:6px; font-weight:bold; font-size:13px;">Messenger</a>
+               </div>`;
+
                if(o.status === 'success') {
                    subject = "Trinh Hg VPN - Kích hoạt thành công";
                    msg = `<div style="font-family:sans-serif; width:100%; max-width:500px; margin:auto; background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; box-sizing:border-box;">
                        <div style="background:linear-gradient(135deg, #4f46e5, #9333ea); padding:20px; text-align:center;"><h2 style="color:white; margin:0; font-size:20px;">KÍCH HOẠT THÀNH CÔNG</h2></div>
                        <div style="padding:20px; box-sizing:border-box;">
-                           <p style="font-size:14px; line-height:1.5;">Xin chào, Gói VPN <b>${o.pkgName}</b> của bạn đã sẵn sàng.</p>
-                           <div style="background:#f1f5f9; border-left:4px solid #4f46e5; padding:15px; border-radius:8px; margin:20px 0; text-align:center;">
+                           <p style="font-size:14px; line-height:1.5;">Xin chào, Gói VPN <b>${o.pkg.split('-')[0].trim()}</b> của bạn đã sẵn sàng.</p>
+                           <div style="background:#f1f5f9; border-left:4px solid #4f46e5; padding:15px; border-radius:8px; margin:20px 0; text-align:center; word-break:break-all;">
                                <p style="margin:0; font-size:11px; color:#64748b; font-weight:bold;">MÃ ĐƠN HÀNG</p>
                                <p style="margin:5px 0 0 0; font-size:22px; font-weight:900; color:#4f46e5; letter-spacing:1px;">${o.id}</p>
                            </div>
                            <div style="text-align:center; margin:20px 0;">
-                               <a href="https://vpntrinhhg.pages.dev" style="background:#1e293b; color:white; padding:12px 20px; border-radius:8px; text-decoration:none; font-weight:bold; display:inline-block; font-size:14px;">TRUY CẬP CỔNG KHÁCH HÀNG</a>
+                               <a href="https://vpntrinhhg.pages.dev" style="background:#1e293b; color:white; padding:12px 20px; border-radius:8px; text-decoration:none; font-weight:bold; display:inline-block; max-width:100%; box-sizing:border-box; font-size:14px;">TRUY CẬP CỔNG KHÁCH HÀNG</a>
+                               <p style="font-size:12px; color:#64748b; margin-top:12px; line-height:1.5;">👉 <i>Tra cứu bằng <b>Mã Đơn Hàng</b> hoặc <b>Email</b> để lấy Link VPN.</i></p>
                            </div>
+                           ${contactBlock}
                        </div></div>`;
                } else if(o.status === 'failed') {
                    subject = "Trinh Hg VPN - Đơn hàng bị từ chối";
@@ -623,7 +597,8 @@
                        <div style="background:#ef4444; padding:20px; text-align:center;"><h2 style="color:white; margin:0; font-size:20px;">Giao dịch thất bại</h2></div>
                        <div style="padding:20px; box-sizing:border-box;">
                            <p style="font-size:14px; line-height:1.5;">Xin chào, Đơn hàng <b>${o.id}</b> của bạn không thể kích hoạt.</p>
-                           <div style="background:#fef2f2; border:1px solid #fca5a5; padding:15px; border-radius:8px; color:#b91c1c; font-weight:bold; margin:20px 0; font-size:14px;">Lý do: ${o.reason}</div>
+                           <div style="background:#fef2f2; border:1px solid #fca5a5; padding:15px; border-radius:8px; color:#b91c1c; font-weight:bold; margin:20px 0; font-size:14px; word-wrap:break-word;">Lý do: ${o.reason}</div>
+                           ${contactBlock}
                        </div></div>`;
                }
                try { await fetch(GOOGLE_MAIL_API, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({to: o.email, subject: subject, html: msg}) }); } catch(e){}
@@ -648,8 +623,10 @@
            currentCmsDevice = dev; document.getElementById('cmsGuide').value = cmsDb[dev] || '';
         }
        function insertMacro(type) {
-           const box = document.getElementById('cmsGuide'); let str = "";
-           if(type === 'btn') str = `\n<style>@keyframes pulseAppBtn { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(109,40,217, 0.7); } 50% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(109,40,217, 0); } }</style>\n<div style="margin: 15px 10px;"><a href="LINK_TẢI_APP_VÀO_ĐÂY" target="_blank" style="display:inline-block; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color:white; padding:14px 28px; border-radius:12px; font-weight:bold; text-decoration:none; font-size:15px; text-align: center; animation: pulseAppBtn 1.5s ease-in-out infinite;"><i class="fas fa-download" style="margin-right: 8px;"></i>TẢI_APP_NGAY</a></div>\n`;
+           const box = document.getElementById('cmsGuide'); 
+           let str = "";
+           // Đã thêm animation scale mượt mà và bóng đổ (box-shadow) để nút tải thu hút, nổi bật. Đổi màu ở background: linear-gradient()
+           if(type === 'btn') str = `\n<style>@keyframes pulseAppBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(109,40,217, 0.6); } 50% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(109,40,217, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(109,40,217, 0); } }</style>\n<div style="margin: 15px 10px;"><a href="LINK_TẢI_APP_VÀO_ĐÂY" target="_blank" style="display:inline-block; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color:white; padding:14px 28px; border-radius:12px; font-weight:bold; text-decoration:none; font-size:15px; text-align: center; animation: pulseAppBtn 2s infinite;"><i class="fas fa-download" style="margin-right: 8px;"></i>TẢI_APP_NGAY</a></div>\n`;
            if(type === 'title') str = `\n<div style="background: #e0e7ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 4px; margin-top: 25px; margin-bottom: 15px;"><h3 style="font-size: 16px; font-weight: 800; color: #3730a3; margin: 0;">TIÊU_ĐỀ_HƯỚNG_DẪN</h3></div>\n`;
            if(type === 'step') str = `\n<div style="display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start;"><span style="background: #4f46e5; color: white; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 12px; font-weight: bold; flex-shrink: 0; margin-top: 0;">SỐ_BƯỚC</span><p style="margin: 0; font-size: 14px; color: #334155; line-height: 24px;">NỘI_DUNG_BƯỚC_CÀI</p></div>\n`;
            if(type === 'note') str = `\n<div style="background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 6px; margin: 15px 0;"><p style="margin: 0; font-size: 14px; color: #92400e; line-height: 1.5;"><b>LƯU Ý:</b> NHẬP_LƯU_Ý_CỦA_BẠN_VÀO_ĐÂY</p></div>\n`;
