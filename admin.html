@@ -163,13 +163,14 @@
                <button onclick="changeCmsDevice('ios')" id="cms-btn-ios" class="dev-btn border-2 border-slate-200 px-4 py-2 rounded-xl font-bold text-slate-600 text-sm flex items-center transition"><i class="fab fa-app-store-ios text-blue-400 mr-2"></i> iOS</button>
            </div>
            <div class="bg-slate-50 p-3 rounded-t-xl border border-slate-200 border-b-0 flex gap-2 flex-wrap">
-               <button onclick="insertMacro('btn')" class="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition"><i class="fas fa-download mr-1"></i> Nút Tải Động</button>
-               <button onclick="insertMacro('title')" class="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition"><i class="fas fa-heading mr-1"></i> Tiêu Đề</button>
+               <button onclick="insertMacro('header')" class="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-xs font-bold text-purple-600 hover:bg-purple-50 transition"><i class="fas fa-layer-group mr-1"></i> Header Tổng</button>
+               <button onclick="insertMacro('title')" class="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition"><i class="fas fa-heading mr-1"></i> Mục Nhỏ</button>
                <button onclick="insertMacro('step')" class="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 transition"><i class="fas fa-list-ol mr-1"></i> Bước Cài</button>
                <button onclick="insertMacro('note')" class="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-xs font-bold text-orange-600 hover:bg-orange-50 transition"><i class="fas fa-exclamation-triangle mr-1"></i> Lưu ý</button>
+               <button onclick="insertMacro('btn')" class="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition"><i class="fas fa-download mr-1"></i> Nút Tải Động</button>
                <button onclick="insertMacro('img')" class="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-xs font-bold text-pink-600 hover:bg-pink-50 transition"><i class="fas fa-image mr-1"></i> Ảnh</button>
            </div>
-           <textarea id="cmsGuide" rows="14" class="w-full p-4 border border-slate-200 rounded-b-xl focus:outline-none focus:border-indigo-400 text-slate-800 bg-white font-mono text-sm leading-relaxed resize-y overflow-x-hidden" placeholder="Soạn nội dung HTML (có thể sử dụng Enter để xuống dòng)..."></textarea>
+           <textarea id="cmsGuide" rows="16" class="w-full p-4 border border-slate-200 rounded-b-xl focus:outline-none focus:border-indigo-400 text-slate-800 bg-white font-mono text-sm leading-relaxed resize-y overflow-x-hidden" placeholder="Soạn nội dung HTML..."></textarea>
            <button onclick="saveCmsToCloud()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3.5 rounded-xl shadow-md w-full md:w-auto transition"><i class="fas fa-save mr-2"></i> LƯU LÊN MÁY CHỦ</button>
        </div>
 
@@ -354,14 +355,14 @@
                let res = await fetch(API_URL + path + "?_t=" + Date.now());
                if(!res.ok) throw new Error("HTTP error");
                let data = await res.json();
-               localStorage.setItem(path, JSON.stringify(data));
+               localStorage.setItem(path.replace(/\//g,'_'), JSON.stringify(data));
                return data;
            } catch(e) {
-               return JSON.parse(localStorage.getItem(path)) || [];
+               return JSON.parse(localStorage.getItem(path.replace(/\//g,'_'))) || [];
            }
         }
        async function apiPost(path, data) {
-           localStorage.setItem(path, JSON.stringify(data)); 
+           localStorage.setItem(path.replace(/\//g,'_'), JSON.stringify(data)); 
            try { await fetch(API_URL + path, { method: "POST", body: JSON.stringify(data) }); } 
            catch(e) {}
         }
@@ -428,8 +429,14 @@
         }
 
        async function fetchOrdersSilently() {
-           let newData = await apiGet("/api/orders"); if(!Array.isArray(newData)) newData = [];
-           if(JSON.stringify(newData) !== JSON.stringify(ordersDb)) { ordersDb = newData; renderOrders(); showToast("Đã có Đơn hàng mới!", "info"); }
+           let newOrders = await apiGet("/api/orders"); if(!Array.isArray(newOrders)) newOrders = [];
+           if(JSON.stringify(newOrders) !== JSON.stringify(ordersDb)) { ordersDb = newOrders; renderOrders(); showToast("Đã có Đơn hàng mới!", "info"); }
+           
+           let newRefs = await apiGet("/api/refs"); if(!Array.isArray(newRefs)) newRefs = [];
+           if(JSON.stringify(newRefs) !== JSON.stringify(refsDb)) { refsDb = newRefs; renderRefs(); }
+           
+           let newHist = await apiGet("/api/history"); if(!Array.isArray(newHist)) newHist = [];
+           if(JSON.stringify(newHist) !== JSON.stringify(historyDb)) { historyDb = newHist; renderHistory(); }
         }
 
        function parseDateString(dateString) {
@@ -505,7 +512,6 @@
            }
        }
 
-       // Quản lý History Lịch sử mua
        function renderHistory() {
            const tbody = document.getElementById('historyTable'); tbody.innerHTML = '';
            historyDb.forEach((h, idx) => {
@@ -770,6 +776,7 @@
            }
 
            const oldStatus = o.status;
+           const oldExpDate = o.expDate;
 
            o.id = originalId;
            o.email = document.getElementById('editEmail').value.trim(); 
@@ -787,7 +794,6 @@
            // LOGIC TẠO MÃ REF & HISTORY TỰ ĐỘNG KHI DUYỆT LẦN ĐẦU CÓ HẠN
            if (o.status === 'success' && o.expDate && !o.refGenerated && o.email) {
                
-               // Tạo mã ref từ ID + Ngày hết hạn (Chỉ giữ lại số)
                const datePart = o.expDate.replace(/\D/g, ''); 
                const code = (o.id.slice(-4) + datePart).substring(0, 10).toUpperCase(); 
 
@@ -797,7 +803,6 @@
                    refsDb.unshift(myRef);
                }
 
-               // Tự đẩy 1 dòng Lịch sử để khách thấy ở cổng
                let h = {
                    email: o.email,
                    pkgName: selectedPkg.txt.split(' - ')[0],
@@ -811,7 +816,6 @@
                historyDb.unshift(h);
                await apiPost("/api/history", historyDb);
 
-               // Cộng tiền ref nếu có mã nhập vào đơn này
                if (o.refCode) {
                    let r = refsDb.find(x => x.code === o.refCode.toUpperCase());
                    if(r) {
@@ -891,11 +895,12 @@
            const box = document.getElementById('cmsGuide'); 
            let str = "";
            
-           if(type === 'btn') str = `\n<style>@keyframes pulseAppBtnStrong { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(109,40,217, 0.7); } 50% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(109,40,217, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(109,40,217, 0); } }</style>\n<div style="display: flex; justify-content: flex-start; margin: 15px 0 15px 15px; width: 100%;"><a href="LINK_TẢI_APP_VÀO_ĐÂY" target="_blank" style="display:inline-block; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color:white; padding:12px 24px; border-radius:12px; font-weight:bold; text-decoration:none; font-size:15px; text-align: center; animation: pulseAppBtnStrong 1.5s infinite; box-shadow: 0 4px 15px rgba(109,40,217, 0.4);"><i class="fas fa-download" style="margin-right: 8px;"></i>TẢI APP NGAY</a></div>\n`;
-           if(type === 'title') str = `\n<div style="background: #e0e7ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 4px; margin-top: 25px; margin-bottom: 15px;"><h3 style="font-size: 16px; font-weight: 800; color: #3730a3; margin: 0;">TIÊU_ĐỀ_HƯỚNG_DẪN</h3></div>\n`;
-           if(type === 'step') str = `\n<div style="display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start;"><span style="background: #4f46e5; color: white; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 12px; font-weight: bold; flex-shrink: 0; margin-top: 0;">SỐ_BƯỚC</span><p style="margin: 0; font-size: 14px; color: #334155; line-height: 24px;">NỘI_DUNG_BƯỚC_CÀI</p></div>\n`;
-           if(type === 'note') str = `\n<div style="background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 6px; margin: 15px 0;"><p style="margin: 0; font-size: 14px; color: #92400e; line-height: 1.5;"><b>LƯU Ý:</b> NHẬP_LƯU_Ý_CỦA_BẠN_VÀO_ĐÂY</p></div>\n`;
-           if(type === 'img') str = `\n<div style="padding-left: 36px; margin-bottom: 15px;"><img src="LINK_ẢNH_JPG" style="max-width: 100%; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);" /></div>\n`;
+           if(type === 'btn') str = `<style>@keyframes pulseAppBtnStrong { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(109,40,217, 0.7); } 50% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(109,40,217, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(109,40,217, 0); } }</style><div style="display: flex; justify-content: flex-start; margin: 10px 0 10px 30px; width: 100%;"><a href="LINK_TẢI_APP_VÀO_ĐÂY" target="_blank" style="display:inline-block; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color:white; padding:12px 24px; border-radius:12px; font-weight:bold; text-decoration:none; font-size:15px; text-align: center; animation: pulseAppBtnStrong 1.5s infinite; box-shadow: 0 4px 15px rgba(109,40,217, 0.4);"><i class="fas fa-download" style="margin-right: 8px;"></i>TẢI_APP_NGAY</a></div>`;
+           if(type === 'header') str = `<div style="background: linear-gradient(90deg, #4f46e5, #8b5cf6); color: white; padding: 14px 20px; border-radius: 8px; font-size: 16px; font-weight: 900; text-transform: uppercase; margin: 20px 0 15px 0; box-shadow: 0 4px 10px rgba(79,70,229,0.3);"><i class="fas fa-star" style="margin-right:8px;"></i>TIÊU_ĐỀ_CHÍNH</div>`;
+           if(type === 'title') str = `<div style="background: #e0e7ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 4px; margin-top: 15px; margin-bottom: 10px;"><h3 style="font-size: 15px; font-weight: 800; color: #3730a3; margin: 0;">TIÊU_ĐỀ_HƯỚNG_DẪN</h3></div>`;
+           if(type === 'step') str = `<div style="display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start;"><span style="background: #4f46e5; color: white; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 12px; font-weight: bold; flex-shrink: 0; margin-top: 0;">SỐ_BƯỚC</span><p style="margin: 0; font-size: 14px; color: #334155; line-height: 24px;">NỘI_DUNG_BƯỚC_CÀI</p></div>`;
+           if(type === 'note') str = `<div style="background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 6px; margin: 15px 0;"><p style="margin: 0; font-size: 14px; color: #92400e; line-height: 1.5;"><b>LƯU Ý:</b> NHẬP_LƯU_Ý_CỦA_BẠN_VÀO_ĐÂY</p></div>`;
+           if(type === 'img') str = `<div style="padding-left: 36px; margin-bottom: 15px;"><img src="LINK_ẢNH_JPG" style="max-width: 100%; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);" /></div>`;
            
            const startPos = box.selectionStart; const endPos = box.selectionEnd;
            box.value = box.value.substring(0, startPos) + str + box.value.substring(endPos, box.value.length);
