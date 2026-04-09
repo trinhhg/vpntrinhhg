@@ -22,13 +22,20 @@
         @keyframes alertText { 0% { color: #ef4444; transform: scale(1); } 50% { color: #991b1b; transform: scale(1.08); } 100% { color: #ef4444; transform: scale(1); } }
         .animate-alert { animation: alertText 1s infinite; display: inline-block; }
 
+        /* Hiệu ứng tỏa bóng nhịp tim cho nút Tôi Đã Chuyển Khoản */
+        @keyframes heartbeatPulse {
+            0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.6); transform: scale(1); }
+            50% { box-shadow: 0 0 0 12px rgba(22, 163, 74, 0); transform: scale(1.01); }
+            100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); transform: scale(1); }
+        }
+        .btn-heartbeat { animation: heartbeatPulse 1.5s infinite; }
+
         .pkg-filters::-webkit-scrollbar { height: 0px; }
         .pkg-filters { scrollbar-width: none; }
         
         #mainNav { transition: transform 0.3s ease-in-out; box-shadow: 0 4px 20px -10px rgba(0,0,0,0.1); }
         .nav-hidden { transform: translateY(-100%); }
-        .portal-nav-btn { position: relative; transition: all 0.3s; }
-        .portal-nav-btn.active { color: #4f46e5; background-color: #e0e7ff; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15); }
+        .portal-nav-btn.active { color: #4f46e5; }
         .portal-tab-content { display: none; animation: fadeUp 0.3s ease forwards; }
         .portal-tab-content.active { display: block; }
         #portalNav { transition: opacity 0.3s, transform 0.3s; }
@@ -41,12 +48,12 @@
 
     <div id="toastContainer" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
-    <div id="floatingSocials" class="fixed bottom-20 md:bottom-6 right-4 md:right-6 flex flex-col gap-3 z-40 transition-all duration-300">
+    <div id="floatingSocials" class="fixed bottom-24 md:bottom-6 right-4 md:right-6 flex flex-col gap-3 z-40 transition-all duration-300">
         <a href="https://www.facebook.com/trinh.hg.57" target="_blank" class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl shadow-lg hover:scale-110 transition hover:animate-none animate-bounce" style="animation-delay: 0.1s;"><i class="fab fa-facebook-messenger"></i></a>
         <a href="https://zalo.me/0917678211" target="_blank" class="w-12 h-12 bg-[#0068ff] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition hover:animate-none animate-bounce"><span class="font-bold text-[14px]" style="font-family: Arial, sans-serif;">Zalo</span></a>
     </div>
 
-    <nav id="mainNav" class="glass-ui fixed top-0 w-full z-[70] px-3 md:px-6 py-3 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6 border-b border-slate-200 w-full max-w-[100vw]">
+    <nav id="mainNav" class="glass-ui fixed top-0 w-full z-[70] px-3 md:px-6 py-3 flex flex-col md:flex-row items-center gap-3 md:gap-6 border-b border-slate-200">
         
         <div class="flex justify-between items-center w-full md:w-auto shrink-0">
             <div class="font-extrabold text-xl md:text-2xl tracking-tighter cursor-pointer flex items-center text-indigo-700" onclick="logout()">
@@ -57,23 +64,23 @@
             </select>
         </div>
         
-        <div class="flex flex-1 items-center justify-center md:justify-start gap-4 w-full relative h-[40px]">
+        <div class="flex flex-1 w-full items-center justify-center gap-4 transition-all duration-300 relative">
             
-            <div id="desktopPortalNav" class="hidden transition-all md:flex items-center gap-1 opacity-0 absolute left-0 pointer-events-none shrink-0 z-10">
-                <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition"><span data-i18n="tab_p_home">Trang chủ</span></button>
-                <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition flex items-center"><span data-i18n="tab_p_store">Cửa hàng</span> <span class="ml-1.5 bg-red-500 text-white text-[8px] px-1.5 py-0.5 rounded-full uppercase" data-i18n="badge_hot">Mua ngay</span></button>
-                <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition"><span data-i18n="tab_p_guide">Hướng dẫn</span></button>
+            <div id="desktopPortalNav" class="hidden md:flex items-center gap-1 opacity-0 w-0 overflow-hidden transition-all duration-500 whitespace-nowrap">
+                <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition"><i class="fas fa-tv mr-1.5 opacity-70"></i><span data-i18n="tab_p_home">Trang chủ</span></button>
+                <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition flex items-center"><i class="fas fa-shopping-cart mr-1.5 opacity-70"></i><span data-i18n="tab_p_store">Cửa hàng</span> <span class="ml-1.5 bg-red-500 text-white text-[8px] px-1.5 py-0.5 rounded-full uppercase" data-i18n="badge_hot">Mua ngay</span></button>
+                <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition"><i class="fas fa-book mr-1.5 opacity-70"></i><span data-i18n="tab_p_guide">Hướng dẫn</span></button>
             </div>
 
-            <div id="searchContainer" class="w-full max-w-2xl mx-auto transition-all duration-500 ease-in-out absolute z-20">
-                <div id="searchBar" class="relative w-full shadow-sm">
+            <div id="searchContainer" class="w-full max-w-2xl transition-all duration-500">
+                <div class="relative w-full shadow-sm">
                     <input type="text" id="loginInput" onkeyup="if(event.key==='Enter') login()" class="w-full bg-white border-2 border-indigo-100 rounded-full pl-5 pr-12 py-2.5 text-xs md:text-sm outline-none font-bold text-slate-700 focus:border-indigo-400 focus:shadow-md transition-all" data-i18n-placeholder="search_placeholder" placeholder="Nhập Mã Đơn hoặc Email...">
                     <button onclick="login()" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-indigo-600 rounded-full text-white hover:bg-indigo-700 flex items-center justify-center transition"><i class="fas fa-search text-xs"></i></button>
                 </div>
             </div>
         </div>
 
-        <div class="hidden md:flex items-center gap-3 w-auto shrink-0 justify-end z-20">
+        <div class="hidden md:flex items-center gap-3 w-auto shrink-0 justify-end">
             <select id="langSelectDesktop" onchange="changeLanguage(this.value)" class="bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-xl px-3 py-2 text-sm font-bold outline-none cursor-pointer">
                 <option value="vi">VN - Tiếng Việt</option><option value="en">EN - English</option><option value="zh">CN - 中文</option>
             </select>
@@ -82,12 +89,18 @@
             </div>
         </div>
     </nav>
-    <div class="h-[110px] md:h-[70px]"></div>
+    <div class="h-[120px] md:h-[70px]"></div>
 
-    <div id="portalNav" class="hidden md:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[60] bg-white/95 backdrop-blur-md shadow-[0_5px_25px_rgba(0,0,0,0.15)] rounded-full p-1.5 flex gap-2 whitespace-nowrap overflow-x-auto pkg-filters border border-slate-200">
-        <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home portal-nav-btn active flex items-center justify-center text-slate-500 font-bold w-12 h-12 rounded-full text-xl transition-colors"><i class="fas fa-tv"></i></button>
-        <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store portal-nav-btn flex items-center justify-center text-slate-500 font-bold w-12 h-12 rounded-full text-xl transition-colors"><i class="fas fa-shopping-cart"></i></button>
-        <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide portal-nav-btn flex items-center justify-center text-slate-500 font-bold w-12 h-12 rounded-full text-xl transition-colors"><i class="fas fa-book"></i></button>
+    <div id="portalNav" class="hidden md:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[60] bg-white/95 backdrop-blur-md shadow-[0_5px_25px_rgba(0,0,0,0.15)] rounded-2xl p-1.5 flex gap-1 whitespace-nowrap overflow-x-auto pkg-filters border border-slate-200">
+        <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home portal-nav-btn active flex flex-col items-center justify-center text-slate-500 w-[70px] py-1.5 rounded-xl transition-colors">
+            <i class="fas fa-tv text-lg mb-0.5"></i><span class="text-[9px] font-bold" data-i18n="tab_p_home">Trang chủ</span>
+        </button>
+        <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store portal-nav-btn flex flex-col items-center justify-center text-slate-500 w-[70px] py-1.5 rounded-xl transition-colors">
+            <i class="fas fa-shopping-cart text-lg mb-0.5"></i><span class="text-[9px] font-bold" data-i18n="tab_p_store">Cửa hàng</span>
+        </button>
+        <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide portal-nav-btn flex flex-col items-center justify-center text-slate-500 w-[70px] py-1.5 rounded-xl transition-colors">
+            <i class="fas fa-book text-lg mb-0.5"></i><span class="text-[9px] font-bold" data-i18n="tab_p_guide">Hướng dẫn</span>
+        </button>
     </div>
 
     <main class="flex-grow z-10 relative px-2 md:px-4 py-4 md:py-6 max-w-7xl mx-auto w-full overflow-x-hidden">
@@ -97,10 +110,11 @@
             <div id="p-home" class="portal-tab-content active w-full">
                 <div class="bg-white p-4 md:p-8 rounded-2xl md:rounded-3xl mb-8 shadow-sm border border-slate-200 w-full overflow-hidden">
 
-                    <div id="portalContentPending" class="hidden bg-yellow-50 border border-yellow-200 p-5 rounded-xl flex flex-col items-center text-center mb-6">
+                    <div id="portalContentPending" class="hidden bg-yellow-50 border border-yellow-200 p-6 rounded-xl flex flex-col items-center text-center mb-6">
                         <i class="fas fa-hourglass-half text-3xl text-yellow-500 mb-3"></i>
                         <h4 class="font-extrabold text-yellow-800 text-sm md:text-lg" data-i18n="pending_title">Đơn hàng đang chờ Admin duyệt</h4>
-                        <p class="text-yellow-700 text-xs md:text-sm mt-1">Vui lòng quay lại sau ít phút hoặc nhắn tin cho Admin.</p>
+                        <p class="text-yellow-700 text-xs md:text-sm mt-1">Vui lòng quay lại sau ít phút hoặc chủ động nhắn tin cho Admin.</p>
+                        <a href="https://zalo.me/0917678211" target="_blank" class="mt-4 bg-[#0068ff] hover:bg-blue-600 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md flex items-center justify-center gap-2 text-sm"><i class="fas fa-comment-dots text-lg"></i> Nhắn Zalo cho Admin ngay</a>
                     </div>
 
                     <div id="portalContentSuccess" class="hidden w-full">
@@ -118,7 +132,7 @@
                         <div class="bg-green-50 border border-green-200 p-4 md:p-6 rounded-2xl mb-4 w-full">
                             <h3 class="text-green-900 font-bold mb-3 text-xs md:text-sm"><i class="fas fa-link mr-1"></i> Link Subscription URL:</h3>
                             <div class="flex flex-col sm:flex-row gap-2 sm:gap-0 shadow-sm w-full">
-                                <input type="text" id="subLink" readonly class="w-full sm:flex-1 bg-white border border-green-300 text-green-800 p-3 md:p-4 font-mono font-bold text-[10px] md:text-sm outline-none rounded-xl sm:rounded-r-none focus:border-green-500">
+                                <input type="text" id="subLink" readonly class="w-full sm:flex-1 bg-white border border-green-300 text-green-800 p-3 md:p-4 font-mono font-bold text-[10px] md:text-sm outline-none rounded-xl sm:rounded-r-none focus:border-green-500 cursor-text" onclick="this.select()">
                                 <button onclick="copyToClipboard('subLink', true)" class="w-full sm:w-auto bg-green-600 text-white font-bold px-6 py-3 rounded-xl sm:rounded-l-none text-xs md:text-sm transition hover:bg-green-700 whitespace-nowrap shadow-md"><i class="fas fa-copy mr-1"></i> COPY LINK</button>
                             </div>
                         </div>
@@ -188,7 +202,7 @@
                         <button onclick="showGuide('ios')" id="btn-dev-ios" class="dev-btn bg-white border border-slate-200 px-5 py-2.5 rounded-xl font-bold flex items-center text-xs md:text-sm shadow-sm hover:bg-slate-50 transition"><i class="fab fa-app-store-ios text-blue-400 text-lg mr-2"></i> iOS</button>
                     </div>
                     <div id="guideContent" class="hidden overflow-x-auto w-full max-w-full">
-                        <div id="guideText" class="text-xs md:text-sm text-slate-800 w-full max-w-full overflow-hidden"></div>
+                        <div id="guideText" class="text-xs md:text-sm text-slate-800 w-full max-w-full overflow-hidden leading-relaxed"></div>
                     </div>
                 </div>
 
@@ -252,7 +266,7 @@
 
                             <label class="block font-bold text-xs text-slate-700 mb-2">Phương thức thanh toán:</label>
                             <div class="grid grid-cols-3 gap-2 mb-4">
-                                <button type="button" onclick="selectPayMethod('bank')" id="pay-btn-bank" class="pay-btn active bg-indigo-50 border-indigo-500 text-indigo-700 border-2 font-bold py-2.5 rounded-xl text-xs transition flex flex-col items-center justify-center gap-1 shadow-sm"><i class="fas fa-university text-lg"></i><span class="text-[10px] uppercase">VN Bank</span></button>
+                                <button type="button" onclick="selectPayMethod('bank')" id="pay-btn-bank" class="pay-btn active bg-indigo-50 border-indigo-500 text-indigo-700 border-2 font-bold py-2.5 rounded-xl text-xs transition flex flex-col items-center justify-center gap-1 shadow-sm"><i class="fas fa-university text-lg"></i><span class="text-[10px] uppercase text-center leading-tight">Ngân hàng<br>VN</span></button>
                                 <button type="button" onclick="selectPayMethod('alipay')" id="pay-btn-alipay" class="pay-btn bg-white border-slate-200 text-slate-600 border-2 font-bold py-2.5 rounded-xl text-xs transition hover:bg-slate-50 flex flex-col items-center justify-center gap-1 shadow-sm"><i class="fab fa-alipay text-lg text-blue-500"></i><span class="text-[10px] uppercase">Alipay</span></button>
                                 <button type="button" onclick="selectPayMethod('wechat')" id="pay-btn-wechat" class="pay-btn bg-white border-slate-200 text-slate-600 border-2 font-bold py-2.5 rounded-xl text-xs transition hover:bg-slate-50 flex flex-col items-center justify-center gap-1 shadow-sm"><i class="fab fa-weixin text-lg text-green-500"></i><span class="text-[10px] uppercase">WeChat</span></button>
                             </div>
@@ -260,10 +274,10 @@
 
                             <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4 mt-2">
                                 <label class="flex items-start space-x-2 cursor-pointer">
-                                    <input type="checkbox" id="needSupport" onchange="toggleZalo()" class="mt-1 w-4 h-4 accent-indigo-600">
+                                    <input type="checkbox" id="needSupport" onchange="toggleZalo()" class="mt-1 w-4 h-4 accent-indigo-600" checked>
                                     <span class="font-bold text-xs md:text-sm text-slate-800 pt-0.5" data-i18n="need_support">Cần Hỗ trợ Zalo/Tele cài đặt</span>
                                 </label>
-                                <input type="text" id="cusZalo" class="w-full border border-slate-300 rounded-lg p-2.5 mt-3 hidden outline-none text-xs" placeholder="Nhập Zalo / Telegram của bạn...">
+                                <input type="text" id="cusZalo" class="w-full border border-slate-300 rounded-lg p-2.5 mt-3 outline-none text-xs" placeholder="Nhập Zalo / Telegram của bạn..." required>
                             </div>
 
                             <div class="mb-4">
@@ -277,8 +291,8 @@
                                 <div id="priceCalculation" class="mt-3 text-sm font-black text-indigo-700 bg-indigo-50 border border-indigo-100 p-2.5 rounded-lg text-center"></div>
                             </div>
 
-                            <div class="sticky bottom-4 z-40 mt-auto w-full pt-4 bg-white/90 backdrop-blur-sm rounded-b-3xl">
-                                <button type="submit" id="btnConfirm" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 md:py-4 rounded-xl text-sm md:text-base uppercase transition shadow-[0_4px_15px_rgba(79,70,229,0.3)] shrink-0">TẠO MÃ QR CHUYỂN KHOẢN</button>
+                            <div class="sticky bottom-0 z-40 mt-auto w-full pt-4 bg-white rounded-b-3xl pb-2">
+                                <button type="submit" id="btnConfirm" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 md:py-4 rounded-xl text-sm md:text-base uppercase transition shadow-md shrink-0">TẠO MÃ QR CHUYỂN KHOẢN</button>
                             </div>
                         </div>
 
@@ -310,8 +324,6 @@
         const GOOGLE_MAIL_API = "https://script.google.com/macros/s/AKfycbyQjEln9By0HuUPtboqJpb1INI6rRp52BxvHR8HaE5fs8qojfgau1R_27P4RyLLxXIp/exec";
         const SESSION_KEY = 'vpn_portal_session_24h';
         const DB_KEY = 'vpn_orders_db';
-
-        // Đã xóa cơ chế Referral Cookie
 
         let lastScrollY = window.scrollY;
         window.addEventListener('scroll', () => {
@@ -433,7 +445,6 @@
             }
         };
 
-        // Format tiền Trung Tệ chuẩn: ¥12.5, Đô la: $2.00
         const pkgs = [
             { id: 't1', category: ['cycle', 'travel'], vi: { name: 'Gói 1 tháng', price: '50.000đ', time: '1 Tháng' }, en: { name: '1 Month Plan', price: '$2.00', time: '1 Month' }, zh: { name: '1个月套餐', price: '¥12.5', time: '1个月' }, usd: 2, vnd: 50000, cny: 12.5, data: '100GB', tag: {vi:'🔥 BÁN CHẠY', en:'🔥 BEST SELLER', zh:'🔥 热销'}, tag2: {vi:'✈️ Phù hợp du lịch', en:'✈️ Good for travel', zh:'✈️ 适合旅游'} },
             { id: 't2', category: ['cycle', 'travel'], vi: { name: 'Gói 1 tháng', price: '60.000đ', time: '1 Tháng' }, en: { name: '1 Month Plan', price: '$3.00', time: '1 Month' }, zh: { name: '1个月套餐', price: '¥15', time: '1个月' }, usd: 3, vnd: 60000, cny: 15, data: '500GB', tag: {vi:'🔥 BÁN CHẠY', en:'🔥 BEST SELLER', zh:'🔥 热销'}, tag2: {vi:'✈️ Phù hợp du lịch', en:'✈️ Good for travel', zh:'✈️ 适合旅游'} },
@@ -541,6 +552,11 @@
             document.getElementById('selectedPackageData').innerText = currentPackage.data;
             document.getElementById('selectedPackagePrice').innerText = currentPackage[lang].price;
             selectDuration(1); currentOrderId = ''; calculateTotal();
+            
+            // Focus vào Zalo luôn nếu tick (Tick mặc định)
+            if(document.getElementById('needSupport').checked) {
+                document.getElementById('cusZalo').classList.remove('hidden');
+            }
         }
 
         function selectDuration(m) {
@@ -555,7 +571,6 @@
             calculateTotal();
         }
 
-        // Chọn phương thức thanh toán kiểu mới
         function selectPayMethod(method) {
             document.getElementById('payMethod').value = method;
             document.querySelectorAll('.pay-btn').forEach(btn => {
@@ -582,20 +597,23 @@
             renderPaymentBox();
         }
 
-        function toggleZalo() { const z = document.getElementById('cusZalo'); z.classList.toggle('hidden'); z.required = !z.classList.contains('hidden'); }
+        function toggleZalo() { 
+            const z = document.getElementById('cusZalo'); 
+            z.classList.toggle('hidden'); 
+            z.required = !z.classList.contains('hidden'); 
+        }
 
         function renderPaymentBox() {
             const col = document.getElementById('checkoutRightCol'); const m = document.getElementById('payMethod').value; const btn = document.getElementById('btnConfirm');
             if(!currentOrderId) {
                 btn.innerText = i18n[lang].btn_create_order; 
-                btn.className = 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 md:py-4 rounded-xl text-sm md:text-base uppercase transition shadow-[0_4px_15px_rgba(79,70,229,0.3)] shrink-0';
+                btn.className = 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 md:py-4 rounded-xl text-sm md:text-base uppercase transition shadow-md shrink-0';
                 col.innerHTML = `<div class="text-left w-full"><h4 class="font-extrabold text-base md:text-lg mb-2 flex items-center text-indigo-700 border-b border-slate-100 pb-2"><i class="fas fa-info-circle mr-2"></i>${i18n[lang].guide_title}</h4><p class="text-sm text-slate-600 leading-relaxed font-medium">${i18n[lang].guide_desc}</p></div>`;
                 return;
             }
             
             btn.innerHTML = `<i class="fas fa-check-circle mr-2"></i> ${i18n[lang].btn_paid}`; 
-            // Đổi style cho nút khi đã chuyển khoản (xanh lá cây, phát sáng)
-            btn.className = 'w-full bg-green-600 hover:bg-green-700 text-white font-black py-3.5 md:py-4 px-2 rounded-xl text-sm md:text-base shadow-[0_0_20px_rgba(22,163,74,0.5)] uppercase transition shrink-0 animate-pulse hover:animate-none';
+            btn.className = 'w-full bg-green-600 hover:bg-green-700 text-white font-black py-3.5 md:py-4 px-2 rounded-xl text-sm md:text-base uppercase transition shrink-0 btn-heartbeat';
             
             let finalPriceStr = "";
             if (lang === 'vi') finalPriceStr = `${currentTotalVnd.toLocaleString('vi-VN')}đ`;
@@ -641,7 +659,8 @@
         }
 
         function copyText(t) { navigator.clipboard.writeText(t); showToast(lang === 'vi' ? 'Đã Copy!' : 'Copied!', 'success'); }
-        // Fix lỗi Copy Link Sub bằng cách lấy trực tiếp .value của input
+        
+        // Fix Copy Link Sub
         function copyToClipboard(id, isInput=false) { 
             const e = document.getElementById(id);
             if(isInput) { 
@@ -668,7 +687,7 @@
                 
                 const cycleText = currentMultiplier + " Tháng";
                 const methodStr = document.getElementById('payMethod').value;
-                const methodName = methodStr === 'bank' ? 'VN Bank' : (methodStr === 'alipay' ? 'Alipay' : 'WeChat');
+                const methodName = methodStr === 'bank' ? 'Ngân hàng Việt Nam' : (methodStr === 'alipay' ? 'Alipay' : 'WeChat');
                 
                 let db = await apiGet("/api/orders");
                 if(!Array.isArray(db)) db = [];
@@ -747,16 +766,17 @@
             localStorage.setItem(SESSION_KEY, JSON.stringify({ id: o.id, time: new Date().getTime() }));
             if(!isManualRefresh && !isAutoPoll) showToast(lang==='vi'?'Vào cổng thành công!':(lang==='en'?'Login success!':'登录成功'), "info");
 
-            // Biến đổi giao diện Morphing
+            // Biến đổi giao diện Morphing Desktop
             document.getElementById('view-store').classList.remove('active'); document.getElementById('view-portal').classList.add('active');
             document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('checkoutSection').classList.add('hidden');
             
             document.getElementById('portalNav').classList.remove('hidden'); 
-            document.getElementById('desktopPortalNav').classList.remove('opacity-0', 'pointer-events-none'); 
             
-            // Ép Search Bar nhường chỗ cho các Tab trên màn Desktop
-            document.getElementById('searchContainer').classList.remove('max-w-2xl', 'mx-auto');
-            document.getElementById('searchContainer').classList.add('flex-1');
+            // Xử lý kéo Search Bar & trượt Tab Nav
+            document.getElementById('desktopPortalNav').classList.remove('hidden', 'opacity-0', 'w-0');
+            document.getElementById('desktopPortalNav').classList.add('opacity-100', 'w-auto');
+            document.getElementById('searchContainer').classList.remove('max-w-2xl');
+            document.getElementById('searchContainer').classList.add('max-w-xs');
             
             if(!isAutoPoll && !isManualRefresh) switchPortalTab('p-home');
 
@@ -766,7 +786,7 @@
                 cmsCache = await apiGet("/api/cms");
                 showGuide('android');
 
-                // XỬ LÝ ĐỒNG BỘ LỊCH SỬ (Đã fix hiển thị chuẩn giá tiền)
+                // Lịch Sử Mua Hàng
                 historiesDb = await apiGet("/api/history");
                 if(!Array.isArray(historiesDb)) historiesDb = [];
                 let myHistory = historiesDb.filter(h => h.email === o.email);
@@ -775,7 +795,7 @@
                 
                 if(myHistory.length > 0) {
                     myHistory.forEach(h => {
-                        let displayPrice = lang === 'en' ? 'Contact Admin' : (h.priceVnd + ' / ' + h.priceCny); // Mặc định USD ẩn ở admin
+                        let displayPrice = lang === 'en' ? 'Contact Admin' : (h.priceVnd + ' / ' + h.priceCny);
                         historyBody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition">
                             <td class="p-3 font-medium text-slate-600 text-xs">${h.pkgName} <span class="text-indigo-600 font-bold">(${h.data})</span></td>
                             <td class="p-3 font-bold text-slate-800 text-xs">${displayPrice}</td>
@@ -792,7 +812,6 @@
 
         function switchPortalTab(tabId) {
             document.querySelectorAll('.portal-tab-content').forEach(el => el.classList.remove('active'));
-            // Đã xóa p-ref
             document.querySelectorAll('.btn-nav-p-home, .btn-nav-p-store, .btn-nav-p-guide').forEach(el => {
                 el.classList.remove('active', 'text-indigo-600', 'bg-indigo-50');
                 if (el.classList.contains('portal-nav-btn')) el.classList.remove('bg-[#e0e7ff]', 'text-indigo-600');
@@ -813,11 +832,12 @@
             localStorage.removeItem(SESSION_KEY); document.getElementById('view-portal').classList.remove('active'); document.getElementById('view-store').classList.add('active');
             document.getElementById('userMenu').classList.add('hidden'); document.getElementById('loginInput').value = '';
             document.getElementById('portalNav').classList.add('hidden');
-            document.getElementById('desktopPortalNav').classList.add('opacity-0', 'pointer-events-none');
             
-            // Trả thanh Search Bar về giữa màn hình
-            document.getElementById('searchContainer').classList.add('max-w-2xl', 'mx-auto');
-            document.getElementById('searchContainer').classList.remove('flex-1');
+            // Xử lý kéo Trả Tab về Search bar chà bá
+            document.getElementById('desktopPortalNav').classList.remove('opacity-100', 'w-auto');
+            document.getElementById('desktopPortalNav').classList.add('opacity-0', 'w-0', 'hidden');
+            document.getElementById('searchContainer').classList.remove('max-w-xs');
+            document.getElementById('searchContainer').classList.add('max-w-2xl');
             
             oCache = null;
         }
