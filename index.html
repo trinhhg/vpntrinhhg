@@ -20,13 +20,19 @@
         @keyframes borderPulse { 0% { border-color: #fde047; box-shadow: 0 0 0 0 rgba(253, 224, 71, 0.7); } 70% { border-color: #eab308; box-shadow: 0 0 0 10px rgba(253, 224, 71, 0); } 100% { border-color: #fde047; box-shadow: 0 0 0 0 rgba(253, 224, 71, 0); } }
         .highlight-copy { animation: borderPulse 2s infinite; background-color: #fef08a; color: #713f12; }
 
-        /* Hiệu ứng Hào quang Nhịp tim (Heartbeat Aura) ĐỨNG IM CHỮ */
         @keyframes textAuraPulse {
             0% { text-shadow: 0 0 0 rgba(220, 38, 38, 0); }
             50% { text-shadow: 0 0 15px rgba(220, 38, 38, 0.8); }
             100% { text-shadow: 0 0 0 rgba(220, 38, 38, 0); }
         }
         .text-heartbeat { animation: textAuraPulse 1.5s infinite; color: #dc2626; font-weight: 900; }
+
+        @keyframes btnHeartbeatPulse {
+            0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.6); transform: scale(1); }
+            50% { box-shadow: 0 0 0 12px rgba(22, 163, 74, 0); transform: scale(1.02); }
+            100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); transform: scale(1); }
+        }
+        .btn-heartbeat { animation: btnHeartbeatPulse 1.5s infinite; }
 
         .pkg-filters::-webkit-scrollbar { height: 0px; }
         .pkg-filters { scrollbar-width: none; }
@@ -37,7 +43,6 @@
         .portal-tab-content { display: none; animation: fadeUp 0.3s ease forwards; }
         .portal-tab-content.active { display: block; }
         
-        /* Giữ nguyên định dạng CMS */
         #guideText { white-space: pre-wrap; word-wrap: break-word; }
         #guideText img { max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; margin: 10px 0; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     </style>
@@ -71,7 +76,7 @@
                         <button onclick="login()" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-indigo-600 rounded-full text-white hover:bg-indigo-700 flex items-center justify-center transition"><i class="fas fa-search text-xs"></i></button>
                     </div>
                     
-                    <div id="desktopPortalNav" class="hidden items-center gap-2 shrink-0 transition-all duration-300">
+                    <div id="desktopPortalNav" class="hidden items-center gap-2 shrink-0 transition-all duration-300 opacity-0 w-0 overflow-hidden whitespace-nowrap">
                         <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-tv mr-2"></i><span data-i18n="tab_p_home">Trang chủ</span></button>
                         <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-shopping-cart mr-2"></i><span data-i18n="tab_p_store">Cửa hàng</span></button>
                         <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-book mr-2"></i><span data-i18n="tab_p_guide">Hướng dẫn</span></button>
@@ -92,15 +97,15 @@
     <div class="h-[110px] md:h-[80px]"></div>
 
     <div id="mobileNavWrapper" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[60]">
-        <div class="md:hidden bg-white/95 backdrop-blur-md shadow-[0_5px_20px_rgba(0,0,0,0.2)] rounded-full px-5 py-2 flex gap-4 border border-slate-200 items-center justify-center">
-            <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home portal-nav-btn active flex items-center justify-center text-slate-500 w-12 h-9 rounded-full transition-colors">
-                <i class="fas fa-tv text-xl"></i>
+        <div class="md:hidden bg-white/95 backdrop-blur-md shadow-[0_5px_20px_rgba(0,0,0,0.2)] rounded-full px-3 py-1.5 flex gap-2 border border-slate-200 items-center justify-center">
+            <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home portal-nav-btn active flex items-center justify-center text-slate-500 w-10 h-10 rounded-full transition-colors">
+                <i class="fas fa-tv text-base"></i>
             </button>
-            <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store portal-nav-btn flex items-center justify-center text-slate-500 w-12 h-9 rounded-full transition-colors">
-                <i class="fas fa-shopping-cart text-xl"></i>
+            <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store portal-nav-btn flex items-center justify-center text-slate-500 w-10 h-10 rounded-full transition-colors">
+                <i class="fas fa-shopping-cart text-base"></i>
             </button>
-            <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide portal-nav-btn flex items-center justify-center text-slate-500 w-12 h-9 rounded-full transition-colors">
-                <i class="fas fa-book text-xl"></i>
+            <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide portal-nav-btn flex items-center justify-center text-slate-500 w-10 h-10 rounded-full transition-colors">
+                <i class="fas fa-book text-base"></i>
             </button>
         </div>
     </div>
@@ -135,7 +140,7 @@
                             <button onclick="switchPortalTab('p-store')" class="w-full xl:w-auto bg-indigo-100 text-indigo-700 hover:bg-indigo-600 hover:text-white font-bold py-2.5 px-6 rounded-xl transition text-sm flex items-center justify-center shrink-0 shadow-sm"><i class="fas fa-redo-alt mr-2"></i> <span data-i18n="btn_renew">Gia hạn</span></button>
                         </div>
 
-                        <div class="bg-white border-2 border-dashed border-green-500 p-4 md:p-6 rounded-2xl w-full shadow-sm">
+                        <div class="bg-green-50 border-2 border-dashed border-green-500 p-4 md:p-6 rounded-2xl w-full shadow-sm">
                             <h3 class="text-green-700 font-extrabold mb-3 text-xs md:text-sm"><i class="fas fa-link mr-1"></i> Link Subscription URL:</h3>
                             <div class="flex flex-col sm:flex-row gap-2 sm:gap-0 w-full shadow-sm">
                                 <input type="text" id="subLink" readonly class="w-full sm:flex-1 bg-white border-2 border-slate-200 text-green-600 p-3 md:p-4 font-mono font-bold text-[10px] md:text-sm outline-none rounded-xl sm:rounded-r-none focus:border-green-500 cursor-text" onclick="this.select()">
@@ -731,7 +736,7 @@
             
             if(o.status === 'pending') st.innerHTML = `<span class="text-yellow-700 bg-yellow-100 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase border border-yellow-200 inline-block"><i class="fas fa-circle-notch fa-spin mr-1"></i> <span>${i18n[lang].status_pending}</span></span>`;
             else if (o.status === 'success') {
-                // Đã Fix logic hiển thị Link Sub an toàn
+                // Đã Fix logic lấy Link từ DB cho chắc chắn (o.info)
                 if (o.info && o.info.trim() !== '') {
                     document.getElementById('subLink').value = o.info;
                 } else {
@@ -757,14 +762,13 @@
             document.getElementById('view-store').classList.remove('active'); document.getElementById('view-portal').classList.add('active');
             document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('checkoutSection').classList.add('hidden');
             
-            // Xử lý Giao diện Desktop Cực Chuẩn
-            document.getElementById('centerNavContainer').classList.remove('justify-center');
-            document.getElementById('searchAndTabsWrapper').classList.remove('max-w-2xl');
-            document.getElementById('searchAndTabsWrapper').classList.add('max-w-full');
+            // Xử lý Desktop: Kéo thanh Search full và hiển thị Tabs bên phải
             document.getElementById('desktopPortalNav').classList.remove('hidden', 'opacity-0', 'w-0');
-            document.getElementById('desktopPortalNav').classList.add('flex', 'opacity-100', 'w-auto');
+            document.getElementById('desktopPortalNav').classList.add('md:flex', 'opacity-100', 'w-auto');
+            document.getElementById('searchContainer').classList.remove('max-w-2xl', 'mx-auto');
+            document.getElementById('searchContainer').classList.add('flex-1');
             
-            // Xử lý Mobile Nav Wrap
+            // Xử lý Mobile: Hiện Bottom Nav
             document.getElementById('mobileNavWrapper').classList.remove('hidden');
             
             if(!isAutoPoll && !isManualRefresh) switchPortalTab('p-home');
@@ -781,13 +785,14 @@
 
         function switchPortalTab(tabId) {
             document.querySelectorAll('.portal-tab-content').forEach(el => el.classList.remove('active'));
-            // Cập nhật màu Tím rực rỡ cho Desktop
+            // Reset tab
             document.querySelectorAll('.btn-nav-p-home, .btn-nav-p-store, .btn-nav-p-guide').forEach(el => {
                 el.classList.remove('active', 'text-white', 'bg-indigo-600');
                 if (el.classList.contains('portal-nav-btn')) el.classList.remove('bg-[#e0e7ff]', 'text-indigo-600');
                 else el.classList.add('text-slate-600');
             });
             
+            // Active tab
             document.getElementById(tabId).classList.add('active');
             document.querySelectorAll('.btn-nav-' + tabId).forEach(el => {
                 el.classList.add('active');
@@ -804,15 +809,14 @@
             localStorage.removeItem(SESSION_KEY); document.getElementById('view-portal').classList.remove('active'); document.getElementById('view-store').classList.add('active');
             document.getElementById('userMenu').classList.add('hidden'); document.getElementById('loginInput').value = '';
             
-            // Ẩn Wrapper Bottom Nav Mobile
+            // Ẩn Mobile Bottom Nav
             document.getElementById('mobileNavWrapper').classList.add('hidden');
             
-            // Trả Form Search về chính giữa màn hình (Desktop)
-            document.getElementById('desktopPortalNav').classList.remove('flex', 'opacity-100', 'w-auto');
+            // Trả Desktop Nav về giữa
+            document.getElementById('desktopPortalNav').classList.remove('md:flex', 'opacity-100', 'w-auto');
             document.getElementById('desktopPortalNav').classList.add('hidden', 'opacity-0', 'w-0');
-            document.getElementById('searchAndTabsWrapper').classList.remove('max-w-full');
-            document.getElementById('searchAndTabsWrapper').classList.add('max-w-2xl');
-            document.getElementById('centerNavContainer').classList.add('justify-center');
+            document.getElementById('searchContainer').classList.remove('flex-1');
+            document.getElementById('searchContainer').classList.add('max-w-2xl', 'mx-auto');
             
             oCache = null;
         }
