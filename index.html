@@ -13,16 +13,13 @@
         .view-section { display: none; animation: fadeUp 0.4s ease-out forwards; }
         .view-section.active { display: block; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        .tab-btn.active { background-color: #4f46e5 !important; color: white !important; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3); }
+        
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
         
         @keyframes borderPulse { 0% { border-color: #fde047; box-shadow: 0 0 0 0 rgba(253, 224, 71, 0.7); } 70% { border-color: #eab308; box-shadow: 0 0 0 10px rgba(253, 224, 71, 0); } 100% { border-color: #fde047; box-shadow: 0 0 0 0 rgba(253, 224, 71, 0); } }
         .highlight-copy { animation: borderPulse 2s infinite; background-color: #fef08a; color: #713f12; }
-        @keyframes alertText { 0% { color: #ef4444; transform: scale(1); } 50% { color: #991b1b; transform: scale(1.08); } 100% { color: #ef4444; transform: scale(1); } }
-        .animate-alert { animation: alertText 1s infinite; display: inline-block; }
 
-        /* Hiệu ứng tỏa bóng nhịp tim cho nút Tôi Đã Chuyển Khoản */
         @keyframes heartbeatPulse {
             0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.6); transform: scale(1); }
             50% { box-shadow: 0 0 0 12px rgba(22, 163, 74, 0); transform: scale(1.01); }
@@ -35,12 +32,13 @@
         
         #mainNav { transition: transform 0.3s ease-in-out; box-shadow: 0 4px 20px -10px rgba(0,0,0,0.1); }
         .nav-hidden { transform: translateY(-100%); }
-        .portal-nav-btn.active { color: #4f46e5; }
+        .portal-nav-btn.active { color: #4f46e5; background-color: #e0e7ff; }
         .portal-tab-content { display: none; animation: fadeUp 0.3s ease forwards; }
         .portal-tab-content.active { display: block; }
         #portalNav { transition: opacity 0.3s, transform 0.3s; }
 
-        /* Giới hạn kích thước ảnh trong CMS Hướng dẫn cho Desktop */
+        /* Đảm bảo ảnh hướng dẫn và khoảng trắng được bảo toàn như gõ trong Admin */
+        #guideText { white-space: pre-wrap; word-wrap: break-word; }
         #guideText img { max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; margin: 10px 0; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     </style>
 </head>
@@ -53,7 +51,7 @@
         <a href="https://zalo.me/0917678211" target="_blank" class="w-12 h-12 bg-[#0068ff] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition hover:animate-none animate-bounce"><span class="font-bold text-[14px]" style="font-family: Arial, sans-serif;">Zalo</span></a>
     </div>
 
-    <nav id="mainNav" class="glass-ui fixed top-0 w-full z-[70] px-3 md:px-6 py-3 flex flex-col md:flex-row items-center gap-3 md:gap-6 border-b border-slate-200">
+    <nav id="mainNav" class="glass-ui fixed top-0 w-full z-[70] px-3 md:px-6 py-3 flex flex-col md:flex-row items-center justify-between gap-3 border-b border-slate-200">
         
         <div class="flex justify-between items-center w-full md:w-auto shrink-0">
             <div class="font-extrabold text-xl md:text-2xl tracking-tighter cursor-pointer flex items-center text-indigo-700" onclick="logout()">
@@ -64,19 +62,19 @@
             </select>
         </div>
         
-        <div class="flex flex-1 w-full items-center justify-center gap-4 transition-all duration-300 relative">
+        <div class="flex flex-1 w-full md:w-auto items-center justify-center md:justify-end gap-4 transition-all duration-300">
             
-            <div id="desktopPortalNav" class="hidden md:flex items-center gap-1 opacity-0 w-0 overflow-hidden transition-all duration-500 whitespace-nowrap">
-                <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition"><i class="fas fa-tv mr-1.5 opacity-70"></i><span data-i18n="tab_p_home">Trang chủ</span></button>
-                <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition flex items-center"><i class="fas fa-shopping-cart mr-1.5 opacity-70"></i><span data-i18n="tab_p_store">Cửa hàng</span> <span class="ml-1.5 bg-red-500 text-white text-[8px] px-1.5 py-0.5 rounded-full uppercase" data-i18n="badge_hot">Mua ngay</span></button>
-                <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition"><i class="fas fa-book mr-1.5 opacity-70"></i><span data-i18n="tab_p_guide">Hướng dẫn</span></button>
-            </div>
-
-            <div id="searchContainer" class="w-full max-w-2xl transition-all duration-500">
+            <div id="searchContainer" class="w-full max-w-2xl transition-all duration-500 ease-in-out">
                 <div class="relative w-full shadow-sm">
                     <input type="text" id="loginInput" onkeyup="if(event.key==='Enter') login()" class="w-full bg-white border-2 border-indigo-100 rounded-full pl-5 pr-12 py-2.5 text-xs md:text-sm outline-none font-bold text-slate-700 focus:border-indigo-400 focus:shadow-md transition-all" data-i18n-placeholder="search_placeholder" placeholder="Nhập Mã Đơn hoặc Email...">
                     <button onclick="login()" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-indigo-600 rounded-full text-white hover:bg-indigo-700 flex items-center justify-center transition"><i class="fas fa-search text-xs"></i></button>
                 </div>
+            </div>
+
+            <div id="desktopPortalNav" class="hidden md:flex items-center gap-1.5 opacity-0 w-0 overflow-hidden transition-all duration-500 whitespace-nowrap">
+                <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-tv mr-2"></i><span data-i18n="tab_p_home">Trang chủ</span></button>
+                <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-shopping-cart mr-2"></i><span data-i18n="tab_p_store">Cửa hàng</span></button>
+                <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-book mr-2"></i><span data-i18n="tab_p_guide">Hướng dẫn</span></button>
             </div>
         </div>
 
@@ -89,17 +87,17 @@
             </div>
         </div>
     </nav>
-    <div class="h-[120px] md:h-[70px]"></div>
+    <div class="h-[100px] md:h-[70px]"></div>
 
-    <div id="portalNav" class="hidden md:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[60] bg-white/95 backdrop-blur-md shadow-[0_5px_25px_rgba(0,0,0,0.15)] rounded-2xl p-1.5 flex gap-1 whitespace-nowrap overflow-x-auto pkg-filters border border-slate-200">
-        <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home portal-nav-btn active flex flex-col items-center justify-center text-slate-500 w-[70px] py-1.5 rounded-xl transition-colors">
-            <i class="fas fa-tv text-lg mb-0.5"></i><span class="text-[9px] font-bold" data-i18n="tab_p_home">Trang chủ</span>
+    <div id="portalNav" class="hidden md:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[60] bg-white/95 backdrop-blur-md shadow-[0_5px_25px_rgba(0,0,0,0.15)] rounded-full p-2 flex gap-2 border border-slate-200">
+        <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home portal-nav-btn active flex items-center justify-center text-slate-500 w-12 h-10 rounded-full transition-colors">
+            <i class="fas fa-tv text-xl"></i>
         </button>
-        <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store portal-nav-btn flex flex-col items-center justify-center text-slate-500 w-[70px] py-1.5 rounded-xl transition-colors">
-            <i class="fas fa-shopping-cart text-lg mb-0.5"></i><span class="text-[9px] font-bold" data-i18n="tab_p_store">Cửa hàng</span>
+        <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store portal-nav-btn flex items-center justify-center text-slate-500 w-12 h-10 rounded-full transition-colors">
+            <i class="fas fa-shopping-cart text-xl"></i>
         </button>
-        <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide portal-nav-btn flex flex-col items-center justify-center text-slate-500 w-[70px] py-1.5 rounded-xl transition-colors">
-            <i class="fas fa-book text-lg mb-0.5"></i><span class="text-[9px] font-bold" data-i18n="tab_p_guide">Hướng dẫn</span>
+        <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide portal-nav-btn flex items-center justify-center text-slate-500 w-12 h-10 rounded-full transition-colors">
+            <i class="fas fa-book text-xl"></i>
         </button>
     </div>
 
@@ -119,17 +117,23 @@
 
                     <div id="portalContentSuccess" class="hidden w-full">
                         <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 md:p-5 mb-6 shadow-sm flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 md:gap-5 w-full">
-                            <div class="grid grid-cols-2 sm:grid-cols-5 gap-y-4 gap-x-2 w-full text-left items-center overflow-hidden">
+                            
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-y-4 gap-x-4 w-full text-left items-center overflow-hidden">
                                 <div class="truncate"><p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="order_id_label">Mã Đơn</p><p id="portalOrderId" class="text-indigo-600 font-mono font-black text-xs md:text-sm uppercase truncate"></p></div>
-                                <div class="truncate"><p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="status_label">Trạng Thái</p><div id="portalStatus" class="truncate"></div></div>
-                                <div class="truncate"><p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="pkg_name_label">Gói</p><p id="portalPackageName" class="text-slate-800 font-bold text-xs md:text-sm truncate"></p></div>
-                                <div class="truncate"><p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="exp_date_label">Ngày Hết Hạn</p><p id="portalExpDate" class="text-slate-800 font-bold text-xs md:text-sm truncate"></p></div>
-                                <div class="truncate"><p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="time_left_label">Còn Lại</p><p id="portalDaysLeft" class="text-red-600 font-black text-xs md:text-sm animate-alert truncate"></p></div>
+                                <div class="truncate"><p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="pkg_name_label">Gói</p><p id="portalPackageName" class="text-slate-800 font-extrabold text-xs md:text-sm truncate"></p></div>
+                                <div class="truncate"><p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="exp_date_label">Ngày Hết Hạn</p><p id="portalExpDate" class="text-slate-800 font-extrabold text-xs md:text-sm truncate"></p></div>
+                                <div class="truncate">
+                                    <p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="time_left_label">Còn Lại</p>
+                                    <div class="inline-block bg-red-100 border border-red-300 text-red-700 px-2 py-0.5 rounded-md shadow-sm">
+                                        <p id="portalDaysLeft" class="font-black text-xs md:text-sm truncate"></p>
+                                    </div>
+                                </div>
                             </div>
-                            <button onclick="switchPortalTab('p-store')" class="w-full xl:w-auto bg-indigo-100 text-indigo-700 hover:bg-indigo-600 hover:text-white font-bold py-2 px-6 rounded-xl transition text-sm flex items-center justify-center shrink-0 shadow-sm"><i class="fas fa-redo-alt mr-2"></i> <span data-i18n="btn_renew">Gia hạn</span></button>
+
+                            <button onclick="switchPortalTab('p-store')" class="w-full xl:w-auto bg-indigo-100 text-indigo-700 hover:bg-indigo-600 hover:text-white font-bold py-2.5 px-6 rounded-xl transition text-sm flex items-center justify-center shrink-0 shadow-sm"><i class="fas fa-redo-alt mr-2"></i> <span data-i18n="btn_renew">Gia hạn</span></button>
                         </div>
 
-                        <div class="bg-green-50 border border-green-200 p-4 md:p-6 rounded-2xl mb-4 w-full">
+                        <div class="bg-green-50 border border-green-200 p-4 md:p-6 rounded-2xl w-full">
                             <h3 class="text-green-900 font-bold mb-3 text-xs md:text-sm"><i class="fas fa-link mr-1"></i> Link Subscription URL:</h3>
                             <div class="flex flex-col sm:flex-row gap-2 sm:gap-0 shadow-sm w-full">
                                 <input type="text" id="subLink" readonly class="w-full sm:flex-1 bg-white border border-green-300 text-green-800 p-3 md:p-4 font-mono font-bold text-[10px] md:text-sm outline-none rounded-xl sm:rounded-r-none focus:border-green-500 cursor-text" onclick="this.select()">
@@ -141,23 +145,6 @@
 
                 <div class="flex justify-center mt-6 mb-8 w-full">
                     <button onclick="switchPortalTab('p-guide')" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-black py-3 px-6 rounded-full shadow-[0_4px_15px_rgba(79,70,229,0.4)] hover:scale-105 transition-transform flex items-center gap-2 text-xs md:text-sm whitespace-normal text-center max-w-[90vw]"><i class="fas fa-question-circle text-lg"></i> <span data-i18n="btn_watch_guide">Chưa biết sử dụng? Xem hướng dẫn ngay thôi nào!</span></button>
-                </div>
-
-                <div class="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl mb-8 border border-slate-200 shadow-sm overflow-hidden w-full">
-                    <h3 class="text-lg md:text-xl font-extrabold text-slate-800 mb-4 border-b border-slate-100 pb-3"><i class="fas fa-history text-indigo-500 mr-2"></i> Lịch sử Mua hàng</h3>
-                    <div class="overflow-x-auto w-full">
-                        <table class="w-full text-left text-xs md:text-sm whitespace-nowrap min-w-[500px]">
-                            <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
-                                <tr>
-                                    <th class="p-3">Gói Mua (Data)</th>
-                                    <th class="p-3">Số Tiền (VNĐ / CNY)</th>
-                                    <th class="p-3">Ngày Hết Hạn</th>
-                                </tr>
-                            </thead>
-                            <tbody id="historyTablePortal" class="divide-y divide-slate-100 bg-white">
-                                </tbody>
-                        </table>
-                    </div>
                 </div>
 
                 <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-6 md:p-8 mb-8 text-white shadow-lg text-center md:text-left flex flex-col md:flex-row items-center gap-6 w-full">
@@ -202,7 +189,7 @@
                         <button onclick="showGuide('ios')" id="btn-dev-ios" class="dev-btn bg-white border border-slate-200 px-5 py-2.5 rounded-xl font-bold flex items-center text-xs md:text-sm shadow-sm hover:bg-slate-50 transition"><i class="fab fa-app-store-ios text-blue-400 text-lg mr-2"></i> iOS</button>
                     </div>
                     <div id="guideContent" class="hidden overflow-x-auto w-full max-w-full">
-                        <div id="guideText" class="text-xs md:text-sm text-slate-800 w-full max-w-full overflow-hidden leading-relaxed"></div>
+                        <div id="guideText" class="text-sm text-slate-800 w-full max-w-full overflow-hidden leading-relaxed font-medium"></div>
                     </div>
                 </div>
 
@@ -266,9 +253,9 @@
 
                             <label class="block font-bold text-xs text-slate-700 mb-2">Phương thức thanh toán:</label>
                             <div class="grid grid-cols-3 gap-2 mb-4">
-                                <button type="button" onclick="selectPayMethod('bank')" id="pay-btn-bank" class="pay-btn active bg-indigo-50 border-indigo-500 text-indigo-700 border-2 font-bold py-2.5 rounded-xl text-xs transition flex flex-col items-center justify-center gap-1 shadow-sm"><i class="fas fa-university text-lg"></i><span class="text-[10px] uppercase text-center leading-tight">Ngân hàng<br>VN</span></button>
-                                <button type="button" onclick="selectPayMethod('alipay')" id="pay-btn-alipay" class="pay-btn bg-white border-slate-200 text-slate-600 border-2 font-bold py-2.5 rounded-xl text-xs transition hover:bg-slate-50 flex flex-col items-center justify-center gap-1 shadow-sm"><i class="fab fa-alipay text-lg text-blue-500"></i><span class="text-[10px] uppercase">Alipay</span></button>
-                                <button type="button" onclick="selectPayMethod('wechat')" id="pay-btn-wechat" class="pay-btn bg-white border-slate-200 text-slate-600 border-2 font-bold py-2.5 rounded-xl text-xs transition hover:bg-slate-50 flex flex-col items-center justify-center gap-1 shadow-sm"><i class="fab fa-weixin text-lg text-green-500"></i><span class="text-[10px] uppercase">WeChat</span></button>
+                                <button type="button" onclick="selectPayMethod('bank')" id="pay-btn-bank" class="pay-btn active bg-indigo-50 border-indigo-500 text-indigo-700 border-2 font-bold py-2.5 px-1 rounded-xl transition flex flex-col items-center justify-center gap-1 shadow-sm"><i class="fas fa-wallet text-lg mb-0.5"></i><span class="text-[11px] uppercase text-center leading-tight whitespace-nowrap">Ngân hàng<br>Việt Nam</span></button>
+                                <button type="button" onclick="selectPayMethod('alipay')" id="pay-btn-alipay" class="pay-btn bg-white border-slate-200 text-slate-600 border-2 font-bold py-2.5 px-1 rounded-xl transition hover:bg-slate-50 flex flex-col items-center justify-center gap-1 shadow-sm"><i class="fab fa-alipay text-lg text-blue-500 mb-0.5"></i><span class="text-[11px] uppercase text-center leading-tight whitespace-nowrap"><br>Alipay</span></button>
+                                <button type="button" onclick="selectPayMethod('wechat')" id="pay-btn-wechat" class="pay-btn bg-white border-slate-200 text-slate-600 border-2 font-bold py-2.5 px-1 rounded-xl transition hover:bg-slate-50 flex flex-col items-center justify-center gap-1 shadow-sm"><i class="fab fa-weixin text-lg text-green-500 mb-0.5"></i><span class="text-[11px] uppercase text-center leading-tight whitespace-nowrap"><br>WeChat</span></button>
                             </div>
                             <input type="hidden" id="payMethod" value="bank">
 
@@ -393,7 +380,7 @@
                 feat_1: "Mở khóa mọi nền tảng", feat_2: "Ping thấp, Game mượt", feat_3: "Bảo mật No-log", feat_4: "Đa hệ điều hành",
                 tab_all: "Tất cả", tab_travel: "Du lịch", tab_cycle: "Chu kỳ", tab_usage: "Dung lượng", checkout_title: "Thanh toán Đơn hàng",
                 email_placeholder: "Nhập Email nhận đơn", btn_create_order: "TẠO MÃ QR CHUYỂN KHOẢN", btn_paid: "TÔI ĐÃ CHUYỂN KHOẢN",
-                pay_vn: "Ngân hàng Việt Nam (VietQR)", pay_alipay: "Alipay", pay_wechat: "WeChat Pay",
+                pay_vn: "Ngân hàng Việt Nam", pay_alipay: "Alipay", pay_wechat: "WeChat Pay",
                 month_lbl: "Tháng", choose_dur: "Chọn thời gian:", email_warning: "Vui lòng nhập đúng Email của bạn và đảm bảo Email có tồn tại vì chúng tôi sẽ gửi mail kích hoạt về Email này.", header_contact: "Cần test tốc độ truy cập app nào thì hãy liên hệ Admin qua Mess hoặc Zalo",
                 guide_title: "Hướng dẫn Thanh toán", guide_desc: "Điền Email, chọn thời gian & phương thức thanh toán, sau đó bấm Tạo Đơn để lấy thông tin mã QR chuyển khoản.",
                 guide_empty: "<p class='text-center py-6 md:py-10 text-slate-500 font-bold text-xs md:text-sm'>Đang cập nhật hướng dẫn...</p>",
@@ -458,7 +445,7 @@
         ];
 
         let lang = 'vi'; let currentPackage = null; let currentOrderId = ''; let cmsCache = {}; let autoPollInterval;
-        let currentMultiplier = 1; let oCache = null; let historiesDb = [];
+        let currentMultiplier = 1; let oCache = null;
         let currentTotalVnd = 0; let currentTotalCny = 0; let currentTotalUsd = 0;
 
         function showToast(msg, type = 'success') {
@@ -553,7 +540,6 @@
             document.getElementById('selectedPackagePrice').innerText = currentPackage[lang].price;
             selectDuration(1); currentOrderId = ''; calculateTotal();
             
-            // Focus vào Zalo luôn nếu tick (Tick mặc định)
             if(document.getElementById('needSupport').checked) {
                 document.getElementById('cusZalo').classList.remove('hidden');
             }
@@ -660,7 +646,6 @@
 
         function copyText(t) { navigator.clipboard.writeText(t); showToast(lang === 'vi' ? 'Đã Copy!' : 'Copied!', 'success'); }
         
-        // Fix Copy Link Sub
         function copyToClipboard(id, isInput=false) { 
             const e = document.getElementById(id);
             if(isInput) { 
@@ -744,12 +729,6 @@
             const st = document.getElementById('portalStatus');
             document.getElementById('portalContentPending').classList.toggle('hidden', o.status !== 'pending');
             document.getElementById('portalContentSuccess').classList.toggle('hidden', o.status !== 'success');
-            
-            if(o.status === 'pending') st.innerHTML = `<span class="text-yellow-700 bg-yellow-100 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase border border-yellow-200 inline-block"><i class="fas fa-circle-notch fa-spin mr-1"></i> <span>${i18n[lang].status_pending}</span></span>`;
-            else if (o.status === 'success') {
-                st.innerHTML = `<span class="text-green-700 bg-green-100 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase border border-green-200 inline-block"><i class="fas fa-check-circle mr-1"></i> <span>${i18n[lang].status_success}</span></span>`;
-                document.getElementById('subLink').value = o.info || '';
-            } else st.innerHTML = `<span class="text-red-700 bg-red-100 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase border border-red-200 inline-block"><span>${i18n[lang].status_failed}</span></span>`;
         }
 
         async function login(isManualRefresh = false, isAutoPoll = false) {
@@ -766,17 +745,16 @@
             localStorage.setItem(SESSION_KEY, JSON.stringify({ id: o.id, time: new Date().getTime() }));
             if(!isManualRefresh && !isAutoPoll) showToast(lang==='vi'?'Vào cổng thành công!':(lang==='en'?'Login success!':'登录成功'), "info");
 
-            // Biến đổi giao diện Morphing Desktop
             document.getElementById('view-store').classList.remove('active'); document.getElementById('view-portal').classList.add('active');
             document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('checkoutSection').classList.add('hidden');
             
             document.getElementById('portalNav').classList.remove('hidden'); 
             
-            // Xử lý kéo Search Bar & trượt Tab Nav
+            // Xử lý kéo Search Bar & trượt Tab Nav (Chỉ áp dụng trên Máy tính)
             document.getElementById('desktopPortalNav').classList.remove('hidden', 'opacity-0', 'w-0');
             document.getElementById('desktopPortalNav').classList.add('opacity-100', 'w-auto');
             document.getElementById('searchContainer').classList.remove('max-w-2xl');
-            document.getElementById('searchContainer').classList.add('max-w-xs');
+            document.getElementById('searchContainer').classList.add('max-w-[250px]');
             
             if(!isAutoPoll && !isManualRefresh) switchPortalTab('p-home');
 
@@ -785,26 +763,6 @@
             if (o.status === 'success') {
                 cmsCache = await apiGet("/api/cms");
                 showGuide('android');
-
-                // Lịch Sử Mua Hàng
-                historiesDb = await apiGet("/api/history");
-                if(!Array.isArray(historiesDb)) historiesDb = [];
-                let myHistory = historiesDb.filter(h => h.email === o.email);
-                const historyBody = document.getElementById('historyTablePortal');
-                historyBody.innerHTML = '';
-                
-                if(myHistory.length > 0) {
-                    myHistory.forEach(h => {
-                        let displayPrice = lang === 'en' ? 'Contact Admin' : (h.priceVnd + ' / ' + h.priceCny);
-                        historyBody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition">
-                            <td class="p-3 font-medium text-slate-600 text-xs">${h.pkgName} <span class="text-indigo-600 font-bold">(${h.data})</span></td>
-                            <td class="p-3 font-bold text-slate-800 text-xs">${displayPrice}</td>
-                            <td class="p-3 font-bold text-slate-600 text-xs">${h.expDate || 'Vĩnh viễn'}</td>
-                        </tr>`;
-                    });
-                } else {
-                    historyBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 italic text-sm">Chưa có dữ liệu lịch sử</td></tr>`;
-                }
             }
             
             renderPackages('all'); if(!isManualRefresh && !isAutoPoll) window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -813,8 +771,9 @@
         function switchPortalTab(tabId) {
             document.querySelectorAll('.portal-tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.btn-nav-p-home, .btn-nav-p-store, .btn-nav-p-guide').forEach(el => {
-                el.classList.remove('active', 'text-indigo-600', 'bg-indigo-50');
+                el.classList.remove('active', 'text-white', 'bg-indigo-600');
                 if (el.classList.contains('portal-nav-btn')) el.classList.remove('bg-[#e0e7ff]', 'text-indigo-600');
+                else el.classList.add('text-slate-600');
             });
             
             document.getElementById(tabId).classList.add('active');
@@ -823,7 +782,8 @@
                 if (el.classList.contains('portal-nav-btn')) {
                     el.classList.add('text-indigo-600', 'bg-[#e0e7ff]');
                 } else {
-                    el.classList.add('text-indigo-600', 'bg-indigo-50');
+                    el.classList.add('bg-indigo-600', 'text-white');
+                    el.classList.remove('text-slate-600', 'hover:bg-slate-100');
                 }
             });
         }
@@ -833,10 +793,10 @@
             document.getElementById('userMenu').classList.add('hidden'); document.getElementById('loginInput').value = '';
             document.getElementById('portalNav').classList.add('hidden');
             
-            // Xử lý kéo Trả Tab về Search bar chà bá
+            // Xử lý kéo Trả Tab về Search bar rộng rãi
             document.getElementById('desktopPortalNav').classList.remove('opacity-100', 'w-auto');
             document.getElementById('desktopPortalNav').classList.add('opacity-0', 'w-0', 'hidden');
-            document.getElementById('searchContainer').classList.remove('max-w-xs');
+            document.getElementById('searchContainer').classList.remove('max-w-[250px]');
             document.getElementById('searchContainer').classList.add('max-w-2xl');
             
             oCache = null;
