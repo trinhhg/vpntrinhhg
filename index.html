@@ -20,20 +20,13 @@
         @keyframes borderPulse { 0% { border-color: #fde047; box-shadow: 0 0 0 0 rgba(253, 224, 71, 0.7); } 70% { border-color: #eab308; box-shadow: 0 0 0 10px rgba(253, 224, 71, 0); } 100% { border-color: #fde047; box-shadow: 0 0 0 0 rgba(253, 224, 71, 0); } }
         .highlight-copy { animation: borderPulse 2s infinite; background-color: #fef08a; color: #713f12; }
 
-        /* Hiệu ứng Hào quang Nhịp tim (Heartbeat Aura) cho Text */
+        /* Hiệu ứng Hào quang Nhịp tim (Heartbeat Aura) ĐỨNG IM CHỮ */
         @keyframes textAuraPulse {
             0% { text-shadow: 0 0 0 rgba(220, 38, 38, 0); }
             50% { text-shadow: 0 0 15px rgba(220, 38, 38, 0.8); }
             100% { text-shadow: 0 0 0 rgba(220, 38, 38, 0); }
         }
-        .text-aura { animation: textAuraPulse 1.5s infinite; color: #dc2626; font-weight: 900; }
-
-        @keyframes btnHeartbeatPulse {
-            0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.6); transform: scale(1); }
-            50% { box-shadow: 0 0 0 12px rgba(22, 163, 74, 0); transform: scale(1.02); }
-            100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); transform: scale(1); }
-        }
-        .btn-heartbeat { animation: btnHeartbeatPulse 1.5s infinite; }
+        .text-heartbeat { animation: textAuraPulse 1.5s infinite; color: #dc2626; font-weight: 900; }
 
         .pkg-filters::-webkit-scrollbar { height: 0px; }
         .pkg-filters { scrollbar-width: none; }
@@ -43,8 +36,8 @@
         .portal-nav-btn.active { color: #4f46e5; background-color: #e0e7ff; }
         .portal-tab-content { display: none; animation: fadeUp 0.3s ease forwards; }
         .portal-tab-content.active { display: block; }
-        #portalNav { transition: opacity 0.3s, transform 0.3s; }
-
+        
+        /* Giữ nguyên định dạng CMS */
         #guideText { white-space: pre-wrap; word-wrap: break-word; }
         #guideText img { max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; margin: 10px 0; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     </style>
@@ -53,13 +46,13 @@
 
     <div id="toastContainer" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
-    <div id="floatingSocials" class="fixed bottom-20 md:bottom-6 right-4 md:right-6 flex flex-col gap-3 z-40 transition-all duration-300">
+    <div id="floatingSocials" class="fixed bottom-24 md:bottom-6 right-4 md:right-6 flex flex-col gap-3 z-40 transition-all duration-300">
         <a href="https://www.facebook.com/trinh.hg.57" target="_blank" class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl shadow-lg hover:scale-110 transition hover:animate-none animate-bounce" style="animation-delay: 0.1s;"><i class="fab fa-facebook-messenger"></i></a>
         <a href="https://zalo.me/0917678211" target="_blank" class="w-12 h-12 bg-[#0068ff] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition hover:animate-none animate-bounce"><span class="font-bold text-[14px]" style="font-family: Arial, sans-serif;">Zalo</span></a>
     </div>
 
     <nav id="mainNav" class="glass-ui fixed top-0 w-full z-[70] border-b border-slate-200 py-3">
-        <div class="max-w-7xl mx-auto px-4 w-full flex flex-col md:flex-row md:items-center gap-3">
+        <div class="max-w-7xl mx-auto px-4 w-full flex flex-col md:flex-row md:items-center justify-between gap-4">
             
             <div class="flex justify-between items-center w-full md:w-auto shrink-0">
                 <div class="font-extrabold text-xl md:text-2xl tracking-tighter cursor-pointer flex items-center text-indigo-700" onclick="logout()">
@@ -70,21 +63,20 @@
                 </select>
             </div>
             
-            <div class="flex-1 flex flex-col md:flex-row items-center w-full gap-4 transition-all duration-500">
-                
-                <div id="searchContainer" class="w-full max-w-2xl mx-auto transition-all duration-500">
-                    <div class="relative w-full shadow-sm">
-                        <input type="text" id="loginInput" onkeyup="if(event.key==='Enter') login()" class="w-full bg-white border-2 border-indigo-100 rounded-full pl-5 pr-12 py-2.5 text-xs md:text-sm outline-none font-bold text-slate-700 focus:border-indigo-400 focus:shadow-md transition-all" data-i18n-placeholder="search_placeholder" placeholder="Nhập Mã Đơn hoặc Email...">
+            <div class="flex-1 flex justify-center items-center h-[40px]" id="centerNavContainer">
+                <div id="searchAndTabsWrapper" class="flex items-center w-full max-w-xl transition-all duration-500 gap-6">
+                    
+                    <div class="flex-1 relative shadow-sm">
+                        <input type="text" id="loginInput" onkeyup="if(event.key==='Enter') login()" class="w-full bg-white border-2 border-indigo-100 rounded-full pl-5 pr-12 py-2.5 text-sm outline-none font-bold text-slate-700 focus:border-indigo-400 focus:shadow-md transition-all" data-i18n-placeholder="search_placeholder" placeholder="Nhập Mã Đơn hoặc Email...">
                         <button onclick="login()" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-indigo-600 rounded-full text-white hover:bg-indigo-700 flex items-center justify-center transition"><i class="fas fa-search text-xs"></i></button>
                     </div>
+                    
+                    <div id="desktopPortalNav" class="hidden items-center gap-2 shrink-0 transition-all duration-300">
+                        <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-tv mr-2"></i><span data-i18n="tab_p_home">Trang chủ</span></button>
+                        <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-shopping-cart mr-2"></i><span data-i18n="tab_p_store">Cửa hàng</span></button>
+                        <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-book mr-2"></i><span data-i18n="tab_p_guide">Hướng dẫn</span></button>
+                    </div>
                 </div>
-
-                <div id="desktopPortalNav" class="hidden max-md:hidden items-center gap-2 opacity-0 w-0 overflow-hidden transition-all duration-500 whitespace-nowrap">
-                    <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-tv mr-1.5 opacity-70"></i><span data-i18n="tab_p_home">Trang chủ</span></button>
-                    <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-shopping-cart mr-1.5 opacity-70"></i><span data-i18n="tab_p_store">Cửa hàng</span></button>
-                    <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-book mr-1.5 opacity-70"></i><span data-i18n="tab_p_guide">Hướng dẫn</span></button>
-                </div>
-
             </div>
 
             <div class="hidden md:flex items-center gap-3 shrink-0 pl-2 border-l border-slate-200">
@@ -97,18 +89,20 @@
             </div>
         </div>
     </nav>
-    <div class="h-[105px] md:h-[80px]"></div>
+    <div class="h-[110px] md:h-[80px]"></div>
 
-    <div id="portalNav" class="hidden max-md:hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[60] bg-white/95 backdrop-blur-md shadow-[0_5px_20px_rgba(0,0,0,0.2)] rounded-full px-3 py-1.5 gap-2 border border-slate-200 w-auto">
-        <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home portal-nav-btn active flex items-center justify-center text-slate-500 w-12 h-10 rounded-full transition-colors">
-            <i class="fas fa-tv text-xl"></i>
-        </button>
-        <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store portal-nav-btn flex items-center justify-center text-slate-500 w-12 h-10 rounded-full transition-colors">
-            <i class="fas fa-shopping-cart text-xl"></i>
-        </button>
-        <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide portal-nav-btn flex items-center justify-center text-slate-500 w-12 h-10 rounded-full transition-colors">
-            <i class="fas fa-book text-xl"></i>
-        </button>
+    <div id="mobileNavWrapper" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[60]">
+        <div class="md:hidden bg-white/95 backdrop-blur-md shadow-[0_5px_20px_rgba(0,0,0,0.2)] rounded-full px-5 py-2 flex gap-4 border border-slate-200 items-center justify-center">
+            <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home portal-nav-btn active flex items-center justify-center text-slate-500 w-12 h-9 rounded-full transition-colors">
+                <i class="fas fa-tv text-xl"></i>
+            </button>
+            <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store portal-nav-btn flex items-center justify-center text-slate-500 w-12 h-9 rounded-full transition-colors">
+                <i class="fas fa-shopping-cart text-xl"></i>
+            </button>
+            <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide portal-nav-btn flex items-center justify-center text-slate-500 w-12 h-9 rounded-full transition-colors">
+                <i class="fas fa-book text-xl"></i>
+            </button>
+        </div>
     </div>
 
     <main class="flex-grow z-10 relative px-2 md:px-4 py-4 md:py-6 max-w-7xl mx-auto w-full overflow-x-hidden">
@@ -134,7 +128,7 @@
                                 <div class="truncate"><p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="exp_date_label">Ngày Hết Hạn</p><p id="portalExpDate" class="text-slate-800 font-extrabold text-xs md:text-sm truncate"></p></div>
                                 <div class="truncate">
                                     <p class="text-[10px] text-slate-500 uppercase font-black mb-1" data-i18n="time_left_label">Còn Lại</p>
-                                    <p id="portalDaysLeft" class="text-aura text-sm md:text-base truncate"></p>
+                                    <p id="portalDaysLeft" class="text-heartbeat text-sm md:text-base truncate"></p>
                                 </div>
                             </div>
 
@@ -142,9 +136,9 @@
                         </div>
 
                         <div class="bg-white border-2 border-dashed border-green-500 p-4 md:p-6 rounded-2xl w-full shadow-sm">
-                            <h3 class="text-green-900 font-bold mb-3 text-xs md:text-sm"><i class="fas fa-link mr-1 text-green-600"></i> Link Subscription URL:</h3>
-                            <div class="flex flex-col sm:flex-row gap-2 sm:gap-0 w-full">
-                                <input type="text" id="subLink" readonly class="w-full sm:flex-1 bg-green-50 border border-green-200 text-green-800 p-3 md:p-4 font-mono font-bold text-[10px] md:text-sm outline-none rounded-xl sm:rounded-r-none focus:border-green-500 cursor-text shadow-inner" onclick="this.select()">
+                            <h3 class="text-green-700 font-extrabold mb-3 text-xs md:text-sm"><i class="fas fa-link mr-1"></i> Link Subscription URL:</h3>
+                            <div class="flex flex-col sm:flex-row gap-2 sm:gap-0 w-full shadow-sm">
+                                <input type="text" id="subLink" readonly class="w-full sm:flex-1 bg-white border-2 border-slate-200 text-green-600 p-3 md:p-4 font-mono font-bold text-[10px] md:text-sm outline-none rounded-xl sm:rounded-r-none focus:border-green-500 cursor-text" onclick="this.select()">
                                 <button onclick="copyToClipboard('subLink', true)" class="w-full sm:w-auto bg-green-600 text-white font-bold px-6 py-3 rounded-xl sm:rounded-l-none text-xs md:text-sm transition hover:bg-green-700 whitespace-nowrap shadow-md"><i class="fas fa-copy mr-1"></i> COPY LINK</button>
                             </div>
                         </div>
@@ -331,13 +325,10 @@
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 const socials = document.getElementById('floatingSocials');
-                const portalNav = document.getElementById('portalNav');
                 if (entry.isIntersecting) {
                     if(socials) socials.classList.add('opacity-0', 'pointer-events-none', 'translate-y-10');
-                    if(portalNav) portalNav.classList.add('opacity-0', 'pointer-events-none', 'translate-y-10');
                 } else {
                     if(socials) socials.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-10');
-                    if(portalNav) portalNav.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-10');
                 }
             });
         }, { threshold: 0.1 });
@@ -740,9 +731,7 @@
             
             if(o.status === 'pending') st.innerHTML = `<span class="text-yellow-700 bg-yellow-100 px-3 py-1.5 rounded-lg text-[10px] md:text-xs font-bold uppercase border border-yellow-200 inline-block"><i class="fas fa-circle-notch fa-spin mr-1"></i> <span>${i18n[lang].status_pending}</span></span>`;
             else if (o.status === 'success') {
-                // Đã xóa Trạng thái thành công ở ô này
-                st.innerHTML = `<span class="text-slate-400 italic text-xs">Đã kích hoạt</span>`; 
-                // Gán Link Sub - ĐÃ FIX TRIỆT ĐỂ LỖI
+                // Đã Fix logic hiển thị Link Sub an toàn
                 if (o.info && o.info.trim() !== '') {
                     document.getElementById('subLink').value = o.info;
                 } else {
@@ -768,14 +757,15 @@
             document.getElementById('view-store').classList.remove('active'); document.getElementById('view-portal').classList.add('active');
             document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('checkoutSection').classList.add('hidden');
             
-            // Xử lý kéo Search Bar & trượt Tab Nav sang PHẢI với khoảng cách chuẩn (Desktop)
+            // Xử lý Giao diện Desktop Cực Chuẩn
+            document.getElementById('centerNavContainer').classList.remove('justify-center');
+            document.getElementById('searchAndTabsWrapper').classList.remove('max-w-2xl');
+            document.getElementById('searchAndTabsWrapper').classList.add('max-w-full');
             document.getElementById('desktopPortalNav').classList.remove('hidden', 'opacity-0', 'w-0');
-            document.getElementById('desktopPortalNav').classList.add('opacity-100', 'w-auto');
-            document.getElementById('searchContainer').classList.remove('max-w-2xl', 'mx-auto');
-            document.getElementById('searchContainer').classList.add('flex-1', 'mx-4');
+            document.getElementById('desktopPortalNav').classList.add('flex', 'opacity-100', 'w-auto');
             
-            // Hiện Bottom Nav nếu là Mobile
-            document.getElementById('portalNav').classList.remove('hidden');
+            // Xử lý Mobile Nav Wrap
+            document.getElementById('mobileNavWrapper').classList.remove('hidden');
             
             if(!isAutoPoll && !isManualRefresh) switchPortalTab('p-home');
 
@@ -813,13 +803,16 @@
         function logout() {
             localStorage.removeItem(SESSION_KEY); document.getElementById('view-portal').classList.remove('active'); document.getElementById('view-store').classList.add('active');
             document.getElementById('userMenu').classList.add('hidden'); document.getElementById('loginInput').value = '';
-            document.getElementById('portalNav').classList.add('hidden'); // Ẩn Bottom Nav Mobile
+            
+            // Ẩn Wrapper Bottom Nav Mobile
+            document.getElementById('mobileNavWrapper').classList.add('hidden');
             
             // Trả Form Search về chính giữa màn hình (Desktop)
-            document.getElementById('desktopPortalNav').classList.remove('opacity-100', 'w-auto');
-            document.getElementById('desktopPortalNav').classList.add('opacity-0', 'w-0', 'hidden');
-            document.getElementById('searchContainer').classList.remove('flex-1', 'mx-4');
-            document.getElementById('searchContainer').classList.add('max-w-2xl', 'mx-auto');
+            document.getElementById('desktopPortalNav').classList.remove('flex', 'opacity-100', 'w-auto');
+            document.getElementById('desktopPortalNav').classList.add('hidden', 'opacity-0', 'w-0');
+            document.getElementById('searchAndTabsWrapper').classList.remove('max-w-full');
+            document.getElementById('searchAndTabsWrapper').classList.add('max-w-2xl');
+            document.getElementById('centerNavContainer').classList.add('justify-center');
             
             oCache = null;
         }
