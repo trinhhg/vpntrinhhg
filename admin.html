@@ -24,7 +24,7 @@
        </div>
    </div>
 
-   <div id="adminHeader" class="hidden bg-white px-4 py-3 md:px-6 border-b border-slate-200 flex justify-between items-center shadow-sm w-full top-0 left-0 absolute z-40">
+   <div id="adminHeader" class="hidden bg-white px-4 py-3 md:px-6 border-b border-slate-200 flex justify-between items-center shadow-sm w-full">
        <h1 class="text-lg md:text-xl font-extrabold text-indigo-600 truncate">VPN Trinh Hg Admin</h1>
        <div class="flex gap-2 shrink-0">
            <button onclick="fetchAllData(true)" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-2 rounded-xl font-bold text-xs md:text-sm transition flex items-center"><i class="fas fa-sync-alt"></i><span class="hidden sm:inline ml-1.5">Làm mới</span></button>
@@ -32,7 +32,9 @@
        </div>
    </div>
 
-   <div id="adminPanel" class="hidden max-w-7xl mx-auto p-4 md:p-6 pt-[80px]"> <div class="flex flex-wrap gap-2 mb-6">
+   <div id="adminPanel" class="hidden max-w-7xl mx-auto p-4 md:p-6">
+       
+       <div class="flex flex-wrap gap-2 mb-6">
            <button onclick="switchTab('tab-orders')" id="btn-tab-orders" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow-md"><i class="fas fa-box mr-1.5"></i>Đơn hàng</button>
            <button onclick="switchTab('tab-exp')" id="btn-tab-exp" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200"><i class="fas fa-clock mr-1.5"></i>Hết hạn</button>
            <button onclick="switchTab('tab-links')" id="btn-tab-links" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200"><i class="fas fa-link mr-1.5"></i>Link Sub</button>
@@ -123,7 +125,7 @@
                <button onclick="insertMacro('btn')" class="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition"><i class="fas fa-download mr-1"></i> Nút Tải</button>
                <button onclick="insertMacro('img')" class="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-xs font-bold text-pink-600 hover:bg-pink-50 transition"><i class="fas fa-image mr-1"></i> Ảnh</button>
            </div>
-           <textarea id="cmsGuide" rows="16" class="w-full p-4 border border-slate-200 rounded-b-xl focus:outline-none focus:border-indigo-400 text-slate-800 bg-white font-mono text-sm leading-relaxed resize-y overflow-x-hidden whitespace-pre-wrap" placeholder="Soạn nội dung HTML... Bạn có thể ENTER xuống dòng hoặc CÁCH (Space) thoải mái, qua trang khách sẽ giữ nguyên định dạng."></textarea>
+           <textarea id="cmsGuide" rows="16" class="w-full p-4 border border-slate-200 rounded-b-xl focus:outline-none focus:border-indigo-400 text-slate-800 bg-white font-mono text-sm leading-relaxed resize-y overflow-x-hidden whitespace-pre-wrap" placeholder="Soạn nội dung HTML... Bạn có thể ENTER xuống dòng thoải mái, qua trang khách sẽ giữ nguyên định dạng."></textarea>
            <button onclick="saveCmsToCloud()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3.5 rounded-xl shadow-md w-full md:w-auto transition"><i class="fas fa-save mr-2"></i> LƯU LÊN MÁY CHỦ</button>
        </div>
 
@@ -197,31 +199,12 @@
        </div>
    </div>
 
-   <div id="modalEditLink" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-       <div class="glass-card p-6 w-full max-w-lg">
-           <h3 class="text-xl font-bold mb-4">Chỉnh sửa Link Sub</h3>
-           <input type="hidden" id="editLinkId">
-           <div class="mb-4">
-               <label class="block font-bold text-xs text-slate-600 mb-1">Email Khách</label>
-               <input type="text" id="editLinkEmail" class="w-full p-3 text-sm border rounded-lg outline-none focus:border-indigo-500">
-           </div>
-           <div class="mb-4">
-               <label class="block font-bold text-xs text-slate-600 mb-1">Link Gốc (Liangxin)</label>
-               <input type="text" id="editLinkOrig" class="w-full p-3 text-sm font-mono border rounded-lg outline-none focus:border-indigo-500">
-           </div>
-           <div class="flex gap-2">
-               <button onclick="saveLinkEdit()" class="flex-1 bg-indigo-600 text-white font-bold py-3 rounded-lg"><i class="fas fa-save mr-2"></i>LƯU THAY ĐỔI</button>
-               <button onclick="document.getElementById('modalEditLink').classList.add('hidden')" class="bg-slate-200 text-slate-700 font-bold py-3 px-6 rounded-lg"><i class="fas fa-times mr-2"></i>Hủy</button>
-           </div>
-       </div>
-   </div>
-
    <script>
        const API_URL = "https://vpntrinhhg.pages.dev"; 
        const MY_PAGES_DOMAIN = "https://vpntrinhhg.pages.dev"; 
        const GOOGLE_MAIL_API = "https://script.google.com/macros/s/AKfycbyQjEln9By0HuUPtboqJpb1INI6rRp52BxvHR8HaE5fs8qojfgau1R_27P4RyLLxXIp/exec";
         
-       let ordersDb = []; let cmsDb = {}; let adminDevices = []; let linksDb = []; 
+       let ordersDb = []; let cmsDb = {}; let adminDevices = []; let linksDb = []; let historyDb = [];
        let currentCmsDevice = 'android'; let refreshInterval; let myDeviceId = '';
 
        const packageOptions = [
@@ -504,7 +487,7 @@
            ordersDb.forEach((o, idx) => {
                const stt = ordersDb.length - idx; 
                
-               // Đã trả lại các ICON chuẩn của bạn cho phần trạng thái
+               // ĐÃ TRẢ LẠI GIAO DIỆN TRẠNG THÁI (ICON + MÀU) THEO ĐÚNG NGUYÊN BẢN
                let badge = o.status === 'pending' 
                            ? `<span class="bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-yellow-200"><i class="fas fa-hourglass-half mr-1"></i> Chờ duyệt</span>` 
                            : (o.status === 'success' 
@@ -594,8 +577,7 @@
            o.expDate = document.getElementById('editExpDate').value.trim();
            o.status = document.getElementById('editStatus').value; 
            
-           // LƯU Ý GÁN LINK SUB (INFO) RẤT QUAN TRỌNG Ở ĐÂY
-           o.info = document.getElementById('editLink').value; 
+           o.info = document.getElementById('editLink').value; // Đảm bảo gán lại giá trị cho ô Info
            
            o.reason = document.getElementById('editReason').value;
            o.pkgName = selectedPkg.name;
