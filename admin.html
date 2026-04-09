@@ -13,7 +13,7 @@
        .dev-btn.active { border-color: #4f46e5; background-color: #e0e7ff; color: #4338ca; }
    </style>
 </head>
-<body class="min-h-screen pb-20 overflow-x-hidden">
+<body class="min-h-screen pb-20 overflow-x-hidden relative">
    <div id="toastContainer" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
    <div id="loginScreen" class="fixed inset-0 bg-slate-50 z-50 flex items-center justify-center p-4">
@@ -24,12 +24,13 @@
        </div>
    </div>
 
-   <div id="adminPanel" class="hidden max-w-7xl mx-auto p-4 md:p-8">
-       <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-100 gap-4">
-           <h1 class="text-xl md:text-2xl font-extrabold text-indigo-600">VPN Trinh Hg Admin</h1>
-           <div class="flex gap-2 w-full md:w-auto">
-               <button onclick="fetchAllData(true)" class="flex-1 md:flex-none bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-4 py-2.5 rounded-xl font-bold text-sm transition"><i class="fas fa-sync-alt mr-2"></i>Làm mới</button>
-               <button onclick="logoutAdmin()" class="flex-1 md:flex-none bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2.5 rounded-xl font-bold text-sm transition"><i class="fas fa-sign-out-alt mr-2"></i>Đăng xuất</button>
+   <div id="adminPanel" class="hidden max-w-7xl mx-auto p-3 md:p-6 relative">
+       
+       <div class="sticky top-2 z-50 flex justify-between items-center bg-white p-3 md:p-4 rounded-2xl shadow-sm border border-slate-100 mb-5 gap-2">
+           <h1 class="text-base md:text-xl font-extrabold text-indigo-600 truncate">VPN Trinh Hg Admin</h1>
+           <div class="flex gap-2 shrink-0">
+               <button onclick="fetchAllData(true)" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-2 rounded-xl font-bold text-xs md:text-sm transition flex items-center"><i class="fas fa-sync-alt"></i><span class="hidden sm:inline ml-1.5">Làm mới</span></button>
+               <button onclick="logoutAdmin()" class="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-2 rounded-xl font-bold text-xs md:text-sm transition flex items-center"><i class="fas fa-sign-out-alt"></i><span class="hidden sm:inline ml-1.5">Thoát</span></button>
            </div>
        </div>
 
@@ -43,23 +44,23 @@
        </div>
 
        <div id="tab-orders">
-           <button onclick="openEditModal(null)" class="mb-4 bg-indigo-100 text-indigo-700 font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-indigo-200 transition"><i class="fas fa-plus mr-2"></i>Tạo Đơn Thủ Công</button>
-           <div class="glass-card overflow-x-auto">
+           <button onclick="openEditModal(null)" class="mb-4 bg-indigo-100 text-indigo-700 font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-indigo-200 transition shadow-sm"><i class="fas fa-plus mr-2"></i>Tạo Đơn Thủ Công</button>
+           <div class="glass-card overflow-x-auto rounded-2xl">
                <table class="w-full text-left text-sm whitespace-nowrap min-w-[900px]">
                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
-                       <tr><th class="p-4 w-12 text-center">STT</th><th class="p-4 md:p-5">Mã Đơn</th><th class="p-4 md:p-5">Thông tin Khách</th><th class="p-4 md:p-5">Gói VPN</th><th class="p-4 md:p-5">Trạng Thái</th><th class="p-4 md:p-5 text-right">Hành động</th></tr>
+                       <tr><th class="p-4 w-12 text-center">STT</th><th class="p-4 md:p-5">Mã Đơn</th><th class="p-4 md:p-5">Thông tin Khách</th><th class="p-4 md:p-5">Gói VPN</th><th class="p-4 md:p-5 text-center">Trạng Thái</th><th class="p-4 md:p-5 text-right">Hành động</th></tr>
                    </thead>
-                   <tbody id="orderTable" class="divide-y divide-slate-100"></tbody>
+                   <tbody id="orderTable" class="divide-y divide-slate-100 bg-white"></tbody>
                </table>
            </div>
        </div>
 
        <div id="tab-history" class="hidden glass-card p-5 md:p-8">
            <div class="flex justify-between items-center mb-4">
-               <h2 class="text-xl font-bold">Lịch sử Mua hàng (Thêm Thủ Công)</h2>
+               <h2 class="text-xl font-bold text-slate-800">Lịch sử Mua hàng (Thêm Thủ Công)</h2>
                <button onclick="openHistoryModal()" class="bg-indigo-100 text-indigo-700 font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-indigo-200 transition"><i class="fas fa-plus mr-2"></i>Thêm Lịch Sử</button>
            </div>
-           <p class="text-xs text-slate-500 mb-6">Thêm lịch sử vào đây để khách hàng thấy được bảng lịch sử trong tab Trang Chủ ở Cổng Khách Hàng.</p>
+           <p class="text-xs text-slate-500 mb-6 italic">*Lịch sử giờ được tự động đồng bộ từ tab Đơn Hàng. Bạn chỉ dùng nút thêm khi cần chèn lịch sử cũ.</p>
            <div class="overflow-x-auto border border-slate-200 rounded-xl">
                <table class="w-full text-left text-sm whitespace-nowrap min-w-[700px]">
                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
@@ -77,7 +78,7 @@
        </div>
 
        <div id="tab-exp" class="hidden glass-card p-5 md:p-8">
-           <h2 class="text-xl font-bold mb-4">Quản lý Đơn hàng sắp hết hạn</h2>
+           <h2 class="text-xl font-bold mb-4 text-slate-800">Quản lý Đơn hàng sắp hết hạn</h2>
            <p class="text-xs text-slate-500 mb-6">Hệ thống sẽ bôi đỏ các đơn hàng còn <= 3 ngày sử dụng. Sắp xếp theo thứ tự ưu tiên gần hết hạn nhất lên trên cùng.</p>
            <div class="overflow-x-auto border border-slate-200 rounded-xl">
                <table class="w-full text-left text-sm whitespace-nowrap min-w-[800px]">
@@ -97,7 +98,7 @@
        </div>
 
        <div id="tab-links" class="hidden glass-card p-5 md:p-8">
-           <h2 class="text-xl font-bold mb-2">Quản lý Link Sub Ẩn (Masked Link)</h2>
+           <h2 class="text-xl font-bold mb-2 text-slate-800">Quản lý Link Sub Ẩn (Masked Link)</h2>
            <p class="text-xs text-slate-500 mb-6">Chỉ cần dán Link gốc (Liangxin). Hệ thống sẽ bẻ lái (Redirect 302) để đảm bảo độ ổn định tuyệt đối.</p>
            
            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6">
@@ -131,7 +132,7 @@
        </div>
 
        <div id="tab-cms" class="hidden glass-card p-5 md:p-8">
-           <h2 class="text-xl font-bold mb-4">Soạn thảo Hướng dẫn (CMS Editor)</h2>
+           <h2 class="text-xl font-bold mb-4 text-slate-800">Soạn thảo Hướng dẫn (CMS Editor)</h2>
            <div class="flex flex-wrap gap-2 mb-4">
                <button onclick="changeCmsDevice('android')" id="cms-btn-android" class="dev-btn active border-2 border-slate-200 px-4 py-2 rounded-xl font-bold text-slate-600 text-sm flex items-center transition"><i class="fab fa-android text-green-500 mr-2"></i> Android</button>
                <button onclick="changeCmsDevice('windows')" id="cms-btn-windows" class="dev-btn border-2 border-slate-200 px-4 py-2 rounded-xl font-bold text-slate-600 text-sm flex items-center transition"><i class="fab fa-windows text-blue-500 mr-2"></i> Windows</button>
@@ -151,13 +152,13 @@
        </div>
 
        <div id="tab-devices" class="hidden glass-card p-5 md:p-8">
-           <h2 class="text-xl font-bold mb-4">Các thiết bị được phép vào Admin</h2>
-           <div class="overflow-x-auto">
+           <h2 class="text-xl font-bold mb-4 text-slate-800">Các thiết bị được phép vào Admin</h2>
+           <div class="overflow-x-auto border border-slate-200 rounded-xl">
                <table class="w-full text-left text-sm whitespace-nowrap min-w-[600px]">
                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
                        <tr><th class="p-4">ID Thiết bị</th><th class="p-4">Trình duyệt / Thiết bị</th><th class="p-4">Ngày cấp</th><th class="p-4 text-right">Xóa</th></tr>
                    </thead>
-                   <tbody id="devicesTable" class="divide-y divide-slate-100"></tbody>
+                   <tbody id="devicesTable" class="divide-y divide-slate-100 bg-white"></tbody>
                </table>
            </div>
        </div>
@@ -180,8 +181,8 @@
 
            <div class="grid grid-cols-3 gap-3 mb-3">
                <div class="col-span-1">
-                   <label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Ngày hết hạn</label>
-                   <input type="text" id="editExpDate" class="w-full p-2 text-sm border rounded-lg outline-none focus:border-indigo-500" placeholder="VD: 30/12/2026">
+                   <label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Hết hạn</label>
+                   <input type="text" id="editExpDate" class="w-full p-2 text-sm border rounded-lg outline-none focus:border-indigo-500 text-center font-bold" placeholder="XX/XX/XXXX">
                </div>
                <div class="col-span-2">
                    <label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Gói VPN</label>
@@ -214,7 +215,7 @@
            </div>
 
            <div class="flex gap-2">
-               <button onclick="saveOrderToCloud()" class="flex-1 bg-indigo-600 text-white font-bold py-2.5 rounded-lg hover:bg-indigo-700 transition text-sm"><i class="fas fa-save mr-2"></i>LƯU</button>
+               <button onclick="saveOrderToCloud()" class="flex-1 bg-indigo-600 text-white font-bold py-2.5 rounded-lg hover:bg-indigo-700 transition text-sm shadow-md"><i class="fas fa-save mr-2"></i>LƯU</button>
                <button onclick="document.getElementById('modalEdit').classList.add('hidden')" class="bg-slate-200 text-slate-700 font-bold py-2.5 px-6 rounded-lg hover:bg-slate-300 text-sm"><i class="fas fa-times mr-2"></i>Hủy</button>
            </div>
        </div>
@@ -236,7 +237,7 @@
 
            <div class="mb-4">
                <label class="block font-bold text-xs text-slate-600 mb-1">Ngày Hết Hạn</label>
-               <input type="text" id="histExp" class="w-full p-3 text-sm border rounded-lg outline-none focus:border-indigo-500" placeholder="VD: 30/12/2026">
+               <input type="text" id="histExp" class="w-full p-3 text-sm border rounded-lg outline-none focus:border-indigo-500 font-bold" placeholder="XX/XX/XXXX">
            </div>
 
            <div class="flex gap-2">
@@ -273,7 +274,6 @@
        let ordersDb = []; let cmsDb = {}; let adminDevices = []; let linksDb = []; let historyDb = [];
        let currentCmsDevice = 'android'; let refreshInterval; let myDeviceId = '';
 
-       // Viết lại packageOptions chuẩn cấu trúc để map vào lịch sử không bị lỗi format
        const packageOptions = [
            { id: 't1', name: "Gói 1 tháng", priceVnd: "50.000đ", priceCny: "¥12.5", data: "100GB" },
            { id: 't2', name: "Gói 1 tháng", priceVnd: "60.000đ", priceCny: "¥15", data: "500GB" },
@@ -399,14 +399,12 @@
            const tbody = document.getElementById('expTable'); tbody.innerHTML = '';
            const now = new Date();
            
-           // Lọc đơn thành công & có ngày, parse Date, sắp xếp tăng dần (Gần hết hạn nhất ở trên đầu)
            let validExpOrders = ordersDb.filter(o => o.status === 'success' && o.expDate).map(o => {
                return { ...o, parsedDate: parseDateString(o.expDate) }
            }).filter(o => o.parsedDate !== null);
 
            validExpOrders.sort((a, b) => a.parsedDate - b.parsedDate);
            
-           // Đánh STT: Đơn trên đầu (cũ nhất) = 1, Đơn dưới đáy (mới nhất) = Max
            validExpOrders.forEach((o, index) => {
                const stt = index + 1; 
                const diffTime = o.parsedDate - now;
@@ -469,7 +467,7 @@
        function renderHistory() {
            const tbody = document.getElementById('historyTable'); tbody.innerHTML = '';
            historyDb.forEach((h, idx) => {
-               const stt = historyDb.length - idx; // Lịch sử mới nhất lên đầu, STT to nhất
+               const stt = historyDb.length - idx; 
                tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition">
                    <td class="p-4 text-center font-bold text-slate-400 text-xs">${stt}</td>
                    <td class="p-4 font-bold text-slate-800">${h.email}</td>
@@ -498,8 +496,8 @@
 
            const selectedPkg = packageOptions[pkgIdx];
            
-           // Lưu lịch sử dạng Object chuẩn không bị bug hiển thị sai bên Cổng Khách
            const newHist = {
+               orderId: "MANUAL-" + Date.now(), // Fake ID for manual
                email: email,
                pkgName: selectedPkg.name,
                priceVnd: selectedPkg.priceVnd,
@@ -528,7 +526,7 @@
        function renderLinks() {
            const tbody = document.getElementById('linksTable'); tbody.innerHTML = '';
            linksDb.forEach((l, idx) => {
-               const stt = linksDb.length - idx; // Mới nhất lên đầu, STT to nhất
+               const stt = linksDb.length - idx; 
                tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition">
                    <td class="p-4 text-center font-bold text-slate-400 text-xs">${stt}</td>
                    <td class="p-4 font-bold text-slate-800">${l.email || '<span class="text-slate-400 italic">Trống</span>'}</td>
@@ -617,18 +615,31 @@
        function renderOrders() {
            const tbody = document.getElementById('orderTable'); tbody.innerHTML = '';
            ordersDb.forEach((o, idx) => {
-               const stt = ordersDb.length - idx; // Mới nhất lên đầu, STT to nhất
-               let badge = o.status === 'pending' ? '<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold border border-yellow-200">⏳ Chờ duyệt</span>' : 
-                           (o.status === 'success' ? '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200">✅ Thành công</span>' : 
-                           '<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">❌ Từ chối</span>');
+               const stt = ordersDb.length - idx; 
+               
+               // Huy hiệu trạng thái mới, đẹp và hiện đại hơn
+               let badge = o.status === 'pending' 
+                           ? `<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-200 shadow-sm"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span><span class="text-[11px] font-bold uppercase tracking-wider">Chờ duyệt</span></div>` 
+                           : (o.status === 'success' 
+                           ? `<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm"><i class="fas fa-check text-[10px]"></i><span class="text-[11px] font-bold uppercase tracking-wider">Thành công</span></div>` 
+                           : `<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 shadow-sm"><i class="fas fa-times text-[10px]"></i><span class="text-[11px] font-bold uppercase tracking-wider">Từ chối</span></div>`);
                
                let supportTag = o.needSupport ? `<span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded ml-2 font-bold uppercase border border-blue-200">Hỗ trợ</span>` : '';
+               
+               // Đồng bộ tên phương thức thanh toán hiển thị
+               let displayMethod = o.method || 'Bank';
+               if(displayMethod.includes('Bank') || displayMethod.includes('Ngân hàng') || displayMethod === 'Manual') {
+                   displayMethod = 'Ngân hàng Việt Nam';
+               }
+
+               let zaloCopyBtn = o.zalo && o.zalo.toLowerCase() !== 'không' ? `<i class="fas fa-copy text-slate-400 hover:text-indigo-600 cursor-pointer ml-1" onclick="copyText('${o.zalo}')" title="Copy SĐT Zalo"></i>` : '';
 
                tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition">
                    <td class="p-4 text-center font-bold text-slate-400 text-xs">${stt}</td>
                    <td class="p-4 md:p-5 font-mono font-bold text-indigo-600">${o.id} <i class="fas fa-copy text-slate-400 hover:text-indigo-600 cursor-pointer ml-1" onclick="copyText('${o.id}')"></i></td>
-                   <td class="p-4 md:p-5"><p class="font-bold text-slate-800">${o.email} <i class="fas fa-copy text-slate-400 hover:text-indigo-600 cursor-pointer ml-1" onclick="copyText('${o.email}')"></i> ${supportTag}</p><p class="text-xs text-slate-500 mt-1"><i class="fas fa-credit-card mr-1"></i>${o.method || 'Bank'} | Zalo: ${o.zalo || 'Không'}</p></td>
-                   <td class="p-4 md:p-5 font-bold text-slate-600 text-xs truncate max-w-[200px]">${o.pkg} <br><span class="text-indigo-500 text-[10px]">${o.expDate ? 'HSD: '+o.expDate : ''}</span></td><td class="p-4 md:p-5">${badge}</td>
+                   <td class="p-4 md:p-5"><p class="font-bold text-slate-800">${o.email} <i class="fas fa-copy text-slate-400 hover:text-indigo-600 cursor-pointer ml-1" onclick="copyText('${o.email}')"></i> ${supportTag}</p><p class="text-xs text-slate-500 mt-1"><i class="fas fa-credit-card mr-1"></i>${displayMethod} | Zalo: ${o.zalo || 'Không'} ${zaloCopyBtn}</p></td>
+                   <td class="p-4 md:p-5 font-bold text-slate-600 text-xs truncate max-w-[200px]">${o.pkg} <br><span class="text-indigo-500 text-[10px]">${o.expDate ? 'HSD: '+o.expDate : ''}</span></td>
+                   <td class="p-4 md:p-5 text-center">${badge}</td>
                    <td class="p-4 md:p-5 text-right whitespace-nowrap">
                        <button onclick="openEditModal('${o.id}')" class="text-indigo-600 font-bold hover:underline px-3 py-1.5 bg-indigo-50 rounded-lg mr-2 text-xs md:text-sm"><i class="fas fa-pen mr-1"></i>Sửa</button>
                        <button onclick="deleteOrder('${o.id}')" class="text-red-500 font-bold hover:underline px-3 py-1.5 bg-red-50 rounded-lg text-xs md:text-sm"><i class="fas fa-trash mr-1"></i>Xóa</button>
@@ -654,7 +665,9 @@
            
            let foundPkg = false;
            for(let i=0; i<document.getElementById('editPkg').options.length; i++) {
-               if(document.getElementById('editPkg').options[i].text.includes(o.pkgName || (o.pkg ? o.pkg.split(' - ')[0] : ''))) { 
+               let optText = document.getElementById('editPkg').options[i].text;
+               // Match bằng cách check Name và Data (Đảm bảo độ chính xác tuyệt đối không lộn gói 100GB với 1000GB)
+               if(o.pkg === optText || (optText.includes(o.pkgName) && optText.includes(o.pkgData || o.data || ""))) { 
                    document.getElementById('editPkg').selectedIndex = i; 
                    foundPkg = true; 
                    break; 
@@ -696,12 +709,16 @@
            o.info = document.getElementById('editLink').value; 
            o.reason = document.getElementById('editReason').value;
            o.pkgName = selectedPkg.name;
+           o.pkgData = selectedPkg.data; // Lưu lại để dùng cho hàm match
 
            const btn = event.target; const oldTxt = btn.innerText; btn.innerText = "ĐANG LƯU..."; btn.disabled = true;
 
-           // Lưu Lịch sử tự động khi duyệt thành công và có hạn sử dụng
-           if (o.status === 'success' && o.expDate && !o.historySaved && o.email) {
-               let h = {
+           // LOGIC ĐỒNG BỘ LỊCH SỬ CHÍNH XÁC KÈM ORDER_ID
+           if (o.status === 'success' && o.expDate && o.email) {
+               let existingHistIndex = historyDb.findIndex(h => h.orderId === o.id);
+               
+               const histObj = {
+                   orderId: o.id,
                    email: o.email,
                    pkgName: selectedPkg.name,
                    priceVnd: selectedPkg.priceVnd,
@@ -710,22 +727,36 @@
                    expDate: o.expDate,
                    date: new Date().toLocaleString()
                };
-               historyDb.unshift(h);
+
+               if(existingHistIndex !== -1) {
+                   // Nếu đơn này đã từng duyệt và có lịch sử -> Update lịch sử đó
+                   historyDb[existingHistIndex] = histObj;
+               } else {
+                   // Cấp mới
+                   historyDb.unshift(histObj);
+               }
                await apiPost("/api/history", historyDb);
                renderHistory();
-               o.historySaved = true; // Đánh dấu đã lưu để không lưu lại lần sau
+           } else if (o.status !== 'success') {
+               // Nếu lỡ chuyển về thất bại thì tự động xóa khỏi Lịch sử
+               const oldLength = historyDb.length;
+               historyDb = historyDb.filter(h => h.orderId !== o.id);
+               if(historyDb.length < oldLength) {
+                   await apiPost("/api/history", historyDb);
+                   renderHistory();
+               }
            }
 
            await apiPost("/api/orders", ordersDb);
-           showToast("Đã đồng bộ đơn hàng!", "success");
+           showToast("Đã đồng bộ đơn hàng & lịch sử!", "success");
 
            if(document.getElementById('sendMailCheck').checked && o.email) {
                btn.innerText = "ĐANG BẮN EMAIL...";
                let subject = "VPN Trinh Hg - Cập nhật đơn hàng"; let msg = "";
                let contactBlock = `<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:15px; margin-top:20px; text-align:center;">
-                   <p style="margin:0 0 10px 0; color:#475569; font-size:13px; line-height:1.5;">${o.needSupport ? '<span style="color:#ef4444; font-weight:bold;">Bạn đã yêu cầu Admin hỗ trợ cài đặt!</span> Vui lòng liên hệ:' : 'Cần hỗ trợ? Đội ngũ của chúng tôi sẵn sàng 24/7'}</p>
-                   <a href="https://zalo.me/0917678211" style="display:inline-block; background:#0ea5e9; color:white; padding:10px 16px; text-decoration:none; border-radius:6px; font-weight:bold; margin-bottom:5px; font-size:13px;">Chat Zalo</a>
-                   <a href="https://www.facebook.com/trinh.hg.57" style="display:inline-block; background:#3b82f6; color:white; padding:10px 16px; text-decoration:none; border-radius:6px; font-weight:bold; font-size:13px;">Messenger</a>
+                   <p style="margin:0 0 10px 0; color:#475569; font-size:13px; line-height:1.5;">${o.needSupport ? '<span style="color:#ef4444; font-weight:bold;">Bạn đã yêu cầu Admin hỗ trợ cài đặt!</span> Vui lòng liên hệ ngay:' : 'Cần hỗ trợ? Đội ngũ của chúng tôi sẵn sàng 24/7'}</p>
+                   <a href="https://zalo.me/0917678211" style="display:inline-block; background:#0ea5e9; color:white; padding:10px 16px; text-decoration:none; border-radius:6px; font-weight:bold; margin-bottom:5px; font-size:13px;">Nhắn tin qua Zalo</a>
+                   <a href="https://www.facebook.com/trinh.hg.57" style="display:inline-block; background:#3b82f6; color:white; padding:10px 16px; text-decoration:none; border-radius:6px; font-weight:bold; font-size:13px;">Chat Messenger</a>
                </div>`;
 
                if(o.status === 'success') {
@@ -760,9 +791,16 @@
            btn.innerText = oldTxt; btn.disabled = false; renderOrders(); document.getElementById('modalEdit').classList.add('hidden');
         }
        async function deleteOrder(id) {
-           if(confirm('Xóa vĩnh viễn đơn ' + id + '?')) {
-               ordersDb = ordersDb.filter(x => x.id !== id); await apiPost("/api/orders", ordersDb);
-               renderOrders(); showToast("Đã xóa vĩnh viễn!", "info");
+           if(confirm('Xóa vĩnh viễn đơn ' + id + ' và các dữ liệu liên quan?')) {
+               ordersDb = ordersDb.filter(x => x.id !== id); 
+               await apiPost("/api/orders", ordersDb);
+               
+               // Xóa cả trong Lịch sử luôn cho sạch sẽ
+               historyDb = historyDb.filter(h => h.orderId !== id);
+               await apiPost("/api/history", historyDb);
+
+               renderOrders(); renderHistory();
+               showToast("Đã xóa vĩnh viễn!", "info");
            }
         }
 
