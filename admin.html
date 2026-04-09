@@ -24,16 +24,16 @@
        </div>
    </div>
 
-   <div id="adminPanel" class="hidden max-w-7xl mx-auto p-3 md:p-6 relative">
-       
-       <div class="flex justify-between items-center bg-white p-3 md:p-4 rounded-2xl shadow-sm border border-slate-100 mb-5 gap-2">
-           <h1 class="text-base md:text-xl font-extrabold text-indigo-600 truncate">VPN Trinh Hg Admin</h1>
-           <div class="flex gap-2 shrink-0">
-               <button onclick="fetchAllData(true)" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-2 rounded-xl font-bold text-xs md:text-sm transition flex items-center"><i class="fas fa-sync-alt"></i><span class="hidden sm:inline ml-1.5">Làm mới</span></button>
-               <button onclick="logoutAdmin()" class="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-2 rounded-xl font-bold text-xs md:text-sm transition flex items-center"><i class="fas fa-sign-out-alt"></i><span class="hidden sm:inline ml-1.5">Thoát</span></button>
-           </div>
+   <div id="adminHeader" class="hidden bg-white px-4 py-3 md:px-6 border-b border-slate-200 flex justify-between items-center shadow-sm w-full">
+       <h1 class="text-lg md:text-xl font-extrabold text-indigo-600 truncate">VPN Trinh Hg Admin</h1>
+       <div class="flex gap-2 shrink-0">
+           <button onclick="fetchAllData(true)" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-2 rounded-xl font-bold text-xs md:text-sm transition flex items-center"><i class="fas fa-sync-alt"></i><span class="hidden sm:inline ml-1.5">Làm mới</span></button>
+           <button onclick="logoutAdmin()" class="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-2 rounded-xl font-bold text-xs md:text-sm transition flex items-center"><i class="fas fa-sign-out-alt"></i><span class="hidden sm:inline ml-1.5">Thoát</span></button>
        </div>
+   </div>
 
+   <div id="adminPanel" class="hidden max-w-7xl mx-auto p-4 md:p-6">
+       
        <div class="flex flex-wrap gap-2 mb-6">
            <button onclick="switchTab('tab-orders')" id="btn-tab-orders" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow-md">Đơn hàng</button>
            <button onclick="switchTab('tab-exp')" id="btn-tab-exp" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200">Hết hạn</button>
@@ -171,20 +171,20 @@
            <div class="mb-4">
                <label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Trạng Thái Đơn</label>
                <select id="editStatus" class="w-full p-2.5 text-sm border rounded-lg font-bold outline-none" onchange="toggleStatusFields()">
-                   <option value="pending">Chờ duyệt (Pending)</option>
-                   <option value="success">Kích hoạt Thành công</option>
-                   <option value="failed">Bị Từ chối / Lỗi</option>
+                   <option value="pending">⏳ Đang chờ duyệt (Pending)</option>
+                   <option value="success">✅ Kích hoạt Thành công</option>
+                   <option value="failed">❌ Bị Từ chối / Lỗi</option>
                </select>
            </div>
 
            <div id="fieldSuccess" class="hidden mb-4 p-3 border-l-4 border-green-500 bg-green-50 rounded-r-lg">
                <label class="block font-bold text-xs md:text-sm mb-1 text-green-700">Link Đăng Ký (Subscription URL)</label>
-               <input type="text" id="editLink" class="w-full p-2 text-sm border border-green-200 rounded-lg font-mono outline-none" placeholder="Dán link VPN vào đây...">
+               <input type="text" id="editLink" class="w-full p-2 text-sm border-2 border-dashed border-green-400 bg-white rounded-lg font-mono outline-none" placeholder="Dán link VPN vào đây...">
            </div>
 
            <div id="fieldFailed" class="hidden mb-4 p-3 border-l-4 border-red-500 bg-red-50 rounded-r-lg">
                <label class="block font-bold text-xs md:text-sm mb-1 text-red-700">Lý do từ chối</label>
-               <input type="text" id="editReason" class="w-full p-2 text-sm border border-red-200 rounded-lg outline-none" placeholder="Ví dụ: Chưa nhận được tiền...">
+               <input type="text" id="editReason" class="w-full p-2 text-sm border border-red-200 bg-white rounded-lg outline-none" placeholder="Ví dụ: Chưa nhận được tiền...">
            </div>
 
            <div class="flex items-center mb-5 bg-slate-50 border border-slate-200 p-2.5 rounded-lg">
@@ -295,6 +295,7 @@
 
        async function doLoginSuccess() {
            document.getElementById('loginScreen').classList.add('hidden');
+           document.getElementById('adminHeader').classList.remove('hidden');
            document.getElementById('adminPanel').classList.remove('hidden');
            
            const opts = packageOptions.map((p, idx) => `<option value="${idx}">${getPackageDisplayText(p)}</option>`).join('');
@@ -509,12 +510,12 @@
            ordersDb.forEach((o, idx) => {
                const stt = ordersDb.length - idx; 
                
-               // Huy hiệu trạng thái ĐẬM, MỚI KHÔNG CẦN ICON THEO YÊU CẦU
+               // HUY HIỆU ĐÃ ĐƯỢC TRẢ LẠI GIAO DIỆN QUEN THUỘC (BẠN GỌI LÀ PHÈN, NHƯNG LÀ NGUYÊN BẢN)
                let badge = o.status === 'pending' 
-                           ? `<span class="bg-amber-500 text-white px-3 py-1.5 rounded-md text-xs font-bold shadow-sm uppercase tracking-wide inline-block w-full">Chờ duyệt</span>` 
+                           ? `<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold border border-yellow-200">⏳ Chờ duyệt</span>` 
                            : (o.status === 'success' 
-                           ? `<span class="bg-emerald-500 text-white px-3 py-1.5 rounded-md text-xs font-bold shadow-sm uppercase tracking-wide inline-block w-full">Thành công</span>` 
-                           : `<span class="bg-rose-500 text-white px-3 py-1.5 rounded-md text-xs font-bold shadow-sm uppercase tracking-wide inline-block w-full">Từ chối</span>`);
+                           ? `<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200">✅ Thành công</span>` 
+                           : `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">❌ Từ chối</span>`);
                
                let supportTag = o.needSupport ? `<span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded ml-2 font-bold uppercase border border-blue-200">Hỗ trợ</span>` : '';
                
@@ -598,14 +599,13 @@
            o.pkg = getPackageDisplayText(selectedPkg);
            o.expDate = document.getElementById('editExpDate').value.trim();
            o.status = document.getElementById('editStatus').value; 
-           o.info = document.getElementById('editLink').value; 
+           o.info = document.getElementById('editLink').value; // LUÔN LUÔN CẬP NHẬT INFO (Link Sub)
            o.reason = document.getElementById('editReason').value;
            o.pkgName = selectedPkg.name;
            o.pkgData = selectedPkg.data; 
 
            const btn = event.target; const oldTxt = btn.innerText; btn.innerText = "ĐANG LƯU..."; btn.disabled = true;
 
-           // LOGIC ĐỒNG BỘ LỊCH SỬ CHÍNH XÁC KÈM ORDER_ID
            if (o.status === 'success' && o.expDate && o.email) {
                let existingHistIndex = historyDb.findIndex(h => h.orderId === o.id);
                
@@ -681,8 +681,10 @@
            if(confirm('Xóa vĩnh viễn đơn ' + id + ' và các dữ liệu liên quan?')) {
                ordersDb = ordersDb.filter(x => x.id !== id); 
                await apiPost("/api/orders", ordersDb);
+               
                historyDb = historyDb.filter(h => h.orderId !== id);
                await apiPost("/api/history", historyDb);
+
                renderOrders();
                showToast("Đã xóa vĩnh viễn!", "info");
            }
@@ -699,7 +701,6 @@
            currentCmsDevice = dev; document.getElementById('cmsGuide').value = cmsDb[dev] || '';
         }
         
-       // Sửa inline-block ôm gọn nội dung
        function insertMacro(type) {
            const box = document.getElementById('cmsGuide'); 
            let str = "";
