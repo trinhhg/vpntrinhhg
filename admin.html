@@ -8,12 +8,12 @@
    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
    <style>
        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-       body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; }
+       body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; margin: 0; padding: 0; }
        .glass-card { background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); border-radius: 1.5rem; }
        .dev-btn.active { border-color: #4f46e5; background-color: #e0e7ff; color: #4338ca; }
    </style>
 </head>
-<body class="min-h-screen pb-20 overflow-x-hidden relative">
+<body class="min-h-screen pb-20 overflow-x-hidden bg-slate-50">
    <div id="toastContainer" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
    <div id="loginScreen" class="fixed inset-0 bg-slate-50 z-50 flex items-center justify-center p-4">
@@ -24,7 +24,7 @@
        </div>
    </div>
 
-   <div id="adminHeader" class="hidden bg-white px-4 py-3 md:px-6 border-b border-slate-200 flex justify-between items-center shadow-sm w-full">
+   <div id="adminHeader" class="hidden bg-white px-4 py-3 md:px-6 border-b border-slate-200 flex justify-between items-center shadow-sm w-full top-0 left-0 absolute z-40">
        <h1 class="text-lg md:text-xl font-extrabold text-indigo-600 truncate">VPN Trinh Hg Admin</h1>
        <div class="flex gap-2 shrink-0">
            <button onclick="fetchAllData(true)" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-2 rounded-xl font-bold text-xs md:text-sm transition flex items-center"><i class="fas fa-sync-alt"></i><span class="hidden sm:inline ml-1.5">Làm mới</span></button>
@@ -32,14 +32,12 @@
        </div>
    </div>
 
-   <div id="adminPanel" class="hidden max-w-7xl mx-auto p-4 md:p-6">
-       
-       <div class="flex flex-wrap gap-2 mb-6">
-           <button onclick="switchTab('tab-orders')" id="btn-tab-orders" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow-md">Đơn hàng</button>
-           <button onclick="switchTab('tab-exp')" id="btn-tab-exp" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200">Hết hạn</button>
-           <button onclick="switchTab('tab-links')" id="btn-tab-links" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200">Link Sub</button>
-           <button onclick="switchTab('tab-cms')" id="btn-tab-cms" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200">Hướng dẫn</button>
-           <button onclick="switchTab('tab-devices')" id="btn-tab-devices" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200">Thiết bị</button>
+   <div id="adminPanel" class="hidden max-w-7xl mx-auto p-4 md:p-6 pt-[80px]"> <div class="flex flex-wrap gap-2 mb-6">
+           <button onclick="switchTab('tab-orders')" id="btn-tab-orders" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow-md"><i class="fas fa-box mr-1.5"></i>Đơn hàng</button>
+           <button onclick="switchTab('tab-exp')" id="btn-tab-exp" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200"><i class="fas fa-clock mr-1.5"></i>Hết hạn</button>
+           <button onclick="switchTab('tab-links')" id="btn-tab-links" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200"><i class="fas fa-link mr-1.5"></i>Link Sub</button>
+           <button onclick="switchTab('tab-cms')" id="btn-tab-cms" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200"><i class="fas fa-book mr-1.5"></i>Hướng dẫn</button>
+           <button onclick="switchTab('tab-devices')" id="btn-tab-devices" class="flex-1 md:flex-none px-5 py-3 rounded-xl font-bold text-sm bg-white text-slate-600 border border-slate-200"><i class="fas fa-laptop mr-1.5"></i>Thiết bị</button>
        </div>
 
        <div id="tab-orders">
@@ -125,7 +123,7 @@
                <button onclick="insertMacro('btn')" class="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition"><i class="fas fa-download mr-1"></i> Nút Tải</button>
                <button onclick="insertMacro('img')" class="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-xs font-bold text-pink-600 hover:bg-pink-50 transition"><i class="fas fa-image mr-1"></i> Ảnh</button>
            </div>
-           <textarea id="cmsGuide" rows="16" class="w-full p-4 border border-slate-200 rounded-b-xl focus:outline-none focus:border-indigo-400 text-slate-800 bg-white font-mono text-sm leading-relaxed resize-y overflow-x-hidden" placeholder="Soạn nội dung HTML... Bạn có thể ENTER xuống dòng thoải mái, qua trang khách sẽ giữ nguyên định dạng."></textarea>
+           <textarea id="cmsGuide" rows="16" class="w-full p-4 border border-slate-200 rounded-b-xl focus:outline-none focus:border-indigo-400 text-slate-800 bg-white font-mono text-sm leading-relaxed resize-y overflow-x-hidden whitespace-pre-wrap" placeholder="Soạn nội dung HTML... Bạn có thể ENTER xuống dòng hoặc CÁCH (Space) thoải mái, qua trang khách sẽ giữ nguyên định dạng."></textarea>
            <button onclick="saveCmsToCloud()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3.5 rounded-xl shadow-md w-full md:w-auto transition"><i class="fas fa-save mr-2"></i> LƯU LÊN MÁY CHỦ</button>
        </div>
 
@@ -171,15 +169,15 @@
            <div class="mb-4">
                <label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Trạng Thái Đơn</label>
                <select id="editStatus" class="w-full p-2.5 text-sm border rounded-lg font-bold outline-none" onchange="toggleStatusFields()">
-                   <option value="pending">⏳ Đang chờ duyệt (Pending)</option>
+                   <option value="pending">⏳ Chờ duyệt (Pending)</option>
                    <option value="success">✅ Kích hoạt Thành công</option>
                    <option value="failed">❌ Bị Từ chối / Lỗi</option>
                </select>
            </div>
 
-           <div id="fieldSuccess" class="hidden mb-4 p-3 border-l-4 border-green-500 bg-green-50 rounded-r-lg">
+           <div id="fieldSuccess" class="hidden mb-4 p-4 border-2 border-dashed border-green-500 bg-green-50 rounded-lg">
                <label class="block font-bold text-xs md:text-sm mb-1 text-green-700">Link Đăng Ký (Subscription URL)</label>
-               <input type="text" id="editLink" class="w-full p-2 text-sm border-2 border-dashed border-green-400 bg-white rounded-lg font-mono outline-none" placeholder="Dán link VPN vào đây...">
+               <input type="text" id="editLink" class="w-full p-2.5 text-sm border border-green-300 bg-white rounded-lg font-mono outline-none shadow-inner" placeholder="Dán link VPN vào đây...">
            </div>
 
            <div id="fieldFailed" class="hidden mb-4 p-3 border-l-4 border-red-500 bg-red-50 rounded-r-lg">
@@ -223,7 +221,7 @@
        const MY_PAGES_DOMAIN = "https://vpntrinhhg.pages.dev"; 
        const GOOGLE_MAIL_API = "https://script.google.com/macros/s/AKfycbyQjEln9By0HuUPtboqJpb1INI6rRp52BxvHR8HaE5fs8qojfgau1R_27P4RyLLxXIp/exec";
         
-       let ordersDb = []; let cmsDb = {}; let adminDevices = []; let linksDb = []; let historyDb = [];
+       let ordersDb = []; let cmsDb = {}; let adminDevices = []; let linksDb = []; 
        let currentCmsDevice = 'android'; let refreshInterval; let myDeviceId = '';
 
        const packageOptions = [
@@ -325,7 +323,6 @@
        async function fetchAllData(showManualToast = false) {
            ordersDb = await apiGet("/api/orders"); if(!Array.isArray(ordersDb)) ordersDb = []; renderOrders(); 
            linksDb = await apiGet("/api/links"); if(!Array.isArray(linksDb)) linksDb = []; renderLinks();
-           historyDb = await apiGet("/api/history"); if(!Array.isArray(historyDb)) historyDb = [];
            await fetchCms(); renderDevices();
            if(showManualToast) showToast("Dữ liệu đã cập nhật!", "success");
         }
@@ -333,9 +330,6 @@
        async function fetchOrdersSilently() {
            let newOrders = await apiGet("/api/orders"); if(!Array.isArray(newOrders)) newOrders = [];
            if(JSON.stringify(newOrders) !== JSON.stringify(ordersDb)) { ordersDb = newOrders; renderOrders(); showToast("Đã có Đơn hàng mới!", "info"); }
-           
-           let newHist = await apiGet("/api/history"); if(!Array.isArray(newHist)) newHist = [];
-           if(JSON.stringify(newHist) !== JSON.stringify(historyDb)) { historyDb = newHist; }
         }
 
        function parseDateString(dateString) {
@@ -510,12 +504,12 @@
            ordersDb.forEach((o, idx) => {
                const stt = ordersDb.length - idx; 
                
-               // HUY HIỆU ĐÃ ĐƯỢC TRẢ LẠI GIAO DIỆN QUEN THUỘC (BẠN GỌI LÀ PHÈN, NHƯNG LÀ NGUYÊN BẢN)
+               // Đã trả lại các ICON chuẩn của bạn cho phần trạng thái
                let badge = o.status === 'pending' 
-                           ? `<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold border border-yellow-200">⏳ Chờ duyệt</span>` 
+                           ? `<span class="bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-yellow-200"><i class="fas fa-hourglass-half mr-1"></i> Chờ duyệt</span>` 
                            : (o.status === 'success' 
-                           ? `<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200">✅ Thành công</span>` 
-                           : `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">❌ Từ chối</span>`);
+                           ? `<span class="bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-green-200"><i class="fas fa-check-circle mr-1"></i> Thành công</span>` 
+                           : `<span class="bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-red-200"><i class="fas fa-times-circle mr-1"></i> Từ chối</span>`);
                
                let supportTag = o.needSupport ? `<span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded ml-2 font-bold uppercase border border-blue-200">Hỗ trợ</span>` : '';
                
@@ -599,43 +593,18 @@
            o.pkg = getPackageDisplayText(selectedPkg);
            o.expDate = document.getElementById('editExpDate').value.trim();
            o.status = document.getElementById('editStatus').value; 
-           o.info = document.getElementById('editLink').value; // LUÔN LUÔN CẬP NHẬT INFO (Link Sub)
+           
+           // LƯU Ý GÁN LINK SUB (INFO) RẤT QUAN TRỌNG Ở ĐÂY
+           o.info = document.getElementById('editLink').value; 
+           
            o.reason = document.getElementById('editReason').value;
            o.pkgName = selectedPkg.name;
            o.pkgData = selectedPkg.data; 
 
            const btn = event.target; const oldTxt = btn.innerText; btn.innerText = "ĐANG LƯU..."; btn.disabled = true;
 
-           if (o.status === 'success' && o.expDate && o.email) {
-               let existingHistIndex = historyDb.findIndex(h => h.orderId === o.id);
-               
-               const histObj = {
-                   orderId: o.id,
-                   email: o.email,
-                   pkgName: selectedPkg.name,
-                   priceVnd: selectedPkg.priceVnd,
-                   priceCny: selectedPkg.priceCny,
-                   data: selectedPkg.data,
-                   expDate: o.expDate,
-                   date: new Date().toLocaleString()
-               };
-
-               if(existingHistIndex !== -1) {
-                   historyDb[existingHistIndex] = histObj;
-               } else {
-                   historyDb.unshift(histObj);
-               }
-               await apiPost("/api/history", historyDb);
-           } else if (o.status !== 'success') {
-               const oldLength = historyDb.length;
-               historyDb = historyDb.filter(h => h.orderId !== o.id);
-               if(historyDb.length < oldLength) {
-                   await apiPost("/api/history", historyDb);
-               }
-           }
-
            await apiPost("/api/orders", ordersDb);
-           showToast("Đã đồng bộ đơn hàng & lịch sử!", "success");
+           showToast("Đã đồng bộ đơn hàng!", "success");
 
            if(document.getElementById('sendMailCheck').checked && o.email) {
                btn.innerText = "ĐANG BẮN EMAIL...";
@@ -678,13 +647,9 @@
            btn.innerText = oldTxt; btn.disabled = false; renderOrders(); document.getElementById('modalEdit').classList.add('hidden');
         }
        async function deleteOrder(id) {
-           if(confirm('Xóa vĩnh viễn đơn ' + id + ' và các dữ liệu liên quan?')) {
+           if(confirm('Xóa vĩnh viễn đơn ' + id + '?')) {
                ordersDb = ordersDb.filter(x => x.id !== id); 
                await apiPost("/api/orders", ordersDb);
-               
-               historyDb = historyDb.filter(h => h.orderId !== id);
-               await apiPost("/api/history", historyDb);
-
                renderOrders();
                showToast("Đã xóa vĩnh viễn!", "info");
            }
