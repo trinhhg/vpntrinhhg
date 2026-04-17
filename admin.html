@@ -11,9 +11,11 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; margin: 0; padding: 0; }
         .glass-card { background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); border-radius: 1.5rem; }
         .dev-btn.active { border-color: #4f46e5; background-color: #e0e7ff; color: #4338ca; }
-        /* Click để Copy */
-        .copyable { cursor: pointer; color: #0366d6; font-weight: bold; position: relative; transition: all 0.2s; }
-        .copyable:hover { color: #4f46e5; text-decoration: underline; text-decoration-style: dotted; background: #e0e7ff; padding: 0 4px; border-radius: 4px; }
+        /* Tối ưu hóa class Copy */
+        .copyable { cursor: pointer; transition: all 0.2s; position: relative; }
+        .copyable:hover { color: #4f46e5 !important; background-color: #f1f5f9; padding: 2px 4px; border-radius: 4px; }
+        .copyable::after { content: "Copy"; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 10px; opacity: 0; pointer-events: none; transition: opacity 0.2s; white-space: nowrap; }
+        .copyable:hover::after { opacity: 1; }
     </style>
 </head>
 <body class="min-h-screen pb-20 overflow-x-hidden bg-slate-50">
@@ -34,8 +36,6 @@
             <button onclick="logoutAdmin()" class="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-2 rounded-xl font-bold text-xs md:text-sm transition flex items-center"><i class="fas fa-sign-out-alt"></i><span class="hidden sm:inline ml-1.5">Thoát</span></button>
         </div>
     </div>
-
-    <datalist id="emailList"></datalist>
 
     <div id="adminPanel" class="hidden max-w-7xl mx-auto p-4 md:p-6">
         
@@ -63,7 +63,6 @@
 
         <div id="tab-exp" class="hidden glass-card p-5 md:p-8">
             <h2 class="text-xl font-bold mb-4 text-slate-800">Quản lý Đơn hàng sắp hết hạn</h2>
-            <p class="text-xs text-slate-500 mb-6">Hệ thống sẽ bôi đỏ các đơn hàng còn <= 3 ngày sử dụng. Sắp xếp theo thứ tự ưu tiên gần hết hạn nhất lên trên cùng.</p>
             <div class="overflow-x-auto border border-slate-200 rounded-xl">
                 <table class="w-full text-left text-sm whitespace-nowrap min-w-[800px]">
                     <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
@@ -77,17 +76,45 @@
         </div>
 
         <div id="tab-links" class="hidden glass-card p-5 md:p-8">
-            <h2 class="text-xl font-bold mb-2 text-slate-800">Quản lý Link Sub Ẩn (Mô hình cây)</h2>
-            <p class="text-xs text-slate-500 mb-6">Tráo link tự động. Dán Link Gist để chuyển sang Base64/YAML dọn rác.</p>
-            <button onclick="openLinkModal(null)" class="mb-4 bg-indigo-100 text-indigo-700 font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-indigo-200 transition shadow-sm"><i class="fas fa-plus mr-2"></i>Tạo Link Ẩn Mới</button>
+            <h2 class="text-xl font-bold mb-4 text-slate-800">Quản lý Link Sub (Mô hình cây)</h2>
+            
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6 shadow-sm">
+                <h3 class="font-extrabold text-sm mb-4 text-indigo-700"><i class="fas fa-magic mr-1"></i> TẠO LINK ẨN MỚI</h3>
+                <input type="hidden" id="lkId">
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block font-bold text-xs text-slate-700 mb-1">Link Gốc (Liangxin / Djjc) <span class="text-red-500">*</span></label>
+                        <input type="text" id="lkOrig" class="w-full p-2.5 border border-slate-300 rounded-xl outline-none focus:border-indigo-500 font-mono text-xs">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-xs text-slate-700 mb-1">Link Gist YAML (Tráo Link & Xóa Rác)</label>
+                        <input type="text" id="lkGist" class="w-full p-2.5 border border-purple-200 bg-purple-50 rounded-xl outline-none focus:border-purple-500 font-mono text-xs" placeholder="Để trống nếu muốn chạy bản cũ (Redirect)...">
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block font-bold text-xs text-slate-700 mb-1">Email Khách</label>
+                        <select id="lkEmail" class="w-full p-2.5 border border-slate-300 rounded-xl outline-none focus:border-indigo-500 text-sm bg-white cursor-pointer"></select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-xs text-slate-700 mb-1">Số Máy</label>
+                        <input type="text" id="lkMachine" class="w-full p-2.5 border border-slate-300 rounded-xl outline-none focus:border-indigo-500 text-sm" placeholder="VD: Máy #1">
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="saveLink()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md transition">Lưu Thông Tin</button>
+                    <button onclick="resetLinkForm()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-2.5 rounded-xl transition">Hủy / Xóa Form</button>
+                </div>
+            </div>
+
             <div class="overflow-x-auto border border-slate-200 rounded-xl bg-white">
                 <div id="linksTree" class="flex flex-col text-sm w-full min-w-[800px]"></div>
             </div>
         </div>
 
         <div id="tab-accounts" class="hidden glass-card p-5 md:p-8">
-            <h2 class="text-xl font-bold mb-4 text-slate-800">Quản lý Tài khoản Gốc (Mua VPN)</h2>
-            <button onclick="openAccModal(null)" class="mb-4 bg-indigo-100 text-indigo-700 font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-indigo-200 transition shadow-sm"><i class="fas fa-user-plus mr-2"></i>Thêm Tài Khoản</button>
+            <h2 class="text-xl font-bold mb-4 text-slate-800">Quản lý Tài khoản Mua VPN Gốc</h2>
+            <button onclick="openAccModal(null)" class="mb-4 bg-indigo-100 text-indigo-700 font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-indigo-200 transition shadow-sm"><i class="fas fa-plus mr-2"></i>Thêm Tài Khoản Mới</button>
             <div class="overflow-x-auto border border-slate-200 rounded-xl bg-white">
                 <div id="accTree" class="flex flex-col text-sm w-full min-w-[600px]"></div>
             </div>
@@ -95,11 +122,11 @@
 
         <div id="tab-trash" class="hidden glass-card p-5 md:p-8">
             <h2 class="text-xl font-bold mb-2 text-red-600">Thùng rác Link Sub (Xóa tạm 48h)</h2>
-            <p class="text-xs text-slate-500 mb-6">Cloudflare tự dọn rác sau 48h. Khách nằm ở đây vẫn bị báo "Khóa mạng".</p>
+            <p class="text-xs text-slate-500 mb-6">Hệ thống tự động dọn sạch rác sau 48 tiếng. Khách nằm ở đây vẫn nhận được thông báo "Khóa mạng".</p>
             <div class="overflow-x-auto border border-slate-200 rounded-xl bg-white">
                 <table class="w-full text-left text-sm whitespace-nowrap min-w-[700px]">
                     <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
-                        <tr><th class="p-4">Email Khách / Số Máy</th><th class="p-4 text-center">Hành động</th></tr>
+                        <tr><th class="p-4">Thông tin Khách</th><th class="p-4">Link Ẩn</th><th class="p-4 text-center">Hành động</th></tr>
                     </thead>
                     <tbody id="trashTable" class="divide-y divide-slate-100"></tbody>
                 </table>
@@ -123,7 +150,7 @@
                 <button onclick="insertMacro('btn')" class="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition"><i class="fas fa-download mr-1"></i> Nút Tải</button>
                 <button onclick="insertMacro('img')" class="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-xs font-bold text-pink-600 hover:bg-pink-50 transition"><i class="fas fa-image mr-1"></i> Ảnh</button>
             </div>
-            <textarea id="cmsGuide" rows="16" class="w-full p-4 border border-slate-200 rounded-b-xl focus:outline-none focus:border-indigo-400 text-slate-800 bg-white font-mono text-sm leading-relaxed resize-y overflow-x-hidden whitespace-pre-wrap" placeholder="Soạn nội dung HTML... Bạn có thể ENTER xuống dòng thoải mái, qua trang khách sẽ giữ nguyên định dạng."></textarea>
+            <textarea id="cmsGuide" rows="16" class="w-full p-4 border border-slate-200 rounded-b-xl focus:outline-none focus:border-indigo-400 text-slate-800 bg-white font-mono text-sm leading-relaxed resize-y overflow-x-hidden whitespace-pre-wrap" placeholder="Soạn nội dung HTML..."></textarea>
             <button onclick="saveCmsToCloud()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3.5 rounded-xl shadow-md w-full md:w-auto transition"><i class="fas fa-save mr-2"></i> LƯU LÊN MÁY CHỦ</button>
         </div>
 
@@ -152,7 +179,7 @@
                         <button onclick="document.getElementById('editId').value = generateRandomId()" class="bg-slate-200 px-3 text-xs font-bold rounded-r-lg border border-l-0 border-slate-300 hover:bg-slate-300">Tạo mã</button>
                     </div>
                 </div>
-                <div><label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Email Khách</label><input type="text" id="editEmail" list="emailList" class="w-full p-2 text-sm border rounded-lg outline-none focus:border-indigo-500"></div>
+                <div><label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Email Khách</label><input type="text" id="editEmail" class="w-full p-2 text-sm border rounded-lg outline-none focus:border-indigo-500"></div>
             </div>
 
             <div class="grid grid-cols-3 gap-3 mb-3">
@@ -197,44 +224,19 @@
         </div>
     </div>
 
-    <div id="modalLink" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="glass-card p-5 w-full max-w-lg">
-            <h3 class="text-xl font-bold mb-4 text-slate-800" id="mLinkTitle">Thông tin Link Sub</h3>
-            <input type="hidden" id="lkId">
-            
-            <div class="mb-3"><label class="block text-xs font-bold text-slate-600 mb-1">Link Gốc (Liangxin / Djjc)</label>
-            <input type="text" id="lkOrig" class="w-full p-2 border rounded-lg text-xs font-mono outline-none focus:border-indigo-500"></div>
-            
-            <div class="mb-3"><label class="block text-xs font-bold text-slate-600 mb-1">Link Gist YAML (Tráo Link / Dọn Rác)</label>
-            <input type="text" id="lkGist" class="w-full p-2 border border-purple-200 bg-purple-50 rounded-lg text-xs font-mono outline-none focus:border-purple-500" placeholder="Để trống nếu muốn giữ nguyên bản cũ..."></div>
-            
-            <div class="grid grid-cols-2 gap-3 mb-5">
-                <div><label class="block text-xs font-bold text-slate-600 mb-1">Email Khách</label>
-                <input type="email" list="emailList" id="lkEmail" class="w-full p-2 border rounded-lg text-sm outline-none focus:border-indigo-500"></div>
-                <div><label class="block text-xs font-bold text-slate-600 mb-1">Số Máy</label>
-                <input type="text" id="lkMachine" class="w-full p-2 border rounded-lg text-sm outline-none focus:border-indigo-500" placeholder="VD: Máy #1"></div>
-            </div>
-
-            <div class="flex gap-2">
-                <button onclick="saveLink()" class="flex-1 bg-indigo-600 text-white font-bold py-2.5 rounded-lg shadow-md hover:bg-indigo-700">Lưu</button>
-                <button onclick="document.getElementById('modalLink').classList.add('hidden')" class="px-6 bg-slate-200 text-slate-700 font-bold py-2.5 rounded-lg hover:bg-slate-300">Hủy</button>
-            </div>
-        </div>
-    </div>
-
     <div id="modalAcc" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="glass-card p-5 w-full max-w-lg">
             <h3 class="text-xl font-bold mb-4 text-slate-800" id="mAccTitle">Tài khoản Mua VPN Gốc</h3>
             <input type="hidden" id="acId">
             
             <div class="mb-3"><label class="block text-xs font-bold text-slate-600 mb-1">Của Khách Hàng (Dùng để Nhóm)</label>
-            <input type="email" list="emailList" id="acClientEmail" class="w-full p-2 border rounded-lg text-sm outline-none focus:border-indigo-500" placeholder="VD: khachA@gmail.com"></div>
+            <select id="acClientEmail" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none focus:border-indigo-500 cursor-pointer bg-white"></select></div>
             
             <div class="mb-3"><label class="block text-xs font-bold text-slate-600 mb-1">Email Đăng nhập Web VPN</label>
-            <input type="text" id="acEmail" class="w-full p-2 border rounded-lg text-sm outline-none focus:border-indigo-500"></div>
+            <input type="text" id="acEmail" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none focus:border-indigo-500"></div>
             
             <div class="mb-5"><label class="block text-xs font-bold text-slate-600 mb-1">Mật khẩu</label>
-            <input type="text" id="acPass" class="w-full p-2 border rounded-lg text-sm outline-none focus:border-indigo-500"></div>
+            <input type="text" id="acPass" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none focus:border-indigo-500"></div>
 
             <div class="flex gap-2">
                 <button onclick="saveAcc()" class="flex-1 bg-indigo-600 text-white font-bold py-2.5 rounded-lg shadow-md hover:bg-indigo-700">Lưu</button>
@@ -262,9 +264,7 @@
             { id: 'd3', name: "Không Giới Hạn", priceVnd: "710.000đ", priceCny: "¥177.5", data: "6000GB" }
         ];
 
-        function getPackageDisplayText(pkg) {
-            return `${pkg.name} - ${pkg.priceVnd} / ${pkg.priceCny} (${pkg.data})`;
-        }
+        function getPackageDisplayText(pkg) { return `${pkg.name} - ${pkg.priceVnd} / ${pkg.priceCny} (${pkg.data})`; }
 
         function showToast(msg, type = 'success') {
             const container = document.getElementById('toastContainer');
@@ -278,7 +278,7 @@
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // HÀM COPY MỚI CHO ADMIN (ĐA NĂNG)
+        // HÀM COPY ĐA NĂNG
         function copyText(element) {
             let txt = '';
             if (typeof element === 'string') txt = element;
@@ -300,14 +300,11 @@
                 let data = await res.json();
                 localStorage.setItem(path.replace(/\//g,'_'), JSON.stringify(data));
                 return data;
-            } catch(e) {
-                return JSON.parse(localStorage.getItem(path.replace(/\//g,'_'))) || [];
-            }
+            } catch(e) { return JSON.parse(localStorage.getItem(path.replace(/\//g,'_'))) || []; }
         }
         async function apiPost(path, data) {
             localStorage.setItem(path.replace(/\//g,'_'), JSON.stringify(data)); 
-            try { await fetch(API_URL + path, { method: "POST", body: JSON.stringify(data) }); } 
-            catch(e) {}
+            try { await fetch(API_URL + path, { method: "POST", body: JSON.stringify(data) }); } catch(e) {}
         }
 
         window.onload = async function() {
@@ -344,7 +341,7 @@
             showToast("Đăng nhập thành công!", "info");
             await fetchAllData();
             refreshInterval = setInterval(async () => {
-                if(document.getElementById('modalEdit').classList.contains('hidden') && document.getElementById('modalLink').classList.contains('hidden') && document.getElementById('modalAcc').classList.contains('hidden')) { 
+                if(document.getElementById('modalEdit').classList.contains('hidden') && document.getElementById('modalAcc').classList.contains('hidden')) { 
                     await fetchOrdersSilently(); 
                 }
             }, 10000);
@@ -369,7 +366,7 @@
             linksDb = await apiGet("/api/links"); if(!Array.isArray(linksDb)) linksDb = []; 
             accDb = await apiGet("/api/accounts"); if(!Array.isArray(accDb)) accDb = []; 
             
-            updateEmailDatalist(); 
+            updateSelectLists(); 
             renderLinksTree(); 
             renderAccTree(); 
             renderTrash();
@@ -378,11 +375,16 @@
             if(showManualToast) showToast("Dữ liệu đã cập nhật!", "success");
         }
 
-        function updateEmailDatalist() {
+        function updateSelectLists() {
             const eSet = new Set();
             ordersDb.forEach(o => { if(o.email) eSet.add(o.email); });
             linksDb.forEach(l => { if(l.email) eSet.add(l.email); });
-            document.getElementById('emailList').innerHTML = Array.from(eSet).map(e => `<option value="${e}">`).join('');
+            const arr = Array.from(eSet);
+            const html = `<option value="">-- Chọn Email Khách (Tùy chọn) --</option>` + arr.map(e => `<option value="${e}">${e}</option>`).join('');
+            
+            // Render cho Ô Chọn bằng Select để không bị xổ tràn lan
+            const el1 = document.getElementById('lkEmail'); if(el1) el1.innerHTML = html;
+            const el2 = document.getElementById('acClientEmail'); if(el2) el2.innerHTML = html;
         }
 
         async function fetchOrdersSilently() {
@@ -395,22 +397,22 @@
             const tbody = document.getElementById('orderTable'); tbody.innerHTML = '';
             ordersDb.forEach((o, idx) => {
                 const stt = ordersDb.length - idx; 
-                let badge = o.status === 'pending' ? `<span class="bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-yellow-200"><i class="fas fa-hourglass-half mr-1"></i> Chờ duyệt</span>` : (o.status === 'success' ? `<span class="bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-green-200"><i class="fas fa-check-circle mr-1"></i> Thành công</span>` : `<span class="bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-red-200"><i class="fas fa-times-circle mr-1"></i> Từ chối</span>`);
+                let badge = o.status === 'pending' ? `<span class="bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-yellow-200">Chờ duyệt</span>` : (o.status === 'success' ? `<span class="bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-green-200">Thành công</span>` : `<span class="bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-red-200">Từ chối</span>`);
                 let supportTag = o.needSupport ? `<span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded ml-2 font-bold uppercase border border-blue-200">Hỗ trợ</span>` : '';
                 let displayMethod = o.method || 'Ngân hàng Việt Nam';
                 if(displayMethod.includes('Bank') || displayMethod === 'Manual') displayMethod = 'Ngân hàng Việt Nam';
-                let zaloCopyBtn = o.zalo && o.zalo.toLowerCase() !== 'không' ? `<i class="fas fa-copy text-slate-400 hover:text-indigo-600 cursor-pointer ml-1" data-copy="${o.zalo}" onclick="copyText(this)" title="Copy SĐT Zalo"></i>` : '';
+                let zaloCopyBtn = o.zalo && o.zalo.toLowerCase() !== 'không' ? `<span class="copyable text-indigo-600" data-copy="${o.zalo}" onclick="copyText(this)">${o.zalo}</span>` : 'Không';
 
                 tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition">
                     <td class="p-4 text-center font-bold text-slate-400 text-xs">${stt}</td>
                     <td class="p-4 md:p-5 font-mono font-bold text-indigo-600"><span class="copyable" data-copy="${o.id}" onclick="copyText(this)">${o.id}</span></td>
-                    <td class="p-4 md:p-5"><p class="font-bold text-slate-800"><span class="copyable" data-copy="${o.email}" onclick="copyText(this)">${o.email}</span> ${supportTag}</p><p class="text-xs text-slate-500 mt-1"><i class="fas fa-credit-card mr-1"></i>${displayMethod} | Zalo: ${o.zalo || 'Không'} ${zaloCopyBtn}</p></td>
+                    <td class="p-4 md:p-5"><p class="font-bold text-slate-800"><span class="copyable" data-copy="${o.email}" onclick="copyText(this)">${o.email}</span> ${supportTag}</p><p class="text-xs text-slate-500 mt-1">Nguồn: ${displayMethod} | Zalo: ${zaloCopyBtn}</p></td>
                     <td class="p-4 md:p-5 font-bold text-slate-600 text-xs truncate max-w-[200px]">${o.pkg} <br><span class="text-indigo-500 text-[10px]">${o.expDate ? 'HSD: '+o.expDate : ''}</span></td>
                     <td class="p-4 md:p-5 text-center">${badge}</td>
                     <td class="p-4 md:p-5 text-center whitespace-nowrap">
                         <div class="flex items-center justify-center gap-2">
-                            <button onclick="openEditModal('${o.id}')" class="text-indigo-600 font-bold px-3 py-1.5 bg-indigo-50 rounded-lg text-xs md:text-sm hover:bg-indigo-100 transition">Sửa</button>
-                            <button onclick="deleteOrder('${o.id}')" class="text-red-500 font-bold px-3 py-1.5 bg-red-50 rounded-lg text-xs md:text-sm hover:bg-red-100 transition">Xóa</button>
+                            <button onclick="openEditModal('${o.id}')" class="text-indigo-600 font-bold px-3 py-1.5 bg-indigo-50 rounded-lg text-xs hover:bg-indigo-100 transition">Sửa</button>
+                            <button onclick="deleteOrder('${o.id}')" class="text-red-500 font-bold px-3 py-1.5 bg-red-50 rounded-lg text-xs hover:bg-red-100 transition">Xóa</button>
                         </div>
                     </td></tr>`;
             });
@@ -446,7 +448,6 @@
             o.info = document.getElementById('editLink').value; o.reason = document.getElementById('editReason').value; o.pkgName = selectedPkg.name; o.pkgData = selectedPkg.data; 
             const btn = event.target; const oldTxt = btn.innerText; btn.innerText = "ĐANG LƯU..."; btn.disabled = true;
             await apiPost("/api/orders", ordersDb); showToast("Đã đồng bộ đơn hàng!", "success");
-            // Gửi mail (Giữ nguyên)
             if(document.getElementById('sendMailCheck').checked && o.email) {
                 btn.innerText = "ĐANG BẮN EMAIL..."; let subject = "VPN Trinh Hg - Cập nhật đơn hàng"; let msg = "";
                 let contactBlock = `<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:15px; margin-top:20px; text-align:center;"><p style="margin:0 0 10px 0; color:#475569; font-size:13px; line-height:1.5;">Cần hỗ trợ? Đội ngũ của chúng tôi sẵn sàng 24/7</p><a href="https://zalo.me/0917678211" style="display:inline-block; background:#0ea5e9; color:white; padding:10px 16px; text-decoration:none; border-radius:6px; font-weight:bold; margin-bottom:5px; font-size:13px;">Nhắn tin qua Zalo</a></div>`;
@@ -484,7 +485,7 @@
             }
         }
 
-        // ======================== TAB LINK SUB TREE (MỚI) ========================
+        // ======================== TAB LINK SUB TREE (CẬP NHẬT) ========================
         function renderLinksTree() {
             const tree = document.getElementById('linksTree'); tree.innerHTML = '';
             const groups = {};
@@ -495,42 +496,45 @@
             for(let orig in groups) {
                 let html = `<div class="border-b border-slate-200">
                     <div class="bg-slate-50 p-3 font-bold text-slate-700 flex items-center border-l-4 border-indigo-500">
-                        <i class="fas fa-folder-open text-indigo-400 mr-2"></i> LINK GỐC: <span class="copyable ml-2 text-[11px] font-mono text-indigo-600" data-copy="${orig}" onclick="copyText(this)">${orig.substring(0,40)}...</span>
+                        <i class="fas fa-folder-open text-indigo-400 mr-2"></i> LINK GỐC: <span class="copyable ml-2 text-[11px] font-mono text-indigo-600" data-copy="${orig}" onclick="copyText(this)">${orig}</span>
                     </div><div class="pl-6 md:pl-10 divide-y divide-slate-100">`;
                 groups[orig].forEach(l => {
                     const isLocked = l.status === 'locked';
-                    const sttBadge = isLocked ? `<span class="bg-red-100 text-red-600 px-2 py-0.5 rounded text-[10px] uppercase ml-2">Bị Khóa</span>` : `<span class="bg-green-100 text-green-600 px-2 py-0.5 rounded text-[10px] uppercase ml-2">Active</span>`;
-                    const btnLock = `<button onclick="toggleLockLink('${l.id}')" class="px-2 py-1 ${isLocked?'bg-green-50 text-green-600':'bg-orange-50 text-orange-600'} rounded text-xs w-24"><i class="fas fa-power-off"></i> ${isLocked?'Mở Khóa':'Ngắt Mạng'}</button>`;
+                    const dotClass = isLocked ? 'text-red-500' : 'text-green-500';
+                    const btnLock = `<button onclick="toggleLockLink('${l.id}')" class="px-3 py-1.5 ${isLocked?'bg-green-50 text-green-600':'bg-orange-50 text-orange-600'} rounded-lg text-xs font-bold w-24"><i class="fas fa-power-off mr-1"></i> ${isLocked?'Mở Khóa':'Ngắt Mạng'}</button>`;
                     
-                    html += `<div class="flex flex-col md:flex-row md:items-center p-3 gap-2 hover:bg-slate-50 transition">
-                        <div class="w-full md:w-24 font-bold text-slate-800 text-xs">${l.machine || 'Máy #...'}</div>
-                        <div class="w-full md:w-48 text-slate-600 text-xs font-bold"><span class="copyable" data-copy="${l.email}" onclick="copyText(this)">${l.email || 'Trống'}</span> ${sttBadge}</div>
-                        <div class="flex-1 min-w-0 font-mono text-[11px] leading-relaxed">
-                            Link Ẩn: <span class="copyable text-blue-600" data-copy="${l.masked}" onclick="copyText(this)">Copy Link</span><br>
-                            Link Gist: ${l.gist ? `<span class="copyable text-purple-600" data-copy="${l.gist}" onclick="copyText(this)">Copy Gist</span>` : '<span class="text-slate-400 italic">Dùng bản cũ (Chưa gắn Gist)</span>'}
+                    html += `<div class="flex flex-col p-3 hover:bg-slate-50 transition">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i class="fas fa-circle ${dotClass} text-[8px]"></i>
+                            <div class="font-bold text-slate-800 text-sm">${l.machine || 'Máy #1'}</div>
+                            <div class="text-slate-600 text-sm font-bold ml-2"><span class="copyable" data-copy="${l.email}" onclick="copyText(this)">${l.email || 'Trống'}</span></div>
                         </div>
-                        <div class="flex gap-1 shrink-0 mt-2 md:mt-0">
-                            <button onclick="openLinkModal('${l.id}')" class="px-2 py-1 bg-indigo-50 text-indigo-600 rounded text-xs w-16 hover:bg-indigo-100"><i class="fas fa-pen"></i> Sửa</button>
+                        <div class="pl-4 font-mono text-[11px] leading-relaxed mb-2">
+                            <div class="text-purple-600 truncate mb-1">Gist: <span class="copyable" data-copy="${l.gist}" onclick="copyText(this)">${l.gist || '<span class="text-slate-400 italic">Trống</span>'}</span></div>
+                            <div class="text-blue-600 truncate">Ẩn: <span class="copyable font-bold" data-copy="${l.masked}" onclick="copyText(this)">${l.masked}</span></div>
+                        </div>
+                        <div class="flex gap-2 pl-4 shrink-0">
+                            <button onclick="editLinkData('${l.id}')" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 font-bold rounded-lg text-xs w-20 hover:bg-indigo-100"><i class="fas fa-pen mr-1"></i> Sửa</button>
                             ${btnLock}
-                            <button onclick="deleteLinkTemp('${l.id}')" class="px-2 py-1 bg-red-50 text-red-600 rounded text-xs w-16 hover:bg-red-100"><i class="fas fa-trash"></i> Xóa</button>
+                            <button onclick="deleteLinkTemp('${l.id}')" class="px-3 py-1.5 bg-red-50 text-red-600 font-bold rounded-lg text-xs w-20 hover:bg-red-100"><i class="fas fa-trash mr-1"></i> Xóa</button>
                         </div></div>`;
                 });
                 html += `</div></div>`; tree.innerHTML += html;
             }
         }
 
-        function openLinkModal(id) {
-            if(id) {
-                let l = linksDb.find(x => x.id === id); document.getElementById('lkId').value = l.id;
-                document.getElementById('lkOrig').value = l.orig; document.getElementById('lkGist').value = l.gist || '';
-                document.getElementById('lkEmail').value = l.email; document.getElementById('lkMachine').value = l.machine;
-                document.getElementById('mLinkTitle').innerText = "Sửa Link Sub";
-            } else {
-                document.getElementById('lkId').value = ''; document.getElementById('lkOrig').value = ''; document.getElementById('lkGist').value = '';
-                document.getElementById('lkEmail').value = ''; document.getElementById('lkMachine').value = '';
-                document.getElementById('mLinkTitle').innerText = "Tạo Link Sub Mới";
-            }
-            document.getElementById('modalLink').classList.remove('hidden');
+        function editLinkData(id) {
+            let l = linksDb.find(x => x.id === id); 
+            document.getElementById('lkId').value = l.id;
+            document.getElementById('lkOrig').value = l.orig; 
+            document.getElementById('lkGist').value = l.gist || '';
+            document.getElementById('lkEmail').value = l.email || ''; 
+            document.getElementById('lkMachine').value = l.machine || '';
+            window.scrollTo({ top: document.getElementById('tab-links').offsetTop - 50, behavior: 'smooth' });
+        }
+        function resetLinkForm() {
+            document.getElementById('lkId').value = ''; document.getElementById('lkOrig').value = ''; document.getElementById('lkGist').value = '';
+            document.getElementById('lkEmail').value = ''; document.getElementById('lkMachine').value = '';
         }
 
         async function saveLink() {
@@ -549,14 +553,14 @@
                 else masked = MY_PAGES_DOMAIN + "/v0/" + Math.random().toString(36).substr(2, 9);
             } catch(e) { return showToast("Link gốc sai định dạng!", "error"); }
 
-            if(id) { // Edit
+            if(id) {
                 let l = linksDb.find(x => x.id === id);
                 l.orig = orig; l.gist = gist; l.email = email; l.machine = machine;
-            } else { // Create
+            } else {
                 linksDb.unshift({ id: 'LK-'+Date.now(), orig, masked, gist, email, machine, status: 'active' });
             }
             await apiPost("/api/links", linksDb);
-            renderLinksTree(); updateEmailDatalist(); document.getElementById('modalLink').classList.add('hidden');
+            renderLinksTree(); updateEmailDatalist(); resetLinkForm();
             showToast("Đã Lưu Link!", "success");
         }
 
@@ -571,7 +575,7 @@
             }
         }
 
-        // ======================== TAB TÀI KHOẢN (MỚI) ========================
+        // ======================== TAB TÀI KHOẢN ========================
         function renderAccTree() {
             const tree = document.getElementById('accTree'); tree.innerHTML = '';
             const groups = {};
@@ -580,16 +584,16 @@
             for(let ce in groups) {
                 let html = `<div class="border-b border-slate-200"><div class="bg-indigo-50 p-3 font-bold text-indigo-700 border-l-4 border-indigo-500"><i class="fas fa-user-circle mr-2"></i> Khách hàng: <span class="copyable ml-1" data-copy="${ce}" onclick="copyText(this)">${ce}</span></div><div class="pl-6 md:pl-10 divide-y divide-slate-100">`;
                 groups[ce].forEach((a) => {
-                    html += `<div class="flex items-center justify-between p-3 hover:bg-slate-50">
-                        <div class="flex-1 font-mono text-sm">
+                    html += `<div class="flex flex-col md:flex-row md:items-center justify-between p-3 hover:bg-slate-50 gap-2">
+                        <div class="flex-1 font-mono text-sm leading-relaxed">
                             Mail Mua VPN: <span class="copyable font-bold text-slate-800" data-copy="${a.email}" onclick="copyText(this)">${a.email}</span><br>
-                            Pass: <span id="pass_${a.id}" data-pass="${a.pass}" class="text-red-500 font-bold ml-2">********</span> 
+                            Pass: <span id="pass_${a.id}" data-pass="${a.pass}" class="text-red-500 font-bold ml-1">********</span> 
                             <button onclick="togglePass('pass_${a.id}', this)" class="ml-2 text-slate-400 hover:text-slate-700"><i class="fas fa-eye"></i></button>
-                            <button onclick="copyText('${a.pass}')" class="ml-2 text-slate-400 hover:text-indigo-600"><i class="fas fa-copy"></i></button>
+                            <span class="copyable ml-2 text-indigo-600 font-bold text-[10px] uppercase" data-copy="${a.pass}" onclick="copyText(this)">[Copy]</span>
                         </div>
-                        <div class="flex gap-1">
-                            <button onclick="openAccModal('${a.id}')" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded text-xs hover:bg-indigo-100"><i class="fas fa-pen"></i></button>
-                            <button onclick="deleteAcc('${a.id}')" class="px-3 py-1.5 bg-red-50 text-red-600 rounded text-xs hover:bg-red-100"><i class="fas fa-trash"></i></button>
+                        <div class="flex gap-2 shrink-0">
+                            <button onclick="openAccModal('${a.id}')" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 font-bold rounded-lg text-xs hover:bg-indigo-100"><i class="fas fa-pen"></i></button>
+                            <button onclick="deleteAcc('${a.id}')" class="px-3 py-1.5 bg-red-50 text-red-600 font-bold rounded-lg text-xs hover:bg-red-100"><i class="fas fa-trash"></i></button>
                         </div></div>`;
                 });
                 html += `</div></div>`; tree.innerHTML += html;
@@ -599,11 +603,13 @@
         function openAccModal(id) {
             if(id) {
                 let a = accDb.find(x => x.id === id); document.getElementById('acId').value = a.id;
-                document.getElementById('acClientEmail').value = a.cEmail; document.getElementById('acEmail').value = a.email; document.getElementById('acPass').value = a.pass;
-                document.getElementById('mAccTitle').innerText = "Sửa Tài Khoản";
+                // Nếu option ko có trong select, tạo tạm một cái
+                let sel = document.getElementById('acClientEmail');
+                if(!Array.from(sel.options).some(o=>o.value===a.cEmail)) { sel.innerHTML += `<option value="${a.cEmail}">${a.cEmail}</option>`; }
+                sel.value = a.cEmail; 
+                document.getElementById('acEmail').value = a.email; document.getElementById('acPass').value = a.pass;
             } else {
                 document.getElementById('acId').value = ''; document.getElementById('acClientEmail').value = ''; document.getElementById('acEmail').value = ''; document.getElementById('acPass').value = '';
-                document.getElementById('mAccTitle').innerText = "Thêm Tài Khoản Mới";
             }
             document.getElementById('modalAcc').classList.remove('hidden');
         }
@@ -619,12 +625,13 @@
             if(confirm('Xóa tài khoản này?')) { accDb = accDb.filter(x => x.id !== id); await apiPost("/api/accounts", accDb); renderAccTree(); showToast("Đã xóa!", "info"); }
         }
 
-        // ======================== TAB THÙNG RÁC (MỚI) ========================
+        // ======================== TAB THÙNG RÁC ========================
         function renderTrash() {
             const tbody = document.getElementById('trashTable'); tbody.innerHTML = '';
             linksDb.filter(l => l.status === 'soft_deleted').forEach(l => {
                 tbody.innerHTML += `<tr class="border-b bg-red-50">
-                    <td class="p-4 text-xs font-bold text-red-700">${l.email||'Trống'} <br><span class="text-slate-500">${l.machine||'Máy #...'}</span></td>
+                    <td class="p-4 text-xs font-bold text-red-700"><span class="copyable" data-copy="${l.email}" onclick="copyText(this)">${l.email||'Trống'}</span> <br><span class="text-slate-500">${l.machine||'Máy #...'}</span></td>
+                    <td class="p-4 text-[10px] font-mono"><span class="copyable text-blue-600" data-copy="${l.masked}" onclick="copyText(this)">${l.masked}</span></td>
                     <td class="p-4 text-center"><button onclick="restoreLink('${l.id}')" class="bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-green-700 shadow-sm"><i class="fas fa-undo mr-1"></i> Khôi phục</button></td>
                 </tr>`;
             });
