@@ -14,26 +14,25 @@
         .view-section.active { display: block; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* HIỆU ỨNG NHỊP TIM (HEARTBEAT SVG) TRÊN 1 DÒNG */
-        @keyframes drawEcg { 0% { stroke-dashoffset: 500; } 100% { stroke-dashoffset: 0; } }
-        .ecg-line { stroke-dasharray: 500; stroke-dashoffset: 500; animation: drawEcg 2s linear infinite; }
+        /* HIỆU ỨNG NHỊP TIM (HEARTBEAT SVG MỚI) Tĩnh, đập y khoa */
+        @keyframes heartbeat {
+            0% { stroke-dashoffset: 200; }
+            100% { stroke-dashoffset: 0; }
+        }
+        .ecg-line {
+            stroke-dasharray: 200;
+            stroke-dashoffset: 200;
+            animation: heartbeat 3.5s infinite linear;
+        }
         
         /* NHỊP TIM CHẾT (FLATLINE) */
         .flatline-container { position: relative; width: 100%; height: 2px; background-color: #ef4444; box-shadow: 0 0 10px #ef4444; }
-        .flatline-glow { position: absolute; width: 50%; height: 100%; background-color: white; opacity: 0.8; animation: flatlineGlow 2s linear infinite; }
-        @keyframes flatlineGlow { 0% { left: -50%; } 100% { left: 100%; } }
+        .flatline-glow { position: absolute; width: 30%; height: 100%; background-color: white; opacity: 0.8; animation: flatlineGlow 2.5s linear infinite; }
+        @keyframes flatlineGlow { 0% { left: -30%; } 100% { left: 100%; } }
 
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
-        @keyframes borderPulse { 0% { border-color: #fde047; box-shadow: 0 0 0 0 rgba(253, 224, 71, 0.7); } 70% { border-color: #eab308; box-shadow: 0 0 0 10px rgba(253, 224, 71, 0); } 100% { border-color: #fde047; box-shadow: 0 0 0 0 rgba(253, 224, 71, 0); } }
-        .highlight-copy { animation: borderPulse 2s infinite; background-color: #fef08a; color: #713f12; }
-        @keyframes btnHeartbeatPulse { 0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.6); transform: scale(1); } 50% { box-shadow: 0 0 0 12px rgba(22, 163, 74, 0); transform: scale(1.02); } 100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); transform: scale(1); } }
-        .btn-heartbeat { animation: btnHeartbeatPulse 1.5s infinite; }
-
-        .pkg-filters::-webkit-scrollbar { height: 0px; }
-        .pkg-filters { scrollbar-width: none; }
-        #mainNav { transition: transform 0.3s ease-in-out; box-shadow: 0 4px 20px -10px rgba(0,0,0,0.1); }
-        .nav-hidden { transform: translateY(-100%); }
+        
         .portal-tab-content { display: none; animation: fadeUp 0.3s ease forwards; }
         .portal-tab-content.active { display: block; }
         
@@ -46,6 +45,7 @@
         /* COPY KHÔNG GIÃN NHẢY CODE */
         .copyable { cursor: pointer; transition: color 0.1s; position: relative; }
         .copyable:hover { color: #4f46e5; text-decoration: underline; text-decoration-style: dotted;}
+        .pkg-filters::-webkit-scrollbar { height: 0px; } .pkg-filters { scrollbar-width: none; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative w-full overflow-x-hidden">
@@ -60,7 +60,7 @@
     <nav id="mainNav" class="glass-ui fixed top-0 w-full z-[70] border-b border-slate-200 py-3 transition-transform duration-300 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 w-full flex flex-col md:flex-row gap-4 items-center justify-between transition-all duration-500">
             
-            <div class="w-full md:w-auto shrink-0 flex justify-between items-center md:mr-4">
+            <div class="w-full md:w-auto shrink-0 flex justify-between items-center pr-2 md:pr-4">
                 <div class="font-extrabold text-xl md:text-2xl tracking-tighter cursor-pointer flex items-center text-indigo-700" onclick="logout()">
                     <span data-i18n="brand">VPN Trinh Hg</span>
                 </div>
@@ -70,14 +70,14 @@
             </div>
             
             <div id="centerNavContainer" class="flex-1 flex flex-col md:flex-row items-center justify-center w-full transition-all duration-500">
-                <div id="searchAndTabsWrapper" class="flex w-full items-center justify-center transition-all duration-500 gap-4">
+                <div id="searchAndTabsWrapper" class="flex w-full items-center justify-center transition-all duration-500 gap-2 md:gap-4">
                     
                     <div class="flex-1 relative shadow-sm transition-all duration-500 w-full">
                         <input type="text" id="loginInput" onkeyup="if(event.key==='Enter') login()" class="w-full bg-white border-2 border-indigo-100 rounded-full pl-5 pr-12 py-2.5 text-sm outline-none font-bold text-slate-700 focus:border-indigo-400 focus:shadow-md transition-all" data-i18n-placeholder="search_placeholder" placeholder="Nhập Mã Đơn hoặc Email...">
                         <button onclick="login()" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-indigo-600 rounded-full text-white hover:bg-indigo-700 flex items-center justify-center transition"><i class="fas fa-search text-xs"></i></button>
                     </div>
                     
-                    <div id="desktopPortalNav" class="hidden items-center shrink-0 transition-all duration-500 opacity-0 w-0 whitespace-nowrap md:ml-4 gap-2">
+                    <div id="desktopPortalNav" class="hidden items-center shrink-0 transition-all duration-500 opacity-0 w-0 whitespace-nowrap pl-2 md:pl-4 border-l border-slate-200 gap-1 md:gap-2">
                         <button onclick="switchPortalTab('p-home')" class="btn-nav-p-home desktop-tab-btn px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-tv mr-2"></i><span data-i18n="tab_p_home">Trang chủ</span></button>
                         <button onclick="switchPortalTab('p-store')" class="btn-nav-p-store desktop-tab-btn px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-shopping-cart mr-2"></i><span data-i18n="tab_p_store">Cửa hàng</span></button>
                         <button onclick="switchPortalTab('p-guide')" class="btn-nav-p-guide desktop-tab-btn px-4 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center"><i class="fas fa-book mr-2"></i><span data-i18n="tab_p_guide">Hướng dẫn</span></button>
@@ -85,7 +85,7 @@
                 </div>
             </div>
 
-            <div class="hidden md:flex items-center justify-end shrink-0 md:ml-4 gap-3">
+            <div class="hidden md:flex items-center justify-end shrink-0 pl-2 md:pl-4 gap-3">
                 <select id="langSelectDesktop" onchange="changeLanguage(this.value)" class="bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-xl px-3 py-2 text-sm font-bold outline-none cursor-pointer">
                     <option value="vi">VN - Tiếng Việt</option><option value="en">EN - English</option><option value="zh">CN - 中文</option>
                 </select>
@@ -121,25 +121,25 @@
                     <div id="portalContentSuccess" class="hidden w-full">
                         <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 md:p-6 mb-6 shadow-sm flex flex-col w-full">
                             
-                            <div class="flex items-center justify-between w-full mb-6 gap-3 md:gap-6 bg-slate-800 p-3 md:p-4 rounded-2xl shadow-inner relative overflow-hidden">
-                                <div class="shrink-0 z-10 text-center bg-white px-4 py-2.5 rounded-xl shadow-md border-b-2 border-indigo-500">
+                            <div class="flex items-center justify-between w-full mb-6 gap-3 md:gap-6 bg-white p-3 md:p-4 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
+                                <div class="shrink-0 z-10 text-center bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-200">
                                     <p class="text-[10px] md:text-xs text-slate-500 uppercase font-black mb-0.5" data-i18n="order_id_label">Mã Đơn</p>
-                                    <p id="portalOrderId" class="text-indigo-600 font-mono font-black text-sm md:text-base uppercase copyable" data-copy="" onclick="copyText(this)"></p>
+                                    <p id="portalOrderId" class="text-indigo-600 font-mono font-black text-sm md:text-base uppercase copyable" onclick="copyText(this)"></p>
                                 </div>
 
-                                <div class="flex-1 flex flex-col items-center justify-center h-[40px] md:h-[50px] relative w-full">
-                                    <div id="heartbeatActive" class="w-full h-full text-green-400 opacity-80 mt-2 absolute inset-0">
-                                        <svg class="w-full h-full" viewBox="0 0 500 40" preserveAspectRatio="none">
-                                            <polyline points="0,20 200,20 210,5 220,35 230,20 350,20 360,5 370,35 380,20 500,20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="ecg-line"/>
+                                <div class="flex-1 flex flex-col items-center justify-center h-[40px] md:h-[50px] relative w-full overflow-hidden">
+                                    <div id="heartbeatActive" class="w-full h-full text-red-500 absolute inset-0">
+                                        <svg class="w-full h-full" viewBox="0 0 200 40" preserveAspectRatio="none">
+                                            <polyline points="0,20 30,20 40,5 50,35 60,20 180,20 190,5 200,35 210,20 300,20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="ecg-line"/>
                                         </svg>
                                     </div>
-                                    <div id="heartbeatLocked" class="hidden w-full flex-col items-center justify-center h-full absolute inset-0 mt-1">
-                                        <p class="text-red-400 font-black text-[8px] md:text-[10px] lg:text-[11px] mb-2 z-10 bg-slate-800 px-2 uppercase tracking-widest whitespace-nowrap">Tài khoản bị khóa, liên hệ Zalo 0917678211</p>
-                                        <div class="flatline-container absolute top-1/2 transform -translate-y-1/2 w-full"><div class="flatline-glow"></div></div>
+                                    <div id="heartbeatLocked" class="hidden w-full flex-col items-center justify-center h-full absolute inset-0">
+                                        <p class="text-red-500 font-black text-[9px] md:text-[11px] mb-2 z-10 bg-white px-2 uppercase tracking-widest whitespace-nowrap">Tài khoản bị khóa, liên hệ Zalo 0917678211</p>
+                                        <div class="flatline-container absolute top-[60%] transform -translate-y-1/2 w-full"><div class="flatline-glow"></div></div>
                                     </div>
                                 </div>
 
-                                <button onclick="switchPortalTab('p-store')" class="bg-indigo-600 text-white hover:bg-indigo-700 font-black py-3 px-5 md:px-6 rounded-xl transition text-[10px] md:text-xs flex items-center justify-center shrink-0 shadow-lg z-10 uppercase tracking-widest"><i class="fas fa-redo-alt md:mr-2"></i> <span class="hidden md:inline" data-i18n="btn_renew">Gia hạn</span></button>
+                                <button onclick="switchPortalTab('p-store')" class="bg-indigo-600 text-white hover:bg-indigo-700 font-black py-3 px-5 md:px-6 rounded-xl transition text-[10px] md:text-xs flex flex-col md:flex-row items-center justify-center shrink-0 shadow-sm z-10 uppercase tracking-widest"><i class="fas fa-redo-alt md:mr-2 mb-1 md:mb-0"></i> <span data-i18n="btn_renew">Gia hạn</span></button>
                             </div>
 
                             <div class="w-full">
@@ -155,7 +155,20 @@
                 </div>
 
                 <div class="flex justify-center mt-6 mb-8 w-full">
-                    <button onclick="switchPortalTab('p-guide')" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-black py-3.5 px-6 rounded-full shadow-[0_4px_15px_rgba(79,70,229,0.4)] hover:scale-105 transition-transform flex items-center gap-2 text-xs md:text-sm whitespace-normal text-center max-w-[90vw]"><i class="fas fa-question-circle text-lg"></i> <span data-i18n="btn_watch_guide">Chưa biết sử dụng? Xem hướng dẫn ngay thôi nào!</span></button>
+                    <button onclick="switchPortalTab('p-guide')" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-black py-3 px-6 rounded-full shadow-[0_4px_15px_rgba(79,70,229,0.4)] hover:scale-105 transition-transform flex items-center gap-2 text-xs md:text-sm whitespace-normal text-center max-w-[90vw]"><i class="fas fa-question-circle text-lg"></i> <span data-i18n="btn_watch_guide">Chưa biết sử dụng? Xem hướng dẫn ngay thôi nào!</span></button>
+                </div>
+
+                <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-6 md:p-8 mb-8 text-white shadow-lg text-center md:text-left flex flex-col md:flex-row items-center gap-6 w-full">
+                    <div class="flex-1">
+                        <h3 class="text-xl md:text-3xl font-black mb-3 leading-tight" data-i18n="promo_title">🚀 Chơi Game & Lướt Mạng Không Giới Hạn!</h3>
+                        <p class="text-sm md:text-base font-medium leading-relaxed opacity-90" data-i18n="promo_desc">Hỗ trợ mượt mà: <b class="text-yellow-300">TikTok, Facebook, Messenger, Threads, Instagram, Zalo, YouTube...</b><br>Tối ưu ping cực thấp cho: <b class="text-green-300">Liên Quân Mobile (VN), Genshin Impact...</b></p>
+                    </div>
+                    <i class="fas fa-rocket text-6xl opacity-80 hidden md:block"></i>
+                </div>
+
+                <div class="mt-12 mb-4 w-full">
+                    <h3 class="text-xl md:text-2xl font-extrabold text-center mb-6 text-slate-800" data-i18n="faq_title">Câu hỏi thường gặp (FAQ)</h3>
+                    <div class="space-y-3" id="faqPortalHomeContainer"></div>
                 </div>
             </div>
 
@@ -179,10 +192,10 @@
                 <div class="bg-white p-4 md:p-8 rounded-2xl md:rounded-3xl mb-8 border border-slate-200 shadow-sm overflow-hidden w-full">
                     <h2 class="text-xl md:text-2xl font-extrabold text-slate-800 mb-6 border-b border-slate-100 pb-4"><i class="fas fa-book-open text-indigo-500 mr-2"></i> Hướng dẫn Cài đặt</h2>
                     <div class="flex flex-wrap gap-2 mb-6 justify-center w-full">
-                        <button onclick="showGuide('android')" id="btn-dev-android" class="dev-btn bg-white border-2 border-slate-200 px-5 py-2.5 rounded-xl font-bold flex items-center text-xs md:text-sm shadow-sm transition"><i class="fab fa-android text-green-500 text-lg mr-2"></i> Android</button>
-                        <button onclick="showGuide('windows')" id="btn-dev-windows" class="dev-btn bg-white border-2 border-slate-200 px-5 py-2.5 rounded-xl font-bold text-slate-600 flex items-center text-xs md:text-sm shadow-sm hover:bg-slate-50 transition"><i class="fab fa-windows text-blue-500 text-lg mr-2"></i> Windows</button>
-                        <button onclick="showGuide('macos')" id="btn-dev-macos" class="dev-btn bg-white border-2 border-slate-200 px-5 py-2.5 rounded-xl font-bold text-slate-600 flex items-center text-xs md:text-sm shadow-sm hover:bg-slate-50 transition"><i class="fab fa-apple text-slate-800 text-lg mr-2"></i> MacOS</button>
-                        <button onclick="showGuide('ios')" id="btn-dev-ios" class="dev-btn bg-white border-2 border-slate-200 px-5 py-2.5 rounded-xl font-bold text-slate-600 flex items-center text-xs md:text-sm shadow-sm hover:bg-slate-50 transition"><i class="fab fa-app-store-ios text-blue-400 text-lg mr-2"></i> iOS</button>
+                        <button onclick="showGuide('android')" id="btn-dev-android" class="dev-btn bg-white border border-slate-200 px-5 py-2.5 rounded-xl font-bold flex items-center text-xs md:text-sm shadow-sm transition"><i class="fab fa-android text-green-500 text-lg mr-2"></i> Android</button>
+                        <button onclick="showGuide('windows')" id="btn-dev-windows" class="dev-btn bg-white border border-slate-200 px-5 py-2.5 rounded-xl font-bold text-slate-600 flex items-center text-xs md:text-sm shadow-sm hover:bg-slate-50 transition"><i class="fab fa-windows text-blue-500 text-lg mr-2"></i> Windows</button>
+                        <button onclick="showGuide('macos')" id="btn-dev-macos" class="dev-btn bg-white border border-slate-200 px-5 py-2.5 rounded-xl font-bold text-slate-600 flex items-center text-xs md:text-sm shadow-sm hover:bg-slate-50 transition"><i class="fab fa-apple text-slate-800 text-lg mr-2"></i> MacOS</button>
+                        <button onclick="showGuide('ios')" id="btn-dev-ios" class="dev-btn bg-white border border-slate-200 px-5 py-2.5 rounded-xl font-bold text-slate-600 flex items-center text-xs md:text-sm shadow-sm hover:bg-slate-50 transition"><i class="fab fa-app-store-ios text-blue-400 text-lg mr-2"></i> iOS</button>
                     </div>
                     <div id="guideContent" class="hidden overflow-x-auto w-full max-w-full">
                         <div id="guideText" class="text-sm text-slate-800 w-full max-w-full overflow-hidden leading-relaxed font-medium"></div>
@@ -193,7 +206,7 @@
         </div>
 
         <div id="view-store" class="view-section active mb-20 w-full text-center mt-10 md:mt-16">
-            <h1 class="text-3xl md:text-5xl font-extrabold mb-3 text-slate-800 leading-tight" data-i18n="hero_title">Vượt rào cản. <span class="text-indigo-600">Kết nối thế giới.</span></h1>
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-4 text-slate-800 leading-tight" data-i18n="hero_title">Vượt rào cản.<br><span class="text-indigo-600">Kết nối thế giới.</span></h1>
             <p class="text-sm md:text-lg text-slate-600 font-medium px-4 mb-10 max-w-2xl mx-auto">Trải nghiệm mạng riêng ảo tốc độ cao. Vui lòng nhập Mã Đơn Hàng lên thanh tìm kiếm ở trên để vào Cổng Khách Hàng.</p>
             
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-10 w-full text-left">
@@ -373,12 +386,12 @@
                 db.unshift({ id: currentOrderId, email: document.getElementById('cusEmail').value, zalo: document.getElementById('cusZalo').value, method: 'Ngân hàng Việt Nam', pkgName: currentPackage.vi.name, pkgData: currentPackage.data, pkg: `${currentPackage.vi.name} (${cycleText}) - ${finalPriceStr} (${currentPackage.data})`, totalVnd: currentTotalVnd, needSupport: document.getElementById('needSupport').checked, status: 'pending', date: new Date().toLocaleString(), expDate: '', info: '' });
                 await apiPost("/api/orders", db);
 
-                // EMAIL BÁO ADMIN
+                // EMAIL BÁO ADMIN ĐƯỢC CHĂM CHÚT LẠI 1 LẦN NỮA
                 try {
                     await fetch(GOOGLE_MAIL_API, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
                         to: "lucastanora@gmail.com", subject: `[CÓ ĐƠN MỚI] ${currentOrderId} - Khách báo Đã CK`, 
                         html: `<div style="font-family:sans-serif; max-width:400px; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden;">
-                                <div style="background:#22c55e; padding:15px; text-align:center;"><h2 style="color:white; margin:0; font-size:18px;">💸 TING TING! KHÁCH ĐÃ CHUYỂN KHOẢN</h2></div>
+                                <div style="background:#22c55e; padding:15px; text-align:center;"><h2 style="color:white; margin:0; font-size:18px;">KHÁCH ĐÃ CHUYỂN KHOẢN!</h2></div>
                                 <div style="padding:20px; background:#f8fafc;">
                                     <p style="margin:5px 0; font-size:14px; color:#475569;">Mã Đơn:</p><p style="margin:0 0 15px 0; font-size:22px; font-weight:900; color:#0f172a;">${currentOrderId}</p>
                                     <p style="margin:5px 0; font-size:14px; color:#475569;">Gói Đăng Ký:</p><p style="margin:0 0 15px 0; font-size:16px; font-weight:bold; color:#4f46e5;">${currentPackage.vi.name} (${cycleText}) | ${finalPriceStr}</p>
@@ -440,12 +453,10 @@
             if(!isAutoPoll && !isManualRefresh) switchPortalTab('p-home');
             updatePortalInfo(orderData);
 
-            // NẠP HƯỚNG DẪN TỪ API (CMS)
+            // NẠP HƯỚNG DẪN TỪ API (CMS) NGAY KHI ĐĂNG NHẬP THÀNH CÔNG
             if (orderData.status === 'success' || orderData.isLocked) {
                 cmsCache = await apiGet("/api/cms"); 
-                // Render sẵn guide Android vào container
-                document.getElementById('guideContent').classList.remove('hidden');
-                document.getElementById('guideText').innerHTML = cmsCache['android'] || "<p class='text-slate-500 italic'>Đang cập nhật hướng dẫn...</p>";
+                showGuide('android');
             }
             if(!isManualRefresh && !isAutoPoll) window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -476,7 +487,13 @@
             document.getElementById('btn-dev-' + dev).classList.remove('bg-white', 'text-slate-600');
             document.getElementById('btn-dev-' + dev).classList.add('active', 'border-indigo-500', 'bg-indigo-50', 'text-indigo-700');
             document.getElementById('guideContent').classList.remove('hidden');
-            document.getElementById('guideText').innerHTML = cmsCache[dev] || "<p class='text-slate-500 italic'>Đang cập nhật hướng dẫn...</p>";
+            
+            // Gán data CMS vào HTML
+            if(cmsCache && cmsCache[dev]) {
+                document.getElementById('guideText').innerHTML = cmsCache[dev];
+            } else {
+                document.getElementById('guideText').innerHTML = "<p class='text-slate-500 italic'>Đang cập nhật hướng dẫn...</p>";
+            }
         }
 
         window.onload = function() {
