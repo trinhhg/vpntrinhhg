@@ -12,11 +12,10 @@
         .glass-card { background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); border-radius: 1.5rem; }
         .dev-btn.active { border-color: #4f46e5; background-color: #e0e7ff; color: #4338ca; }
         
-        /* CLICK ĐỂ COPY - KHÔNG GIÃN BOX */
-        .copyable { cursor: pointer; transition: color 0.2s; position: relative; }
-        .copyable:hover { color: #4f46e5 !important; }
-        .copyable::after { content: "Copy"; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 10px; opacity: 0; pointer-events: none; transition: opacity 0.2s; white-space: nowrap; margin-bottom: 4px; z-index: 10;}
-        .copyable:hover::after { opacity: 1; }
+        /* CLICK ĐỂ COPY CHUẨN */
+        .copyable { cursor: pointer; transition: color 0.1s, background-color 0.1s; position: relative; border-radius: 4px;}
+        .copyable:hover { color: #4f46e5; text-decoration: underline; text-decoration-style: dotted;}
+        .copyable:active { background-color: #e0e7ff; }
 
         select option { padding: 8px; font-weight: 500; }
         .tree-node { border-radius: 12px; margin-bottom: 8px; }
@@ -175,7 +174,6 @@
     <div id="modalEdit" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="glass-card p-5 md:p-8 w-full max-w-2xl max-h-[95vh] overflow-y-auto">
             <h3 class="text-xl md:text-2xl font-bold mb-4" id="modalTitle">Chỉnh sửa Đơn Hàng</h3>
-            
             <div class="grid md:grid-cols-2 gap-3 mb-3">
                 <div>
                     <label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Mã Đơn</label>
@@ -186,42 +184,25 @@
                 </div>
                 <div><label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Email Khách</label><input type="text" id="editEmail" list="emailList" class="w-full p-2 text-sm border rounded-lg outline-none focus:border-indigo-500"></div>
             </div>
-
             <div class="grid grid-cols-3 gap-3 mb-3">
-                <div class="col-span-1">
-                    <label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Hết hạn</label>
-                    <input type="text" id="editExpDate" class="w-full p-2 text-sm border rounded-lg outline-none focus:border-indigo-500 text-center font-bold" placeholder="XX/XX/XXXX">
-                </div>
-                <div class="col-span-2">
-                    <label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Gói VPN</label>
-                    <select id="editPkg" class="w-full p-2 text-sm border rounded-lg font-bold text-indigo-700 bg-indigo-50 outline-none truncate"></select>
-                </div>
+                <div class="col-span-1"><label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Hết hạn</label><input type="text" id="editExpDate" class="w-full p-2 text-sm border rounded-lg outline-none focus:border-indigo-500 text-center font-bold" placeholder="XX/XX/XXXX"></div>
+                <div class="col-span-2"><label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Gói VPN</label><select id="editPkg" class="w-full p-2 text-sm border rounded-lg font-bold text-indigo-700 bg-indigo-50 outline-none truncate"></select></div>
             </div>
-
             <div class="mb-4">
                 <label class="block font-bold text-xs md:text-sm mb-1 text-slate-600">Trạng Thái Đơn</label>
                 <select id="editStatus" class="w-full p-2.5 text-sm border rounded-lg font-bold outline-none" onchange="toggleStatusFields()">
-                    <option value="pending">⏳ Chờ duyệt (Pending)</option>
-                    <option value="success">✅ Kích hoạt Thành công</option>
-                    <option value="failed">❌ Bị Từ chối / Lỗi</option>
+                    <option value="pending">⏳ Chờ duyệt (Pending)</option><option value="success">✅ Kích hoạt Thành công</option><option value="failed">❌ Bị Từ chối / Lỗi</option>
                 </select>
             </div>
-
             <div id="fieldSuccess" class="hidden mb-4 p-4 border-2 border-dashed border-green-500 bg-green-50 rounded-lg">
                 <label class="block font-bold text-xs md:text-sm mb-1 text-green-700">Link Đăng Ký (Subscription URL)</label>
                 <input type="text" id="editLink" class="w-full p-2.5 text-sm border border-green-300 bg-white rounded-lg font-mono outline-none shadow-inner" placeholder="Dán link VPN vào đây...">
             </div>
-
             <div id="fieldFailed" class="hidden mb-4 p-3 border-l-4 border-red-500 bg-red-50 rounded-r-lg">
                 <label class="block font-bold text-xs md:text-sm mb-1 text-red-700">Lý do từ chối</label>
                 <input type="text" id="editReason" class="w-full p-2 text-sm border border-red-200 bg-white rounded-lg outline-none" placeholder="Ví dụ: Chưa nhận được tiền...">
             </div>
-
-            <div class="flex items-center mb-5 bg-slate-50 border border-slate-200 p-2.5 rounded-lg">
-                <input type="checkbox" id="sendMailCheck" class="w-4 h-4 mr-3 accent-indigo-600" checked>
-                <label for="sendMailCheck" class="font-bold text-xs md:text-sm text-slate-700">Gửi Email thông báo trạng thái cho khách</label>
-            </div>
-
+            <div class="flex items-center mb-5 bg-slate-50 border border-slate-200 p-2.5 rounded-lg"><input type="checkbox" id="sendMailCheck" class="w-4 h-4 mr-3 accent-indigo-600" checked><label for="sendMailCheck" class="font-bold text-xs md:text-sm text-slate-700">Gửi Email thông báo trạng thái cho khách</label></div>
             <div class="flex gap-2">
                 <button onclick="saveOrderToCloud()" class="flex-1 bg-indigo-600 text-white font-bold py-2.5 rounded-lg hover:bg-indigo-700 transition text-sm shadow-md"><i class="fas fa-save mr-2"></i>LƯU</button>
                 <button onclick="document.getElementById('modalEdit').classList.add('hidden')" class="bg-slate-200 text-slate-700 font-bold py-2.5 px-6 rounded-lg hover:bg-slate-300 text-sm"><i class="fas fa-times mr-2"></i>Hủy</button>
@@ -268,8 +249,7 @@
             { id: 'c3', name: "Gói 1 Năm", priceVnd: "710.000đ", priceCny: "¥177.5", data: "200GB/tháng" },
             { id: 'd1', name: "Không Giới Hạn", priceVnd: "70.000đ", priceCny: "¥17.5", data: "200GB" },
             { id: 'd2', name: "Không Giới Hạn", priceVnd: "200.000đ", priceCny: "¥50", data: "2000GB" },
-            { id: 'd3', name: "Không Giới Hạn", priceVnd: "710.000đ", priceCny: "¥177.5", data: "6000GB" },
-            { id: 'custom', name: "Gói Tùy Chọn", priceVnd: "Liên hệ Admin", priceCny: "0", data: "Tuỳ chọn" }
+            { id: 'd3', name: "Không Giới Hạn", priceVnd: "710.000đ", priceCny: "¥177.5", data: "6000GB" }
         ];
 
         function getPackageDisplayText(pkg) { return `${pkg.name} - ${pkg.priceVnd} / ${pkg.priceCny} (${pkg.data})`; }
@@ -286,7 +266,7 @@
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // HÀM COPY ĐA NĂNG (CLICK VÀO TEXT ĐỂ COPY)
+        // HÀM COPY ĐA NĂNG
         function copyText(element) {
             let txt = '';
             if (typeof element === 'string') txt = element;
@@ -445,7 +425,6 @@
             document.getElementById('fieldFailed').classList.toggle('hidden', s !== 'failed');
         }
 
-        // EMAIL TEMPLATE ADMIN TO CLIENT (THÔNG BÁO TRẠNG THÁI)
         async function saveOrderToCloud() {
             const originalId = document.getElementById('editId').value.trim();
             if(!originalId) return showToast("Mã đơn không được rỗng!", "error");
@@ -493,7 +472,6 @@
             }
             btn.innerText = oldTxt; btn.disabled = false; renderOrders(); document.getElementById('modalEdit').classList.add('hidden');
         }
-
         async function deleteOrder(id) { if(confirm('Xóa vĩnh viễn đơn ' + id + '?')) { ordersDb = ordersDb.filter(x => x.id !== id); await apiPost("/api/orders", ordersDb); renderOrders(); showToast("Đã xóa vĩnh viễn!", "info"); } }
         function parseDateString(dateString) { if (!dateString) return null; const parts = dateString.split('/'); if (parts.length >= 3) { return new Date(`${parts[2]}-${parts[1]}-${parts[0]}T23:59:59`); } return null; }
         function renderExpTable() {
@@ -517,16 +495,21 @@
             });
 
             for(let orig in groups) {
+                // Xác định Link Gist chung của Cụm (lấy của node đầu tiên nếu có)
+                const firstGist = groups[orig].find(x => x.gist)?.gist || '';
+                const gistDisplay = firstGist ? `<div class="mt-1 flex items-center text-purple-600 text-[10px]"><span class="w-16 font-sans font-bold text-slate-500">Link Gist:</span><span class="copyable font-mono truncate bg-white px-2 py-0.5 rounded border border-purple-100 ml-2" data-copy="${firstGist}" onclick="copyText(this)">${firstGist}</span></div>` : '';
+
                 let html = `<div class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-6 overflow-hidden">
-                    <div class="bg-slate-50 p-4 font-bold text-slate-700 flex flex-col md:flex-row md:items-center border-b border-slate-200 gap-2">
-                        <div class="flex items-center text-indigo-600 uppercase text-xs tracking-wider"><i class="fas fa-network-wired mr-2"></i> Cụm Server Gốc</div>
-                        <span class="copyable text-xs font-mono text-slate-500 md:ml-4 truncate bg-white px-3 py-1.5 rounded-lg border border-slate-200" data-copy="${orig}" onclick="copyText(this)">${orig}</span>
-                    </div><div class="p-2 space-y-2">`;
+                    <div class="bg-slate-50 p-4 font-bold text-slate-700 flex flex-col justify-center border-b border-slate-200 gap-1">
+                        <div class="flex items-center text-indigo-600 uppercase text-xs tracking-wider mb-1"><i class="fas fa-network-wired mr-2"></i> Cụm Server Gốc</div>
+                        <div class="flex items-center text-[10px]"><span class="w-16 font-sans font-bold text-slate-500">Link Gốc:</span><span class="copyable font-mono truncate bg-white px-2 py-0.5 rounded border border-slate-200 ml-2" data-copy="${orig}" onclick="copyText(this)">${orig}</span></div>
+                        ${gistDisplay}
+                    </div><div class="p-3 space-y-3">`;
                 
                 groups[orig].forEach(l => {
                     const isLocked = l.status === 'locked';
                     const dotClass = isLocked ? 'text-red-500' : 'text-green-500';
-                    const btnLock = `<button onclick="toggleLockLink('${l.id}')" class="px-4 py-2 ${isLocked?'bg-green-50 text-green-600 hover:bg-green-100':'bg-orange-50 text-orange-600 hover:bg-orange-100'} rounded-xl text-xs font-bold transition shadow-sm w-full md:w-auto whitespace-nowrap"><i class="fas fa-power-off mr-1"></i> ${isLocked?'Mở Khóa':'Ngắt Mạng'}</button>`;
+                    const btnLock = `<button onclick="toggleLockLink('${l.id}')" class="px-4 py-2 ${isLocked?'bg-green-50 text-green-600 hover:bg-green-100':'bg-orange-50 text-orange-600 hover:bg-orange-100'} rounded-xl text-xs font-bold transition shadow-sm w-full md:w-auto whitespace-nowrap"><i class="fas fa-power-off md:mr-1"></i> <span class="md:inline hidden">${isLocked?'Mở Khóa':'Ngắt Mạng'}</span></button>`;
                     
                     html += `<div class="tree-node border border-slate-100 flex flex-col md:flex-row md:items-center justify-between p-4 hover:bg-slate-50 transition gap-4 bg-white shadow-sm">
                         <div class="flex-1">
@@ -535,12 +518,11 @@
                                 <span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-md text-[10px] font-black tracking-wide">${l.machine || 'Máy #1'}</span>
                                 <div class="text-slate-800 text-sm font-bold ml-1"><span class="copyable" data-copy="${l.email}" onclick="copyText(this)">${l.email || 'Trống'}</span></div>
                             </div>
-                            <div class="font-mono text-xs leading-relaxed space-y-1.5">
-                                <div class="text-blue-600 truncate flex items-center bg-blue-50/50 px-2 py-1 rounded"><span class="w-10 text-slate-400 font-sans font-bold">Ẩn:</span><span class="copyable font-bold truncate" data-copy="${l.masked}" onclick="copyText(this)">${l.masked}</span></div>
-                                ${l.gist ? `<div class="text-purple-600 truncate flex items-center bg-purple-50/50 px-2 py-1 rounded"><span class="w-10 text-slate-400 font-sans font-bold">Gist:</span><span class="copyable truncate" data-copy="${l.gist}" onclick="copyText(this)">${l.gist}</span></div>` : ''}
+                            <div class="font-mono text-xs leading-relaxed space-y-1.5 mt-2">
+                                <div class="text-blue-600 truncate flex items-center bg-blue-50/50 px-2 py-1.5 rounded w-fit max-w-full"><span class="w-12 text-slate-500 font-sans font-bold text-[10px] uppercase">Link Ẩn:</span><span class="copyable font-bold truncate text-[11px]" data-copy="${l.masked}" onclick="copyText(this)">${l.masked}</span></div>
                             </div>
                         </div>
-                        <div class="flex gap-2 shrink-0 w-full md:w-auto mt-2 md:mt-0 justify-end">
+                        <div class="flex gap-2 shrink-0 w-full md:w-auto mt-2 md:mt-0 justify-end md:justify-start">
                             <button onclick="editLinkData('${l.id}')" class="flex-1 md:flex-none px-4 py-2 bg-indigo-50 text-indigo-600 font-bold rounded-xl text-xs hover:bg-indigo-100 transition shadow-sm"><i class="fas fa-pen md:mr-1"></i> <span class="md:inline hidden">Sửa</span></button>
                             ${btnLock}
                             <button onclick="deleteLinkTemp('${l.id}')" class="flex-1 md:flex-none px-4 py-2 bg-red-50 text-red-600 font-bold rounded-xl text-xs hover:bg-red-100 transition shadow-sm"><i class="fas fa-trash md:mr-1"></i> <span class="md:inline hidden">Xóa</span></button>
@@ -590,8 +572,8 @@
             for(let ce in groups) {
                 let html = `<div class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-6 overflow-hidden">
                     <div class="bg-indigo-50 p-4 font-bold text-slate-700 flex items-center border-b border-slate-200">
-                        <i class="fas fa-user-circle text-indigo-500 mr-2 text-lg"></i> <span class="uppercase text-xs tracking-wider">Khách Hàng:</span> <span class="copyable ml-2 text-sm font-bold text-indigo-700 bg-white px-3 py-1 rounded-lg shadow-sm" data-copy="${ce}" onclick="copyText(this)">${ce}</span>
-                    </div><div class="p-2 space-y-2">`;
+                        <i class="fas fa-user-circle text-indigo-500 mr-2 text-lg"></i> <span class="uppercase text-xs tracking-wider">Khách Hàng:</span> <span class="copyable ml-2 text-sm font-bold text-indigo-700 bg-white px-3 py-1 rounded-lg shadow-sm border border-slate-100" data-copy="${ce}" onclick="copyText(this)">${ce}</span>
+                    </div><div class="p-3 space-y-3">`;
                 groups[ce].forEach((a) => {
                     html += `<div class="tree-node border border-slate-100 flex flex-col md:flex-row md:items-center justify-between p-4 hover:bg-slate-50 transition gap-4 bg-white shadow-sm">
                         <div class="flex-1 font-mono text-sm leading-relaxed space-y-2">
@@ -600,7 +582,7 @@
                             <button onclick="togglePass('pass_${a.id}', this)" class="ml-2 text-slate-500 hover:text-indigo-600 bg-white border border-slate-200 w-8 h-8 rounded-lg flex items-center justify-center transition shadow-sm"><i class="fas fa-eye"></i></button>
                             <button class="copyable ml-2 text-indigo-600 font-bold text-[10px] uppercase bg-indigo-50 px-3 py-2 rounded-lg hover:bg-indigo-100 transition shadow-sm border border-indigo-100" data-copy="${a.pass}" onclick="copyText(this)">Copy</button></div>
                         </div>
-                        <div class="flex gap-2 shrink-0 w-full md:w-auto mt-2 md:mt-0 justify-end">
+                        <div class="flex gap-2 shrink-0 w-full md:w-auto mt-2 md:mt-0 justify-end md:justify-start">
                             <button onclick="openAccModal('${a.id}')" class="flex-1 md:flex-none px-4 py-2 bg-indigo-50 text-indigo-600 font-bold rounded-xl text-xs hover:bg-indigo-100 transition shadow-sm"><i class="fas fa-pen md:mr-1"></i> <span class="md:inline hidden">Sửa</span></button>
                             <button onclick="deleteAcc('${a.id}')" class="flex-1 md:flex-none px-4 py-2 bg-red-50 text-red-600 font-bold rounded-xl text-xs hover:bg-red-100 transition shadow-sm"><i class="fas fa-trash md:mr-1"></i> <span class="md:inline hidden">Xóa</span></button>
                         </div></div>`;
@@ -656,7 +638,6 @@
             const startPos = box.selectionStart; const endPos = box.selectionEnd; box.value = box.value.substring(0, startPos) + str + box.value.substring(endPos, box.value.length); box.selectionStart = startPos + str.length; box.selectionEnd = startPos + str.length; box.focus();
         }
         async function saveCmsToCloud() { cmsDb[currentCmsDevice] = document.getElementById('cmsGuide').value; const btn = event.target; const oldTxt = btn.innerText; btn.innerText = "ĐANG LƯU..."; btn.disabled = true; await apiPost("/api/cms", cmsDb); showToast('Đã lưu bài viết lên hệ thống Cloud!', "success"); btn.innerText = oldTxt; btn.disabled = false; }
-        
         function renderDevices() {
             const tbody = document.getElementById('devicesTable'); tbody.innerHTML = '';
             adminDevices.forEach((d) => { let isMe = d.id === myDeviceId ? '<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold ml-2">Bạn</span>' : ''; tbody.innerHTML += `<tr class="border-b hover:bg-slate-50 transition"><td class="p-4 font-mono font-bold text-indigo-600 text-xs">${d.id} ${isMe}</td><td class="p-4 text-xs text-slate-600 max-w-xs truncate">${d.userAgent}</td><td class="p-4 text-xs text-slate-500">${d.date}</td><td class="p-4 text-center whitespace-nowrap"><button onclick="removeDevice('${d.id}')" class="text-red-500 font-bold px-3 py-1.5 bg-red-50 rounded-lg text-xs hover:bg-red-100"><i class="fas fa-trash mr-1"></i>Xóa</button></td></tr>`; });
