@@ -1,3 +1,4 @@
+// v1.1 - Fix API sync bug & Update QR Alipay/Weixin UI - 2026-05-03
 <!DOCTYPE html>
 <html lang="vi" class="scroll-smooth">
 <head>
@@ -20,7 +21,6 @@
         @keyframes borderPulse { 0% { border-color: #fde047; box-shadow: 0 0 0 0 rgba(253, 224, 71, 0.7); } 70% { border-color: #eab308; box-shadow: 0 0 0 10px rgba(253, 224, 71, 0); } 100% { border-color: #fde047; box-shadow: 0 0 0 0 rgba(253, 224, 71, 0); } }
         .highlight-copy { animation: borderPulse 2s infinite; background-color: #fef08a; color: #713f12; }
 
-        /* Hiệu ứng Hào quang Đứng Im (Chữ đỏ đứng im, chỉ tỏa bóng viền) */
         @keyframes staticAura {
             0% { filter: drop-shadow(0 0 2px rgba(220, 38, 38, 0.2)); }
             50% { filter: drop-shadow(0 0 10px rgba(220, 38, 38, 0.8)); }
@@ -47,9 +47,7 @@
         #guideText { white-space: pre-wrap; word-wrap: break-word; }
         #guideText img { max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; margin: 10px 0; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
         
-        /* CSS tuỳ chỉnh cho Tab Desktop */
         .desktop-tab-btn.active { background-color: #4f46e5; color: white !important; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3); }
-        /* CSS tuỳ chỉnh cho Tab Mobile */
         .mobile-tab-btn.active { color: #4f46e5; background-color: #e0e7ff; }
     </style>
 </head>
@@ -269,7 +267,7 @@
                             <div class="grid grid-cols-4 gap-2 mb-4">
                                 <button type="button" onclick="selectPayMethod('bank')" id="pay-btn-bank" class="col-span-2 pay-btn active bg-indigo-50 border-indigo-500 text-indigo-700 border-2 font-bold py-2.5 px-2 rounded-xl transition flex flex-col items-center justify-center gap-1 shadow-sm"><i class="fas fa-university text-xl mb-0.5"></i><span class="text-[11px] uppercase text-center leading-tight whitespace-nowrap">Ngân hàng Việt Nam</span></button>
                                 <button type="button" onclick="selectPayMethod('alipay')" id="pay-btn-alipay" class="col-span-1 pay-btn bg-white border-slate-200 text-slate-600 border-2 font-bold py-2.5 px-1 rounded-xl transition hover:bg-slate-50 flex flex-col items-center justify-center gap-1 shadow-sm"><i class="fab fa-alipay text-xl text-blue-500 mb-0.5"></i><span class="text-[10px] uppercase text-center leading-tight whitespace-nowrap">Alipay</span></button>
-                                <button type="button" onclick="selectPayMethod('wechat')" id="pay-btn-wechat" class="col-span-1 pay-btn bg-white border-slate-200 text-slate-600 border-2 font-bold py-2.5 px-1 rounded-xl transition hover:bg-slate-50 flex flex-col items-center justify-center gap-1 shadow-sm"><i class="fab fa-weixin text-xl text-green-500 mb-0.5"></i><span class="text-[10px] uppercase text-center leading-tight whitespace-nowrap">WeChat</span></button>
+                                <button type="button" onclick="selectPayMethod('wechat')" id="pay-btn-wechat" class="col-span-1 pay-btn bg-white border-slate-200 text-slate-600 border-2 font-bold py-2.5 px-1 rounded-xl transition hover:bg-slate-50 flex flex-col items-center justify-center gap-1 shadow-sm"><i class="fab fa-weixin text-xl text-green-500 mb-0.5"></i><span class="text-[10px] uppercase text-center leading-tight whitespace-nowrap">Weixin</span></button>
                             </div>
                             <input type="hidden" id="payMethod" value="bank">
 
@@ -366,7 +364,7 @@
                     <span data-i18n="faq_2_q">Có những phương thức thanh toán nào?</span>
                     <span class="transition group-open:rotate-180 text-slate-400"><i class="fas fa-chevron-down"></i></span>
                 </summary>
-                <p class="text-slate-600 text-xs md:text-sm mt-3 leading-relaxed" data-i18n="faq_2_a">Hỗ trợ Ngân hàng Việt Nam, Alipay, WeChat Pay. Chọn tại bước Tạo đơn.</p>
+                <p class="text-slate-600 text-xs md:text-sm mt-3 leading-relaxed" data-i18n="faq_2_a">Hỗ trợ Ngân hàng Việt Nam, Alipay, Weixin. Chọn tại bước Tạo đơn.</p>
             </details>
             <details class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 group cursor-pointer w-full">
                 <summary class="font-bold text-indigo-700 text-sm md:text-base flex justify-between items-center outline-none">
@@ -391,14 +389,14 @@
                 feat_1: "Mở khóa mọi nền tảng", feat_2: "Ping thấp, Game mượt", feat_3: "Bảo mật No-log", feat_4: "Đa hệ điều hành",
                 tab_all: "Tất cả", tab_travel: "Du lịch", tab_cycle: "Chu kỳ", tab_usage: "Dung lượng", checkout_title: "Thanh toán Đơn hàng",
                 email_placeholder: "Nhập Email nhận đơn", btn_create_order: "TẠO MÃ QR CHUYỂN KHOẢN", btn_paid: "TÔI ĐÃ CHUYỂN KHOẢN",
-                pay_vn: "Ngân hàng Việt Nam", pay_alipay: "Alipay", pay_wechat: "WeChat Pay",
+                pay_vn: "Ngân hàng Việt Nam", pay_alipay: "Alipay", pay_wechat: "Weixin",
                 month_lbl: "Tháng", choose_dur: "Chọn thời gian:", email_warning: "Vui lòng nhập đúng Email của bạn và đảm bảo Email có tồn tại vì chúng tôi sẽ gửi mail kích hoạt về Email này.", header_contact: "Cần test tốc độ truy cập app nào thì hãy liên hệ Admin qua Mess hoặc Zalo",
                 guide_title: "Hướng dẫn Thanh toán", guide_desc: "Điền Email, chọn thời gian & phương thức thanh toán, sau đó bấm Tạo Đơn để lấy thông tin mã QR chuyển khoản.",
                 guide_empty: "<p class='text-center py-6 md:py-10 text-slate-500 font-bold text-xs md:text-sm'>Đang cập nhật hướng dẫn...</p>",
                 promo_title: "🚀 Chơi Game & Lướt Mạng Không Giới Hạn!", promo_desc: "Hỗ trợ mượt mà: <b class='text-yellow-300'>TikTok, Facebook, Messenger, Threads, Instagram, Zalo, YouTube...</b><br>Tối ưu ping cực thấp cho: <b class='text-green-300'>Liên Quân Mobile (VN), Genshin Impact...</b>",
                 data_label: "Dung lượng:", dev_label: "Không giới hạn thiết bị", speed_label: "Băng thông > 100Gbps", btn_buy: "Đăng ký Gói Này", btn_contact: "Liên hệ Admin",
                 copy_memo: "Nội dung chuyển khoản:", copy_amount: "Số tiền:", need_support: "Cần Hỗ trợ Cài đặt (Zalo/Tele)",
-                faq_title: "Câu hỏi thường gặp (FAQ)", faq_1_q: "Làm sao lấy Hướng dẫn?", faq_1_a: "Nhập Mã Đơn hoặc Email vào thanh tìm kiếm trên cùng để vào Cổng Khách Hàng.", faq_4_q: "VPN hỗ trợ truy cập những ứng dụng nào?", faq_4_a: "Hỗ trợ lướt siêu mượt các app như: <b>TikTok, Facebook, Messenger, Threads, Instagram, Telegram, Zalo, YouTube...</b> Cần test app nào cứ nhắn Admin.", faq_2_q: "Có những phương thức thanh toán nào?", faq_2_a: "Chúng tôi hỗ trợ Ngân hàng Việt Nam, Alipay, WeChat Pay.", faq_3_q: "Đổi máy tính/điện thoại có dùng được không?", faq_3_a: "Có. Tra cứu lại mã đơn trên web để lấy cấu hình.",
+                faq_title: "Câu hỏi thường gặp (FAQ)", faq_1_q: "Làm sao lấy Hướng dẫn?", faq_1_a: "Nhập Mã Đơn hoặc Email vào thanh tìm kiếm trên cùng để vào Cổng Khách Hàng.", faq_4_q: "VPN hỗ trợ truy cập những ứng dụng nào?", faq_4_a: "Hỗ trợ lướt siêu mượt các app như: <b>TikTok, Facebook, Messenger, Threads, Instagram, Telegram, Zalo, YouTube...</b> Cần test app nào cứ nhắn Admin.", faq_2_q: "Có những phương thức thanh toán nào?", faq_2_a: "Chúng tôi hỗ trợ Ngân hàng Việt Nam, Alipay, Weixin.", faq_3_q: "Đổi máy tính/điện thoại có dùng được không?", faq_3_a: "Có. Tra cứu lại mã đơn trên web để lấy cấu hình.",
                 status_pending: "Chờ duyệt", status_success: "Thành công", status_failed: "Từ chối", lifetime_lbl: "Vĩnh viễn", days_lbl: " Ngày", expired_lbl: "Đã hết hạn"
             },
             en: {
@@ -411,14 +409,14 @@
                 feat_1: "Unblock everything", feat_2: "Low Ping Gaming", feat_3: "Strict No-log", feat_4: "Multi-OS",
                 tab_all: "All", tab_travel: "Travel", tab_cycle: "Cycle", tab_usage: "Data", checkout_title: "Checkout",
                 email_placeholder: "Enter your Email", btn_create_order: "CREATE PAYMENT QR", btn_paid: "I HAVE PAID",
-                pay_vn: "Vietnam Bank", pay_alipay: "Alipay", pay_wechat: "WeChat Pay",
+                pay_vn: "Vietnam Bank", pay_alipay: "Alipay", pay_wechat: "Weixin",
                 month_lbl: "Months", choose_dur: "Duration:", email_warning: "Please enter a valid Email. Your activation link will be sent to this address.", header_contact: "Want to test an app? Contact Admin via Messenger or Zalo",
                 guide_title: "Payment Instructions", guide_desc: "Enter Email, select duration and payment method, then Create Order to get the QR code.",
                 guide_empty: "<p class='text-center py-6 md:py-10 text-slate-500 font-bold text-xs md:text-sm'>Guide is updating...</p>",
                 promo_title: "🚀 Unlimited Gaming & Browsing!", promo_desc: "Smooth access to: <b class='text-yellow-300'>TikTok, Facebook, Messenger, Threads, Instagram, Zalo, YouTube...</b><br>Low ping optimization for: <b class='text-green-300'>Arena of Valor (VN), Genshin Impact...</b>",
                 data_label: "Data:", dev_label: "Unlimited devices", speed_label: "Speed > 100Gbps", btn_buy: "Subscribe Now", btn_contact: "Contact Admin",
                 copy_memo: "Transfer Memo:", copy_amount: "Amount:", need_support: "Need Setup Support",
-                faq_title: "Frequently Asked Questions", faq_1_q: "Where is the guide?", faq_1_a: "Enter your Order ID in the top search bar to access the Portal.", faq_4_q: "What apps does the VPN support?", faq_4_a: "Supports smooth browsing for: <b>TikTok, Facebook, Messenger, Threads, Instagram, Telegram, Zalo, YouTube...</b>", faq_2_q: "Payment methods?", faq_2_a: "Vietnam Bank, Alipay, WeChat.", faq_3_q: "Can I change my device?", faq_3_a: "Yes. Just re-enter your Order ID to get the setup link.",
+                faq_title: "Frequently Asked Questions", faq_1_q: "Where is the guide?", faq_1_a: "Enter your Order ID in the top search bar to access the Portal.", faq_4_q: "What apps does the VPN support?", faq_4_a: "Supports smooth browsing for: <b>TikTok, Facebook, Messenger, Threads, Instagram, Telegram, Zalo, YouTube...</b>", faq_2_q: "Payment methods?", faq_2_a: "Vietnam Bank, Alipay, Weixin.", faq_3_q: "Can I change my device?", faq_3_a: "Yes. Just re-enter your Order ID to get the setup link.",
                 status_pending: "Pending", status_success: "Active", status_failed: "Rejected", lifetime_lbl: "Lifetime", days_lbl: " Days", expired_lbl: "Expired"
             },
             zh: {
@@ -431,14 +429,14 @@
                 feat_1: "解锁所有平台", feat_2: "低延迟游戏", feat_3: "无日志记录", feat_4: "多操作系统",
                 tab_all: "全部", tab_travel: "旅游", tab_cycle: "周期", tab_usage: "流量", checkout_title: "结账",
                 email_placeholder: "输入您的电子邮件", btn_create_order: "创建支付二维码", btn_paid: "我已付款",
-                pay_vn: "越南银行", pay_alipay: "支付宝", pay_wechat: "微信支付",
+                pay_vn: "越南银行", pay_alipay: "支付宝", pay_wechat: "微信 (Weixin)",
                 month_lbl: "个月", choose_dur: "选择时长：", email_warning: "请输入有效的电子邮件。激活链接将发送到此地址。", header_contact: "想要测试应用程序？ 请联系管理员",
                 guide_title: "付款说明", guide_desc: "输入邮箱，选择时长和付款方式，然后创建订单获取二维码。",
                 guide_empty: "<p class='text-center py-6 md:py-10 text-slate-500 font-bold text-xs md:text-sm'>教程正在更新...</p>",
                 promo_title: "🚀 无限游戏与浏览！", promo_desc: "流畅访问: <b class='text-yellow-300'>TikTok, Facebook, Messenger, Threads, Instagram, Zalo, YouTube...</b><br>低延迟优化: <b class='text-green-300'>王者荣耀 (VN), 原神...</b>",
                 data_label: "流量:", dev_label: "无限制设备", speed_label: "带宽 > 100Gbps", btn_buy: "立即订阅", btn_contact: "联系管理员",
                 copy_memo: "转账备注:", copy_amount: "金额:", need_support: "需要人工设置支持",
-                faq_title: "常见问题", faq_1_q: "如何获取教程？", faq_1_a: "在顶部搜索栏输入订单号即可进入门户。", faq_4_q: "VPN支持哪些应用程序？", faq_4_a: "支持流畅浏览：<b>TikTok、Facebook、Messenger、Threads、Instagram、Telegram、YouTube...</b>", faq_2_q: "有哪些付款方式？", faq_2_a: "我们支持越南银行，支付宝和微信。", faq_3_q: "可以更换设备吗？", faq_3_a: "可以，重新查询订单号即可获取配置链接。",
+                faq_title: "常见问题", faq_1_q: "如何获取教程？", faq_1_a: "在顶部搜索栏输入订单号即可进入门户。", faq_4_q: "VPN支持哪些应用程序？", faq_4_a: "支持流畅浏览：<b>TikTok、Facebook、Messenger、Threads、Instagram、Telegram、YouTube...</b>", faq_2_q: "有哪些付款方式？", faq_2_a: "我们支持越南银行，支付宝和微信 (Weixin)。", faq_3_q: "可以更换设备吗？", faq_3_a: "可以，重新查询订单号即可获取配置链接。",
                 status_pending: "待处理", status_success: "已激活", status_failed: "已拒绝", lifetime_lbl: "永久", days_lbl: " 天", expired_lbl: "已过期"
             }
         };
@@ -472,17 +470,31 @@
         async function apiGet(path) {
             try {
                 let res = await fetch(API_URL + path + "?_t=" + Date.now());
-                if(!res.ok) throw new Error("HTTP error");
+                if(!res.ok) {
+                    const errBody = await res.text();
+                    throw new Error("HTTP error " + res.status + ": " + errBody);
+                }
                 let data = await res.json();
                 localStorage.setItem(path === '/api/orders' ? DB_KEY : path.replace(/\//g,'_'), JSON.stringify(data));
                 return data;
             } catch(e) {
+                console.error("API GET Error:", e);
                 return JSON.parse(localStorage.getItem(path === '/api/orders' ? DB_KEY : path.replace(/\//g,'_'))) || (path === '/api/orders' ? [] : {});
             }
         }
+        
         async function apiPost(path, data) {
             localStorage.setItem(path === '/api/orders' ? DB_KEY : path.replace(/\//g,'_'), JSON.stringify(data)); 
-            try { await fetch(API_URL + path, { method: "POST", body: JSON.stringify(data) }); } catch(e) {}
+            try { 
+                let res = await fetch(API_URL + path, { method: "POST", headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(data) }); 
+                if(!res.ok) {
+                    const errBody = await res.text();
+                    throw new Error("HTTP error " + res.status + ": " + errBody);
+                }
+            } catch(e) {
+                console.error("API POST Error:", e);
+                showToast("Lỗi đồng bộ dữ liệu với máy chủ! Xin thử lại.", "error");
+            }
         }
 
         function changeLanguage(val) {
@@ -633,7 +645,10 @@
             } else if (m === 'alipay') {
                 col.innerHTML = `<div class="text-center w-full"><h4 class="font-extrabold text-slate-800 text-base md:text-lg mb-4 text-blue-600"><i class="fas fa-qrcode mr-2"></i>Alipay</h4>
                     <div class="flex justify-center mb-6">
-                        <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-100 flex items-center justify-center"><img src="https://scontent-nrt6-1.xx.fbcdn.net/v/t1.15752-9/653857590_1758745008618735_4375237426148577611_n.jpg?stp=dst-jpg_s720x720_tt6&_nc_cat=110&ccb=1-7&_nc_sid=0024fc&_nc_ohc=_SgoipZLgUkQ7kNvwGTIzYm&_nc_oc=AdrO2lWMUl61E44q7BVfIH40A2fqKLTNdcUAdoWhzfwuF4McoyFJ70VzU_UPmIDtXtGyHkyqvgbynydVWSE5yl7r&_nc_zt=23&_nc_ht=scontent-nrt6-1.xx&_nc_ss=7a30f&oh=03_Q7cD4wE32bYIr4NC7uRoxNa04HxQqRSAhpXXhdbM7YBist-IxQ&oe=69E5BE9F" class="w-40 h-40 md:w-56 md:h-56 rounded-lg object-contain"></div>
+                        <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center">
+                            <img src="https://i.pinimg.com/736x/44/57/9d/44579dfb5241614ddc897a21ce34e233.jpg" class="max-w-full h-auto rounded-lg">
+                            <div class="text-center font-bold text-slate-800 text-sm mt-3">Chủ TK: TRINH THI XUAN HUONG</div>
+                        </div>
                     </div>
                     <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100 mb-6"><span class="text-slate-500 text-xs md:text-sm">${i18n[lang].copy_amount}</span><strong class="text-red-500 font-black text-lg md:text-xl">¥${currentTotalCny}</strong></div>
                     <div class="highlight-copy py-4 px-3 rounded-xl text-center w-full shadow-md cursor-pointer transition" onclick="copyText('${currentOrderId}')">
@@ -642,9 +657,12 @@
                         <p class="text-[10px] mt-2 italic font-bold opacity-80 uppercase">${lang==='zh'?'请手动输入金额和订单号！':(lang==='en'?'Please manually enter the amount and Memo!':'Vui lòng tự nhập số tiền và nội dung chuyển khoản!')}</p>
                     </div></div>`;
             } else if (m === 'wechat') {
-                col.innerHTML = `<div class="text-center w-full"><h4 class="font-extrabold text-slate-800 text-base md:text-lg mb-4 text-green-600"><i class="fas fa-qrcode mr-2"></i>WeChat Pay</h4>
+                col.innerHTML = `<div class="text-center w-full"><h4 class="font-extrabold text-slate-800 text-base md:text-lg mb-4 text-green-600"><i class="fas fa-qrcode mr-2"></i>Weixin</h4>
                     <div class="flex justify-center mb-6">
-                        <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-100 flex items-center justify-center"><img src="https://scontent-nrt1-2.xx.fbcdn.net/v/t1.15752-9/652721068_899535699618771_165366187059067125_n.png?_nc_cat=102&ccb=1-7&_nc_sid=9f807c&_nc_ohc=tqY_EL9rmrsQ7kNvwHryZQy&_nc_oc=AdrasTGaeXx7U24IMsuc9vhdQVwi_wXbxBYjA562u4NvuQobh3nrSC0oI33-DMuX-i04YqDuRxnThnfh0mJaRgJT&_nc_zt=23&_nc_ht=scontent-nrt1-2.xx&_nc_ss=7a30f&oh=03_Q7cD4wEuP3DCf5T9KwYNCILX_DPsbf1gpzV5RcYnlMjy_NoCyg&oe=69E59E0D" class="w-40 h-40 md:w-56 md:h-56 rounded-lg object-contain"></div>
+                        <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center">
+                            <img src="https://i.pinimg.com/736x/28/b2/95/28b29577c6229ec943e8e13afe241db3.jpg" class="max-w-full h-auto rounded-lg">
+                            <div class="text-center font-bold text-slate-800 text-sm mt-3">Chủ TK: TRINH THI XUAN HUONG</div>
+                        </div>
                     </div>
                     <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-100 mb-6"><span class="text-slate-500 text-xs md:text-sm">${i18n[lang].copy_amount}</span><strong class="text-red-500 font-black text-lg md:text-xl">¥${currentTotalCny}</strong></div>
                     <div class="highlight-copy py-4 px-3 rounded-xl text-center w-full shadow-md cursor-pointer transition" onclick="copyText('${currentOrderId}')">
@@ -683,7 +701,7 @@
                 
                 const cycleText = currentMultiplier + " Tháng";
                 const methodStr = document.getElementById('payMethod').value;
-                const methodName = methodStr === 'bank' ? 'Ngân hàng Việt Nam' : (methodStr === 'alipay' ? 'Alipay' : 'WeChat');
+                const methodName = methodStr === 'bank' ? 'Ngân hàng Việt Nam' : (methodStr === 'alipay' ? 'Alipay' : 'Weixin');
                 
                 let db = await apiGet("/api/orders");
                 if(!Array.isArray(db)) db = [];
@@ -709,10 +727,6 @@
         function updatePortalInfo(o) {
             oCache = o;
             
-            // XÓA sạch block hiển thị thông tin gói cũ
-            // (Chỉ giữ lại Link Sub và nút Hướng dẫn bên dưới)
-            
-            // Cập nhật Trạng thái cho View Pending
             if(o.status === 'pending') {
                 document.getElementById('portalContentPending').classList.remove('hidden');
                 document.getElementById('portalContentSuccess').classList.add('hidden');
@@ -720,14 +734,12 @@
                 document.getElementById('portalContentPending').classList.add('hidden');
                 document.getElementById('portalContentSuccess').classList.remove('hidden');
                 
-                // HIỂN THỊ LINK SUB VÀO Ô INPUT (ĐÃ FIX LỖI KHÔNG HIỂN THỊ)
                 if (o.info && o.info.trim() !== '') {
                     document.getElementById('subLink').value = o.info;
                 } else {
                     document.getElementById('subLink').value = "Đang tải link...";
                 }
             } else {
-                // Trạng thái từ chối thì giấu hết phần Success
                 document.getElementById('portalContentPending').classList.add('hidden');
                 document.getElementById('portalContentSuccess').classList.add('hidden');
             }
@@ -750,17 +762,13 @@
             document.getElementById('view-store').classList.remove('active'); document.getElementById('view-portal').classList.add('active');
             document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('checkoutSection').classList.add('hidden');
             
-            // --- XỬ LÝ DESKTOP NAVBAR MƯỢT MÀ ---
-            // Trượt Tabs ra bên phải (Chỉ Desktop)
             document.getElementById('desktopPortalNav').classList.remove('hidden', 'opacity-0', 'w-0');
             document.getElementById('desktopPortalNav').classList.add('md:flex', 'opacity-100', 'w-auto');
             
-            // Kéo dài thanh Search ra sát Tabs (Bỏ max-w-xl để dãn full width)
             document.getElementById('searchAndTabsWrapper').classList.remove('max-w-xl', 'justify-center');
             document.getElementById('searchAndTabsWrapper').classList.add('w-full');
             document.getElementById('centerNavContainer').classList.remove('justify-center');
             
-            // --- XỬ LÝ MOBILE BOTTOM NAV ---
             document.getElementById('mobileNavWrapper').classList.remove('hidden');
             
             if(!isAutoPoll && !isManualRefresh) switchPortalTab('p-home');
@@ -778,13 +786,11 @@
         function switchPortalTab(tabId) {
             document.querySelectorAll('.portal-tab-content').forEach(el => el.classList.remove('active'));
             
-            // Reset toàn bộ Tabs Desktop
             document.querySelectorAll('.desktop-tab-btn').forEach(el => {
                 el.classList.remove('active', 'text-white', 'bg-indigo-600');
                 el.classList.add('text-slate-600');
             });
             
-            // Reset toàn bộ Tabs Mobile
             document.querySelectorAll('.mobile-tab-btn').forEach(el => {
                 el.classList.remove('active', 'text-indigo-600', 'bg-[#e0e7ff]');
                 el.classList.add('text-slate-500');
@@ -792,13 +798,11 @@
             
             document.getElementById(tabId).classList.add('active');
             
-            // Active Tab Desktop (Màu Tím đậm, Chữ Trắng)
             document.querySelectorAll('.desktop-tab-btn.btn-nav-' + tabId).forEach(el => {
                 el.classList.add('active', 'bg-indigo-600', 'text-white');
                 el.classList.remove('text-slate-600', 'hover:bg-slate-100');
             });
             
-            // Active Tab Mobile (Nền Tím nhạt, Icon Tím đậm)
             document.querySelectorAll('.mobile-tab-btn.btn-nav-' + tabId).forEach(el => {
                 el.classList.add('active', 'text-indigo-600', 'bg-[#e0e7ff]');
                 el.classList.remove('text-slate-500');
@@ -809,10 +813,8 @@
             localStorage.removeItem(SESSION_KEY); document.getElementById('view-portal').classList.remove('active'); document.getElementById('view-store').classList.add('active');
             document.getElementById('userMenu').classList.add('hidden'); document.getElementById('loginInput').value = '';
             
-            // Ẩn Bottom Nav Mobile
             document.getElementById('mobileNavWrapper').classList.add('hidden');
             
-            // Trả Desktop Nav về giữa chình ình
             document.getElementById('desktopPortalNav').classList.remove('md:flex', 'opacity-100', 'w-auto');
             document.getElementById('desktopPortalNav').classList.add('hidden', 'opacity-0', 'w-0');
             document.getElementById('searchAndTabsWrapper').classList.remove('w-full');
