@@ -8,7 +8,7 @@ GitHub Actions: chạy mỗi 60 phút
 - Push lên Cloudflare KV qua /api/push_data
 """
 
-import requests, base64, urllib.parse, re, datetime, yaml, json, sys
+import requests, base64, urllib.parse, re, datetime, yaml, json, sys, time
 
 WORKER_DOMAIN = "https://vpntrinhhg.pages.dev"
 API_LINKS = f"{WORKER_DOMAIN}/api/links"
@@ -25,9 +25,9 @@ INFO_SKIP_KW = ["剩余流量", "距离下次重置", "套餐到期"]
 
 # ── Rename dict DJJC ─────────────────────────────────────────────────────────
 RENAME_DJJC = {
-    "🇺🇸美国洛杉矶1号":        "🇺🇸 US Los Angeles 01 - VPN Trinh Hg",
-    "🇺🇸美国洛杉矶2号":        "🇺🇸 US Los Angeles 02 - VPN Trinh Hg",
-    "🇺🇸美国洛杉矶3号":        "🇺🇸 US Los Angeles 03 - VPN Trinh Hg",
+    "🇺🇸美国洛杉极1号":        "🇺🇸 US Los Angeles 01 - VPN Trinh Hg",
+    "🇺🇸美国洛杉极2号":        "🇺🇸 US Los Angeles 02 - VPN Trinh Hg",
+    "🇺🇸美国洛杉极3号":        "🇺🇸 US Los Angeles 03 - VPN Trinh Hg",
     "🇺🇸美国凤凰城1号":        "🇺🇸 US Phoenix 01 - VPN Trinh Hg",
     "🇩🇪德国法兰克福2":        "🇩🇪 DE Frankfurt 02 - VPN Trinh Hg",
     "🇧🇷巴西圣保罗-1.5倍率":   "🇧🇷 BR Sao Paulo 1.5x - VPN Trinh Hg",
@@ -1502,13 +1502,18 @@ def update_all():
         print(f"\n→ [{provider}] token: {orig_token[:12]}... url: {orig_url[:55]}...")
 
         try:
+            headers = {
+                "User-Agent": "v2rayN/6.23",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
+            }
             r = requests.get(
                 orig_url,
-                headers={"User-Agent": "v2rayN/6.23"},
+                headers=headers,
                 timeout=30,
             )
             if r.status_code != 200:
                 print(f"  [!] HTTP {r.status_code}")
+                time.sleep(3)
                 continue
 
             raw_b64   = r.text.strip()
@@ -1517,6 +1522,7 @@ def update_all():
 
             if len(raw_b64) < 1000 or "ERROR" in raw_b64:
                 print("  [!] Bỏ qua - b64 quá ngắn hoặc dính lỗi 403 Token Error từ server")
+                time.sleep(3)
                 continue
 
             traffic = parse_traffic(user_info)
@@ -1548,8 +1554,10 @@ def update_all():
             print(f"  [!] Lỗi: {e}")
             traceback.print_exc()
 
-    print("\n=== Hoàn thành ===")
+        # Bắt bot nghỉ 3 giây trước khi cào link tiếp theo
+        time.sleep(3)
 
+    print("\n=== Hoàn thành ===")
 
 if __name__ == "__main__":
     update_all()
