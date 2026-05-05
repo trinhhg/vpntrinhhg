@@ -2,8 +2,8 @@ name: Update VPN Subs Automatically
 
 on:
   schedule:
-    # Chạy vào phút thứ 0 của mỗi 5 tiếng (0:00, 5:00, 10:00...)
-    - cron: '0 */5 * * *'
+    # Chạy đúng 1 lần/ngày vào lúc 00:00 UTC (7h sáng VN - lúc Cloudflare vừa reset quota)
+    - cron: '0 0 * * *'
   workflow_dispatch:
 
 jobs:
