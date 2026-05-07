@@ -99,6 +99,16 @@ details>summary::-webkit-details-marker{display:none;}
           <div class="mb-4 text-center">
              <p class="text-red-600 font-black text-[11px] md:text-sm animate-pulse bg-red-50 py-2 px-4 rounded-lg inline-block border border-red-200">⚠️ Bắt buộc giữ bí mật Email và Mã đơn hàng để tránh kẻ gian lợi dụng.</p>
           </div>
+          
+          <div class="flex items-center justify-between bg-white border border-slate-200 rounded-xl p-3 md:p-4 mb-4 shadow-sm">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="bg-slate-100 text-slate-500 font-bold px-2 py-1 rounded text-[10px] md:text-xs shrink-0" data-i18n="order_id_label">Mã đơn</span>
+              <span class="font-mono font-extrabold text-indigo-600 text-xs md:text-sm truncate" id="displayOrderId"></span>
+            </div>
+            <button id="btnRequestData" onclick="requestDataCheck()" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm hover:scale-105 transition shadow-md flex items-center shrink-0 btn-heartbeat outline-none">
+              <i class="fas fa-chart-pie mr-1.5"></i><span data-i18n="btn_check_data">Kiểm tra dung lượng</span>
+            </button>
+          </div>
           <div class="bg-green-50 border-2 border-dashed border-green-500 p-4 md:p-6 rounded-2xl w-full">
             <h3 class="text-green-700 font-extrabold mb-3 text-xs md:text-sm"><i class="fas fa-link mr-1"></i>Link Subscription URL:</h3>
             <div class="flex flex-col sm:flex-row gap-2 w-full">
@@ -286,7 +296,8 @@ const i18n={
       faq_2_q:"VPN hỗ trợ những app nào?",faq_2_a:"TikTok, Facebook, Messenger, Instagram, Telegram, Zalo, YouTube... Nhắn Admin để test.",
       faq_3_q:"Có những phương thức thanh toán nào?",faq_3_a:"Ngân hàng VN (VietQR), Alipay, Weixin.",
       faq_4_q:"Đổi máy có dùng tiếp được không?",faq_4_a:"Có. Tra cứu lại Mã Đơn trên web.",
-      status_pending:"Chờ duyệt",status_success:"Thành công",status_failed:"Từ chối",lifetime_lbl:"Vĩnh viễn",days_lbl:" Ngày",expired_lbl:"Đã hết hạn"},
+      status_pending:"Chờ duyệt",status_success:"Thành công",status_failed:"Từ chối",lifetime_lbl:"Vĩnh viễn",days_lbl:" Ngày",expired_lbl:"Đã hết hạn",
+      btn_check_data:"Kiểm tra dung lượng"},
   en:{brand:"VPN Trinh Hg",search_placeholder:"Order ID or Email...",btn_logout:"Exit",
       tab_p_home:"Home",tab_p_store:"Store",tab_p_guide:"Guide",
       pending_title:"Order pending approval",btn_copy:"COPY URL",btn_renew:"RENEW",
@@ -312,7 +323,8 @@ const i18n={
       faq_2_q:"What apps does VPN support?",faq_2_a:"TikTok, Facebook, Messenger, Instagram, Telegram, Zalo, YouTube...",
       faq_3_q:"Payment methods?",faq_3_a:"Vietnam Bank, Alipay, Weixin.",
       faq_4_q:"Can I change my device?",faq_4_a:"Yes. Re-enter your Order ID to get the config link.",
-      status_pending:"Pending",status_success:"Active",status_failed:"Rejected",lifetime_lbl:"Lifetime",days_lbl:" Days",expired_lbl:"Expired"},
+      status_pending:"Pending",status_success:"Active",status_failed:"Rejected",lifetime_lbl:"Lifetime",days_lbl:" Days",expired_lbl:"Expired",
+      btn_check_data:"Check Data Usage"},
   zh:{brand:"VPN Trinh Hg",search_placeholder:"输入订单号或邮箱...",btn_logout:"退出",
       tab_p_home:"主页",tab_p_store:"商店",tab_p_guide:"指南",
       pending_title:"订单处理中",btn_copy:"复制链接",btn_renew:"续费",
@@ -337,7 +349,8 @@ const i18n={
       faq_2_q:"VPN支持哪些应用？",faq_2_a:"TikTok、Facebook、Messenger、Instagram、Telegram、YouTube...",
       faq_3_q:"有哪些付款方式？",faq_3_a:"越南银行、支付宝、微信支付 (Weixin)。",
       faq_4_q:"可以更换设备吗？",faq_4_a:"可以，重新输入订单号即可获取链接。",
-      status_pending:"待处理",status_success:"已激活",status_failed:"已拒绝",lifetime_lbl:"永久",days_lbl:" 天",expired_lbl:"已过期"}
+      status_pending:"待处理",status_success:"已激活",status_failed:"已拒绝",lifetime_lbl:"永久",days_lbl:" 天",expired_lbl:"已过期",
+      btn_check_data:"检查流量"}
 };
  
 const pkgs=[
@@ -597,6 +610,7 @@ function updatePortalInfo(o){
    document.getElementById('portalContentPending').classList.add('hidden');
    document.getElementById('portalContentSuccess').classList.remove('hidden');
    document.getElementById('subLink').value=o.info&&o.info.trim()!==''?o.info:'';
+   document.getElementById('displayOrderId').innerText=o.id;
   }else{
    document.getElementById('portalContentPending').classList.add('hidden');
    document.getElementById('portalContentSuccess').classList.add('hidden');
@@ -682,6 +696,74 @@ window.onload=function(){
     }
   },10000);
 };
+
+// --- LOGIC YÊU CẦU KIỂM TRA DUNG LƯỢNG ---
+async function requestDataCheck() {
+  if(!oCache) return;
+  const cdKey = 'data_req_' + oCache.id;
+  const lastReq = localStorage.getItem(cdKey);
+  const now = Date.now();
+  
+  // Chống Spam: Cooldown 5 tiếng (18.000.000 ms)
+  if (lastReq && now - parseInt(lastReq) < 18000000) {
+    showToast(lang==='vi'?'Yêu cầu đang chờ xử lý. Vui lòng quay lại sau!':lang==='en'?'Request pending. Try again later!':'请求待处理，请稍后再试！', 'info');
+    return;
+  }
+
+  const btn = document.getElementById('btnRequestData');
+  const originalHtml = btn.innerHTML;
+  btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-1.5"></i> ${lang==='vi'?'Đang gửi...':lang==='en'?'Sending...':'发送中...'}`;
+  btn.classList.remove('btn-heartbeat');
+  btn.disabled = true;
+
+  try {
+    let reqs = await apiGet('/api/data_requests');
+    if(!Array.isArray(reqs)) reqs = [];
+    
+    // Gỡ yêu cầu cũ của mã đơn này nếu có (tránh rác KV)
+    reqs = reqs.filter(r => r.orderId !== oCache.id);
+    
+    // Đẩy yêu cầu mới lên đầu
+    reqs.unshift({
+      orderId: oCache.id,
+      email: oCache.email,
+      pkgName: oCache.pkgName || "Gói VPN",
+      status: "pending",
+      date: new Date().toLocaleString('vi-VN')
+    });
+    await apiPost('/api/data_requests', reqs);
+
+    // Bắn Mail thông báo cho Admin
+    const htmlAdmin = `<div style="font-family:sans-serif; max-width:500px; margin:auto; border:1px solid #e2e8f0; border-radius:10px; padding:20px;">
+        <h2 style="color:#2563eb; margin-top:0;">📊 YÊU CẦU CHECK DUNG LƯỢNG!</h2>
+        <p>Khách hàng vừa bấm nút yêu cầu kiểm tra dung lượng.</p>
+        <ul style="list-style-type:none; padding:0; line-height:1.8;">
+            <li style="border-bottom:1px solid #f1f5f9; padding-bottom:8px;">📌 <b>Mã Đơn:</b> <span style="color:#ef4444; font-weight:bold;">${oCache.id}</span></li>
+            <li style="padding-top:8px;">📧 <b>Email:</b> ${oCache.email}</li>
+        </ul>
+        <p style="background:#eff6ff; padding:10px; border-radius:6px; font-size:13px; color:#1e40af; text-align:center;">Mở tab "Dung lượng" trên Admin để báo số GB cho khách!</p>
+    </div>`;
+    
+    fetch(GOOGLE_MAIL_API, { 
+        method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify({
+            to: "lucastanora@gmail.com", 
+            subject: `[TRA CỨU DATA] ${oCache.id}`, 
+            html: htmlAdmin
+        }) 
+    }).catch(()=>{});
+
+    localStorage.setItem(cdKey, now.toString());
+    showToast(lang==='vi'?'Đã gửi yêu cầu! Vui lòng chờ Email báo cáo.':lang==='en'?'Request sent! Please check your email later.':'请求已发送！请稍后检查您的电子邮件。', 'success');
+    btn.innerHTML = `<i class="fas fa-check-circle mr-1.5"></i> ${lang==='vi'?'Đã gửi yêu cầu':lang==='en'?'Request sent':'请求已发送'}`;
+    
+  } catch(e) {
+    showToast(lang==='vi'?'Có lỗi xảy ra, vui lòng thử lại!':'Error occurred, please try again.', 'error');
+    btn.innerHTML = originalHtml;
+    btn.classList.add('btn-heartbeat');
+    btn.disabled = false;
+  }
+}
 </script>
 </body>
 </html>
