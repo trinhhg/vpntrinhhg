@@ -1585,6 +1585,3 @@ def update_all():
 if __name__ == "__main__":
     update_all()
 
-Ok vậy gom chung update link fecth và update rebuild lại thành global như t nói trc kia đi, và nhớ cơ chế bảo vệ nếu global chết thì dùng cái đơn thuần cũ để phòng tránh gây lỗi khách hàng nhé. 
-Phân tích xem sẽ phải làm thế nào và logic như nào ở woker và update_sub.py
-Bàn luận chưa gõ code
