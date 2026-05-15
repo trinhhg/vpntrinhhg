@@ -1,4 +1,4 @@
-# v1.1 - Tách riêng 2 bộ rules và DNS cho Liangxin và DJJC - 2026-05-03
+# v1.2 - Cập nhật toàn bộ hạ tầng node mới (BGP, CMCU, CTCUCM) cho Liangxin - 2026-05-15
 """
 update_sub.py — VPN Trinh Hg
 GitHub Actions: chạy mỗi 60 phút
@@ -62,40 +62,63 @@ RENAME_DJJC = {
     "🇮🇳印度孟买":             "🇮🇳 IN Mumbai - VPN Trinh Hg",
 }
 
-# ── Rename dict Liangxin ─────────────────────────────────────────────────────
+# ── Rename dict Liangxin (Cập nhật Hạ tầng mới: CMCU, CTCUCM, CTCU) ─────────
 RENAME_LIANGXIN = {
-    "🇭🇰香港高速01|BGP|流媒体": "🇭🇰 HK Hong Kong High Speed 01 Streaming - VPN Trinh Hg",
-    "🇭🇰香港高速02|BGP|流媒体": "🇭🇰 HK Hong Kong High Speed 02 Streaming - VPN Trinh Hg",
-    "🇭🇰香港高速03|BGP|流媒体": "🇭🇰 HK Hong Kong High Speed 03 Streaming - VPN Trinh Hg",
-    "🇭🇰香港高速04|BGP|流媒体": "🇭🇰 HK Hong Kong High Speed 04 Streaming - VPN Trinh Hg",
-    "🇸🇬新加坡高速01|BGP|流媒体":"🇸🇬 SG Singapore High Speed 01 Streaming - VPN Trinh Hg",
-    "🇸🇬新加坡高速02|BGP|流媒体":"🇸🇬 SG Singapore High Speed 02 Streaming - VPN Trinh Hg",
-    "🇸🇬新加坡高速03|BGP|流媒体":"🇸🇬 SG Singapore High Speed 03 Streaming - VPN Trinh Hg",
-    "🇸🇬新加坡高速04|BGP|流媒体":"🇸🇬 SG Singapore High Speed 04 Streaming - VPN Trinh Hg",
-    "🇸🇬新加坡高速05|BGP|流媒体":"🇸🇬 SG Singapore High Speed 05 Streaming - VPN Trinh Hg",
-    "🇯🇵日本高速01|BGP|流媒体": "🇯🇵 JP Japan High Speed 01 Streaming - VPN Trinh Hg",
-    "🇯🇵日本高速02|BGP|流媒体": "🇯🇵 JP Japan High Speed 02 Streaming - VPN Trinh Hg",
-    "🇯🇵日本高速03|BGP|流媒体": "🇯🇵 JP Japan High Speed 03 Streaming - VPN Trinh Hg",
-    "🇯🇵日本高速04|BGP|流媒体": "🇯🇵 JP Japan High Speed 04 Streaming - VPN Trinh Hg",
-    "🇯🇵日本高速05|BGP|流媒体": "🇯🇵 JP Japan High Speed 05 Streaming - VPN Trinh Hg",
-    "🇯🇵日本高速06|BGP|流媒体": "🇯🇵 JP Japan High Speed 06 Streaming - VPN Trinh Hg",
-    "🇺🇸美国高速01|流媒体":     "🇺🇸 US America High Speed 01 Streaming - VPN Trinh Hg",
-    "🇺🇸美国高速03|流媒体":     "🇺🇸 US America High Speed 03 Streaming - VPN Trinh Hg",
-    "🇺🇸美国高速04|流媒体":     "🇺🇸 US America High Speed 04 Streaming - VPN Trinh Hg",
-    "🇰🇷韩国高速01|BGP|流媒体": "🇰🇷 KR South Korea High Speed 01 Streaming - VPN Trinh Hg",
-    "🇨🇳台湾高速01|BGP|流媒体": "🇹🇼 TW Taiwan High Speed 01 Streaming - VPN Trinh Hg",
-    "🇭🇰香港专线01|BGP|流媒体": "🇭🇰 HK Hong Kong Dedicated 01 Streaming - VPN Trinh Hg",
-    "🇭🇰香港专线02|BGP|流媒体": "🇭🇰 HK Hong Kong Dedicated 02 Streaming - VPN Trinh Hg",
-    "🇭🇰香港专线03|BGP|流媒体": "🇭🇰 HK Hong Kong Dedicated 03 Streaming - VPN Trinh Hg",
-    "🇸🇬新加坡专线02|BGP|流媒体":"🇸🇬 SG Singapore Dedicated 02 Streaming - VPN Trinh Hg",
-    "🇸🇬新加坡专线03|BGP|流媒体":"🇸🇬 SG Singapore Dedicated 03 Streaming - VPN Trinh Hg",
-    "🇯🇵日本专线01|BGP|流媒体": "🇯🇵 JP Japan Dedicated 01 Streaming - VPN Trinh Hg",
-    "🇯🇵日本专线02|BGP|流媒体": "🇯🇵 JP Japan Dedicated 02 Streaming - VPN Trinh Hg",
-    "🇯🇵日本专线03|BGP|流媒体": "🇯🇵 JP Japan Dedicated 03 Streaming - VPN Trinh Hg",
-    "🇰🇷韩国专线01|BGP|流媒体": "🇰🇷 KR South Korea Dedicated 01 Streaming - VPN Trinh Hg",
-    "🇨🇳台湾专线01|BGP|流媒体": "🇹🇼 TW Taiwan Dedicated 01 Streaming - VPN Trinh Hg",
-    "🇺🇸美国01|流媒体":         "🇺🇸 US America 01 Streaming - VPN Trinh Hg",
-    "🇺🇸美国02|流媒体":         "🇺🇸 US America 02 Streaming - VPN Trinh Hg",
+    # ── HỒNG KÔNG ──
+    "🇭🇰香港高速01|BGP|CMCU": "🇭🇰 HK Hong Kong High Speed 01 BGP CMCU - VPN Trinh Hg",
+    "🇭🇰香港高速02|BGP|CMCU": "🇭🇰 HK Hong Kong High Speed 02 BGP CMCU - VPN Trinh Hg",
+    "🇭🇰香港高速03|BGP|CMCU": "🇭🇰 HK Hong Kong High Speed 03 BGP CMCU - VPN Trinh Hg",
+    "🇭🇰香港高速04|BGP|CMCU": "🇭🇰 HK Hong Kong High Speed 04 BGP CMCU - VPN Trinh Hg",
+    "🇭🇰香港高速05|BGP|CMCU": "🇭🇰 HK Hong Kong High Speed 05 BGP CMCU - VPN Trinh Hg",
+    "🇭🇰香港高速06|BGP|CMCU": "🇭🇰 HK Hong Kong High Speed 06 BGP CMCU - VPN Trinh Hg",
+    "🇭🇰香港专线01|BGP|流媒体": "🇭🇰 HK Hong Kong Dedicated 01 BGP Streaming - VPN Trinh Hg",
+    "🇭🇰香港专线02|BGP|流媒体": "🇭🇰 HK Hong Kong Dedicated 02 BGP Streaming - VPN Trinh Hg",
+    "🇭🇰香港专线03|BGP|流媒体": "🇭🇰 HK Hong Kong Dedicated 03 BGP Streaming - VPN Trinh Hg",
+    "🇭🇰香港专线04|BGP|流媒体": "🇭🇰 HK Hong Kong Dedicated 04 BGP Streaming - VPN Trinh Hg",
+    "🇭🇰香港专线05|BGP|流媒体": "🇭🇰 HK Hong Kong Dedicated 05 BGP Streaming - VPN Trinh Hg",
+    "🇭🇰香港专线06|BGP|流媒体": "🇭🇰 HK Hong Kong Dedicated 06 BGP Streaming - VPN Trinh Hg",
+
+    # ── SINGAPORE ──
+    "🇸🇬新加坡高速01|BGP|CTCUCM": "🇸🇬 SG Singapore High Speed 01 BGP CTCUCM - VPN Trinh Hg",
+    "🇸🇬新加坡高速02|BGP|CTCUCM": "🇸🇬 SG Singapore High Speed 02 BGP CTCUCM - VPN Trinh Hg",
+    "🇸🇬新加坡高速03|BGP|CTCUCM": "🇸🇬 SG Singapore High Speed 03 BGP CTCUCM - VPN Trinh Hg",
+    "🇸🇬新加坡高速04|BGP|CTCUCM": "🇸🇬 SG Singapore High Speed 04 BGP CTCUCM - VPN Trinh Hg",
+    "🇸🇬新加坡高速05|BGP|CTCUCM": "🇸🇬 SG Singapore High Speed 05 BGP CTCUCM - VPN Trinh Hg",
+    "🇸🇬新加坡高速06|BGP|CTCU": "🇸🇬 SG Singapore High Speed 06 BGP CTCU - VPN Trinh Hg",
+    "🇸🇬新加坡高速07|BGP|CTCU": "🇸🇬 SG Singapore High Speed 07 BGP CTCU - VPN Trinh Hg",
+    "🇸🇬新加坡高速08|BGP|CTCU": "🇸🇬 SG Singapore High Speed 08 BGP CTCU - VPN Trinh Hg",
+    "🇸🇬新加坡专线01|BGP|流媒体": "🇸🇬 SG Singapore Dedicated 01 BGP Streaming - VPN Trinh Hg",
+    "🇸🇬新加坡专线02|BGP|流媒体": "🇸🇬 SG Singapore Dedicated 02 BGP Streaming - VPN Trinh Hg",
+    "🇸🇬新加坡专线03|BGP|流媒体": "🇸🇬 SG Singapore Dedicated 03 BGP Streaming - VPN Trinh Hg",
+
+    # ── NHẬT BẢN ──
+    "🇯🇵日本高速01|BGP|CUCM": "🇯🇵 JP Japan High Speed 01 BGP CUCM - VPN Trinh Hg",
+    "🇯🇵日本高速02|BGP|CUCM": "🇯🇵 JP Japan High Speed 02 BGP CUCM - VPN Trinh Hg",
+    "🇯🇵日本高速03|BGP|CUCM": "🇯🇵 JP Japan High Speed 03 BGP CUCM - VPN Trinh Hg",
+    "🇯🇵日本高速04|BGP|CUCM": "🇯🇵 JP Japan High Speed 04 BGP CUCM - VPN Trinh Hg",
+    "🇯🇵日本高速05|BGP|CUCM": "🇯🇵 JP Japan High Speed 05 BGP CUCM - VPN Trinh Hg",
+    "🇯🇵日本高速06|BGP|CTCU": "🇯🇵 JP Japan High Speed 06 BGP CTCU - VPN Trinh Hg",
+    "🇯🇵日本高速07|BGP|CTCU": "🇯🇵 JP Japan High Speed 07 BGP CTCU - VPN Trinh Hg",
+    "🇯🇵日本高速08|BGP|CTCU": "🇯🇵 JP Japan High Speed 08 BGP CTCU - VPN Trinh Hg",
+    "🇯🇵日本高速09|BGP|CTCU": "🇯🇵 JP Japan High Speed 09 BGP CTCU - VPN Trinh Hg",
+    "🇯🇵日本专线01|BGP|流媒体": "🇯🇵 JP Japan Dedicated 01 BGP Streaming - VPN Trinh Hg",
+    "🇯🇵日本专线02|BGP|流媒体": "🇯🇵 JP Japan Dedicated 02 BGP Streaming - VPN Trinh Hg",
+    "🇯🇵日本专线03|BGP|流媒体": "🇯🇵 JP Japan Dedicated 03 BGP Streaming - VPN Trinh Hg",
+
+    # ── MỸ ──
+    "🇺🇸美国高速01|CTCU": "🇺🇸 US America High Speed 01 CTCU - VPN Trinh Hg",
+    "🇺🇸美国高速02|CTCU": "🇺🇸 US America High Speed 02 CTCU - VPN Trinh Hg",
+    "🇺🇸美国高速01|流媒体": "🇺🇸 US America High Speed 01 Streaming - VPN Trinh Hg",
+    "🇺🇸美国高速03|流媒体": "🇺🇸 US America High Speed 03 Streaming - VPN Trinh Hg",
+    "🇺🇸美国高速04|流媒体": "🇺🇸 US America High Speed 04 Streaming - VPN Trinh Hg",
+    "🇺🇸美国01|流媒体": "🇺🇸 US America 01 Streaming - VPN Trinh Hg",
+    "🇺🇸美国02|流媒体": "🇺🇸 US America 02 Streaming - VPN Trinh Hg",
+
+    # ── HÀN QUỐC & ĐÀI LOAN ──
+    "🇰🇷韩国高速01|BGP|流媒体": "🇰🇷 KR South Korea High Speed 01 BGP Streaming - VPN Trinh Hg",
+    "🇰🇷韩国专线01|BGP|流媒体": "🇰🇷 KR South Korea Dedicated 01 BGP Streaming - VPN Trinh Hg",
+    "🇨🇳台湾高速01|BGP|流媒体": "🇹🇼 TW Taiwan High Speed 01 BGP Streaming - VPN Trinh Hg",
+    "🇨🇳台湾专线01|BGP|流媒体": "🇹🇼 TW Taiwan Dedicated 01 BGP Streaming - VPN Trinh Hg",
 }
 
 # ── DNS header riêng cho từng nhà cung cấp ───────────────────────────────────
@@ -1561,3 +1584,7 @@ def update_all():
 
 if __name__ == "__main__":
     update_all()
+
+Ok vậy gom chung update link fecth và update rebuild lại thành global như t nói trc kia đi, và nhớ cơ chế bảo vệ nếu global chết thì dùng cái đơn thuần cũ để phòng tránh gây lỗi khách hàng nhé. 
+Phân tích xem sẽ phải làm thế nào và logic như nào ở woker và update_sub.py
+Bàn luận chưa gõ code
