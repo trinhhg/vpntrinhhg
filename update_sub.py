@@ -1,4 +1,4 @@
-# v1.5 - Xóa từ điển Rename, dùng logic nối chuỗi tự động, khôi phục 100% rule gốc Liangxin - 2026-05-16
+# v1.5 - Tối giản: Xóa Rename Dict, Dùng Logic tự động nối đuôi, Khôi phục 100% Rule Liangxin gốc - 2026-05-16
 """
 update_sub.py — VPN Trinh Hg
 GitHub Actions: chạy mỗi 60 phút
@@ -51,6 +51,8 @@ dns:
     fallback-filter: { geoip: true, geoip-code: CN, geosite: [gfw], ipcidr: [240.0.0.0/4], domain: [+.google.com, +.facebook.com, +.youtube.com] }"""
 
 # ── Rules riêng biệt ─────────────────────────────────────────────────────────
+
+# DJJC Rules giữ nguyên từ bản v1.4
 DJJC_RULES = [
     "DOMAIN-SUFFIX,services.googleapis.cn,VPN Trinh Hg",
     "DOMAIN-SUFFIX,xn--ngstr-lra8j.com,VPN Trinh Hg",
@@ -567,6 +569,7 @@ DJJC_RULES = [
     "MATCH,VPN Trinh Hg"
 ]
 
+# Liangxin Rules khôi phục 100% bản gốc, chỉ thay thế "良心云" bằng "VPN Trinh Hg"
 LIANGXIN_RULES = [
     "IP-CIDR,1.1.1.1/32,VPN Trinh Hg,no-resolve",
     "IP-CIDR,8.8.8.8/32,VPN Trinh Hg,no-resolve",
@@ -1306,8 +1309,7 @@ def process_b64(raw_b64: str, is_liangxin: bool):
         return raw_b64, ""
 
     lines = [l.strip() for l in decoded.splitlines() if l.strip() and "://" in l]
-    rename_map = RENAME_LIANGXIN if is_liangxin else RENAME_DJJC
-
+    
     new_b64_lines = []
     # 4 info nodes đầu tiên
     for name in INFO_NODES:
@@ -1329,15 +1331,12 @@ def process_b64(raw_b64: str, is_liangxin: bool):
         if old_name and any(kw in old_name for kw in INFO_SKIP_KW):
             continue
 
-        # Rename
+        # Rename tự động nối đuôi
         if old_name:
-            new_name = rename_map.get(old_name)
-            if new_name is None:
-                # Nếu chưa có trong dict → giữ tên gốc + suffix nếu chưa có
-                if "VPN Trinh Hg" not in old_name:
-                    new_name = old_name + " - VPN Trinh Hg"
-                else:
-                    new_name = old_name
+            if "VPNTrinhHg" not in old_name:
+                new_name = old_name + " - VPNTrinhHg"
+            else:
+                new_name = old_name
         else:
             new_name = old_name
 
