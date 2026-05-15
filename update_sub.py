@@ -1,10 +1,10 @@
-# v1.5 - Tối giản: Xóa Rename Dict, Dùng Logic tự động nối đuôi, Khôi phục 100% Rule Liangxin gốc - 2026-05-16
+# v1.6 - Mở thêm dây chuyền sản xuất Sing-box JSON (Hiddify), Giữ nguyên YAML/Rules gốc - 2026-05-16
 """
 update_sub.py — VPN Trinh Hg
 GitHub Actions: chạy mỗi 60 phút
 - Fetch b64 từ link gốc
-- Parse từng proxy URI (không fetch YAML server vì UA filtering)
-- Build YAML đầy đủ với DNS/rules riêng cho Liangxin và DJJC
+- Parse từng proxy URI 
+- Build YAML (Clash) & JSON (Sing-box/Hiddify)
 - Push lên Cloudflare KV qua /api/push_data
 """
 
@@ -51,8 +51,6 @@ dns:
     fallback-filter: { geoip: true, geoip-code: CN, geosite: [gfw], ipcidr: [240.0.0.0/4], domain: [+.google.com, +.facebook.com, +.youtube.com] }"""
 
 # ── Rules riêng biệt ─────────────────────────────────────────────────────────
-
-# DJJC Rules giữ nguyên từ bản v1.4
 DJJC_RULES = [
     "DOMAIN-SUFFIX,services.googleapis.cn,VPN Trinh Hg",
     "DOMAIN-SUFFIX,xn--ngstr-lra8j.com,VPN Trinh Hg",
@@ -569,7 +567,6 @@ DJJC_RULES = [
     "MATCH,VPN Trinh Hg"
 ]
 
-# Liangxin Rules khôi phục 100% bản gốc, chỉ thay thế "良心云" bằng "VPN Trinh Hg"
 LIANGXIN_RULES = [
     "IP-CIDR,1.1.1.1/32,VPN Trinh Hg,no-resolve",
     "IP-CIDR,8.8.8.8/32,VPN Trinh Hg,no-resolve",
@@ -1189,6 +1186,120 @@ def uri_to_proxy(line: str) -> dict | None:
     return proxy if (proxy and proxy.get("name") and proxy.get("server")) else None
 
 
+# ── Sing-box Helpers ─────────────────────────────────────────────────────────
+def proxy_to_singbox(p: dict) -> dict | None:
+    """Chuyển đổi proxy dict (chuẩn YAML) sang format outbound của Sing-box/Hiddify"""
+    out = {
+        "type": p["type"],
+        "tag": p["name"],
+        "server": p["server"],
+        "server_port": int(p["port"])
+    }
+    
+    if p["type"] == "vless":
+        out["uuid"] = p.get("uuid", "")
+        out["packet_encoding"] = "xudp"
+        if p.get("flow"):
+            out["flow"] = p["flow"]
+            
+        if p.get("tls"):
+            tls = {"enabled": True}
+            if p.get("servername"): 
+                tls["server_name"] = p["servername"]
+            if p.get("client-fingerprint"): 
+                tls["utls"] = {"enabled": True, "fingerprint": p["client-fingerprint"]}
+            if p.get("skip-cert-verify"): 
+                tls["insecure"] = True
+            if p.get("reality-opts"):
+                tls["reality"] = {
+                    "enabled": True,
+                    "public_key": p["reality-opts"].get("public-key", ""),
+                    "short_id": p["reality-opts"].get("short-id", "")
+                }
+            out["tls"] = tls
+            
+        if p.get("network") == "ws":
+            out["transport"] = {
+                "type": "ws",
+                "path": p["ws-opts"].get("path", "/"),
+                "headers": p["ws-opts"].get("headers", {})
+            }
+        elif p.get("network") == "grpc":
+            out["transport"] = {
+                "type": "grpc",
+                "service_name": p["grpc-opts"].get("grpc-service-name", "")
+            }
+            
+    elif p["type"] in ("hysteria2", "hy2"):
+        out["type"] = "hysteria2"
+        out["password"] = p.get("password", "")
+        tls = {"enabled": True}
+        if p.get("sni"): 
+            tls["server_name"] = p["sni"]
+        if p.get("skip-cert-verify"): 
+            tls["insecure"] = True
+        out["tls"] = tls
+        
+    elif p["type"] == "trojan":
+        out["password"] = p.get("password", "")
+        tls = {"enabled": True}
+        if p.get("sni"): 
+            tls["server_name"] = p["sni"]
+        if p.get("skip-cert-verify"): 
+            tls["insecure"] = True
+        out["tls"] = tls
+        
+    else:
+        return None
+
+    return out
+
+def build_singbox(proxy_list: list) -> str:
+    """Build JSON format chuẩn Sing-box/Hiddify y hệt bản gốc Liangxin"""
+    real_names = [p["name"] for p in proxy_list]
+    
+    outbounds = []
+    
+    # 1. Selector Group (节点选择)
+    outbounds.append({
+        "type": "selector",
+        "tag": "节点选择",
+        "outbounds": ["自动选择"] + real_names
+    })
+    
+    # 2. URL-Test Group (自动选择)
+    outbounds.append({
+        "type": "urltest",
+        "tag": "自动选择",
+        "outbounds": real_names
+    })
+    
+    # 3. Direct
+    outbounds.append({
+        "type": "direct",
+        "tag": "direct"
+    })
+    
+    # 4. Info Nodes (Đẩy thành chuẩn vless giả)
+    for i, name in enumerate(INFO_NODES):
+        outbounds.append({
+            "type": "vless",
+            "tag": f"{name} § {i}",
+            "server": "127.0.0.1",
+            "server_port": 1,
+            "uuid": "00000000-0000-0000-0000-000000000000",
+            "packet_encoding": "xudp"
+        })
+        
+    # 5. Add all real proxies
+    for p in proxy_list:
+        sb_proxy = proxy_to_singbox(p)
+        if sb_proxy:
+            outbounds.append(sb_proxy)
+            
+    return json.dumps({"outbounds": outbounds}, ensure_ascii=False, indent=2)
+
+
 # ── YAML dump helpers ────────────────────────────────────────────────────────
 def _q(v) -> str:
     if isinstance(v, bool): return str(v).lower()
@@ -1306,7 +1417,7 @@ def process_b64(raw_b64: str, is_liangxin: bool):
         decoded = base64.b64decode(pad).decode("utf-8", errors="ignore")
     except Exception as e:
         print(f"  [!] b64 decode error: {e}")
-        return raw_b64, ""
+        return raw_b64, "", ""
 
     lines = [l.strip() for l in decoded.splitlines() if l.strip() and "://" in l]
     
@@ -1345,7 +1456,7 @@ def process_b64(raw_b64: str, is_liangxin: bool):
         new_line = uri_base + "#" + urllib.parse.quote(new_name or "", safe="")
         new_b64_lines.append(new_line)
 
-        # Parse proxy để build YAML
+        # Parse proxy để build YAML và Sing-box
         proxy = uri_to_proxy(new_line)
         if proxy:
             proxy_list.append(proxy)
@@ -1363,7 +1474,14 @@ def process_b64(raw_b64: str, is_liangxin: bool):
     else:
         print("  [!] No real proxies parsed — YAML will be empty")
 
-    return new_b64, yaml_str
+    # Build Sing-box JSON
+    singbox_str = ""
+    if proxy_list:
+        singbox_str = build_singbox(proxy_list)
+    else:
+        print("  [!] No real proxies parsed — Sing-box JSON will be empty")
+
+    return new_b64, yaml_str, singbox_str
 
 
 # ── Parse traffic info ────────────────────────────────────────────────────────
@@ -1452,7 +1570,7 @@ def update_all():
             traffic = parse_traffic(user_info)
 
             # Process
-            final_b64, final_yaml = process_b64(raw_b64, is_liangxin)
+            final_b64, final_yaml, final_singbox = process_b64(raw_b64, is_liangxin)
 
             # Verify b64
             try:
@@ -1464,11 +1582,12 @@ def update_all():
 
             # Push KV
             payload = {
-                "key":       orig_token,
-                "body_b64":  final_b64,
-                "body_yaml": final_yaml,
-                "info":      user_info,
-                "traffic":   traffic,
+                "key":          orig_token,
+                "body_b64":     final_b64,
+                "body_yaml":    final_yaml,
+                "body_singbox": final_singbox,
+                "info":         user_info,
+                "traffic":      traffic,
             }
             push_res = requests.post(API_PUSH, json=payload, timeout=20)
             print(f"  [OK] Push → HTTP {push_res.status_code}")
